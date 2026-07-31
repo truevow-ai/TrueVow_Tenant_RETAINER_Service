@@ -118,11 +118,21 @@ async def get_webhook_context(request: Request) -> AuthContext:
                 detail="Legacy webhook auth is no longer accepted. Use HMAC WebhookSignature v1.0.",
             )
 
-        allowed = {settings.service_api_key}
-        if settings.intake_webhook_secret:
-            allowed.add(settings.intake_webhook_secret)
-        if api_key in allowed:
-            logger.warning("LEGACY_AUTH webhook auth used (Bearer/API-Key). Migrate to HMAC WebhookSignature v1.0.")
+        # Legacy auth — validate against per-link keys only, not a global service_api_key
+        from app.security.webhook_signature import _KEY_REGISTRY, _resolve_secret
+
+        legacy_ok = False
+        for key_id in _KEY_REGISTRY:
+            secret = _resolve_secret(key_id)
+            if secret and api_key == secret:
+                logger.warning(
+                    "LEGACY_AUTH webhook auth used (Bearer/API-Key). Migrate to HMAC WebhookSignature v1.0. "
+                    "Key: %s", key_id,
+                )
+                legacy_ok = True
+                break
+
+        if legacy_ok:
             tenant_id = request.headers.get("X-Tenant-Id")
             if not tenant_id:
                 raise HTTPException(status.HTTP_400_BAD_REQUEST, detail="X-Tenant-Id required")
