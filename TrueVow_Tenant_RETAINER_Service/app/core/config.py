@@ -70,7 +70,10 @@ class Settings(BaseSettings):
     def effective_database_url(self) -> str:
         url = self.retainer_database_url
         if not url:
-            return "sqlite+aiosqlite:///:memory:"
+            raise RuntimeError(
+                "RETAINER requires Supabase Postgres. Set RETAINER_DATABASE_URL or DATABASE_URL. "
+                "SQLite is not supported — this service communicates only with Supabase."
+            )
         if url.startswith("postgresql://") and "+asyncpg" not in url:
             url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
         return url

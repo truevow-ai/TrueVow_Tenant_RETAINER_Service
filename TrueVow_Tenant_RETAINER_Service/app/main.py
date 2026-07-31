@@ -32,10 +32,9 @@ async def lifespan(app: FastAPI):
             "AUTH_MODE=local is forbidden in production. Set AUTH_MODE=clerk and CLERK_JWKS_URL."
         )
     logger.info(
-        "RETAINER starting: env=%s auth_mode=%s db=%s",
+        "RETAINER starting: env=%s auth_mode=%s db=supabase",
         settings.environment,
         settings.auth_mode,
-        "postgres" if settings.retainer_database_url else "sqlite(fallback)",
     )
     yield
     logger.info("RETAINER shutting down")
