@@ -168,6 +168,26 @@ def test_default_tv_primary_rejected():
     assert result.reason == "UNKNOWN_KEY_ID"
 
 
+def test_secondary_key_accepted_after_rotation():
+    """tv-intake-to-retainer-v2 works as rotation key for same path."""
+    hdrs = sign_request(TEST_METHOD, TEST_PATH, TEST_BODY,
+                        key_id="tv-intake-to-retainer-v2", secret=TEST_SECRET)
+    result = verify_signature(hdrs, TEST_METHOD, TEST_PATH, TEST_BODY,
+                              secret_override=TEST_SECRET)
+    assert result.valid
+    assert result.key_id == "tv-intake-to-retainer-v2"
+
+
+def test_primary_rejected_when_disabled():
+    """Rotated-out key no longer in registry should be rejected."""
+    hdrs = sign_request(TEST_METHOD, TEST_PATH, TEST_BODY,
+                        key_id="tv-intake-to-retainer-legacy", secret=TEST_SECRET)
+    result = verify_signature(hdrs, TEST_METHOD, TEST_PATH, TEST_BODY,
+                              secret_override=TEST_SECRET)
+    assert not result.valid
+    assert result.reason == "UNKNOWN_KEY_ID"
+
+
 def test_signing_produces_valid_symmetric_result(valid_headers):
     body_hash = hashlib.sha256(TEST_BODY).hexdigest()
     ts = valid_headers["X-TrueVow-Timestamp"]
