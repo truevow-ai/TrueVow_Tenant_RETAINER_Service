@@ -131,6 +131,43 @@ def test_non_hex_signature():
     assert not result.valid
 
 
+def test_correct_link_key_passes():
+    hdrs = sign_request(TEST_METHOD, TEST_PATH, TEST_BODY,
+                        key_id="tv-intake-to-retainer-v1", secret=TEST_SECRET)
+    result = verify_signature(hdrs, TEST_METHOD, TEST_PATH, TEST_BODY,
+                              secret_override=TEST_SECRET)
+    assert result.valid
+    assert result.key_id == "tv-intake-to-retainer-v1"
+
+
+def test_different_services_key_fails():
+    """tv-retainer-to-saas-admin-v1 must not authorize INTAKE→RETAINER path."""
+    hdrs = sign_request(TEST_METHOD, TEST_PATH, TEST_BODY,
+                        key_id="tv-retainer-to-saas-admin-v1", secret=TEST_SECRET)
+    result = verify_signature(hdrs, TEST_METHOD, TEST_PATH, TEST_BODY,
+                              secret_override=TEST_SECRET)
+    assert not result.valid
+    assert result.reason == "PATH_NOT_ALLOWED"
+
+
+def test_correct_key_wrong_path():
+    """tv-intake-to-retainer-v1 must not authorize activation path."""
+    hdrs = sign_request(TEST_METHOD, "/api/v1/matters/activate", TEST_BODY,
+                        key_id="tv-intake-to-retainer-v1", secret=TEST_SECRET)
+    result = verify_signature(hdrs, TEST_METHOD, "/api/v1/matters/activate", TEST_BODY,
+                              secret_override=TEST_SECRET)
+    assert not result.valid
+    assert result.reason == "PATH_NOT_ALLOWED"
+
+
+def test_default_tv_primary_rejected():
+    """tv-primary is no longer accepted — per-service keys required."""
+    hdrs = sign_request(TEST_METHOD, TEST_PATH, TEST_BODY, secret=TEST_SECRET)
+    result = verify_signature(hdrs, TEST_METHOD, TEST_PATH, TEST_BODY)
+    assert not result.valid
+    assert result.reason == "UNKNOWN_KEY_ID"
+
+
 def test_signing_produces_valid_symmetric_result(valid_headers):
     body_hash = hashlib.sha256(TEST_BODY).hexdigest()
     ts = valid_headers["X-TrueVow-Timestamp"]

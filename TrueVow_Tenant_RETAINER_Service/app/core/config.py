@@ -51,6 +51,11 @@ class Settings(BaseSettings):
         validation_alias=AliasChoices("LEGACY_WEBHOOK_AUTH_CUTOFF"),
     )
 
+    webhook_keys: dict = Field(
+        default={},
+        validation_alias=AliasChoices("TRUEVOW_WEBHOOK_KEYS", "WEBHOOK_KEYS"),
+    )
+
     model_config = SettingsConfigDict(
         env_file=(".env", ".env.local"),
         case_sensitive=False,
