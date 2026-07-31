@@ -71,6 +71,36 @@ async def health() -> dict:
     }
 
 
+@app.get("/ready", tags=["health"])
+async def ready() -> dict:
+    from sqlalchemy import text
+
+    try:
+        engine = None
+        from app.core.database import engine as _engine
+
+        engine = _engine
+        async with engine.connect() as conn:
+            result = await conn.execute(text("SELECT version_num FROM retainer.alembic_version ORDER BY version_num DESC LIMIT 1"))
+            row = result.fetchone()
+            current = row[0] if row else "unknown"
+            tables_check = await conn.execute(text(
+                "SELECT count(*) FROM information_schema.tables WHERE table_schema = 'retainer'"
+            ))
+            table_count = tables_check.scalar()
+            return {
+                "status": "ready",
+                "database": "connected",
+                "migration_head": current,
+                "table_count": table_count,
+            }
+    except Exception as e:
+        return {
+            "status": "not_ready",
+            "reason": str(e)[:200],
+        }
+
+
 if __name__ == "__main__":
     import uvicorn
 

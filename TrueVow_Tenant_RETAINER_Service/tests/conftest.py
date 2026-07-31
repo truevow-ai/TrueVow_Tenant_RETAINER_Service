@@ -1,6 +1,6 @@
 """Test configuration.
 
-Runs the suite against in-memory SQLite (the platform's conftest pattern).
+Runs against Supabase Postgres. No SQLite fallback.
 Environment is set BEFORE importing the app so settings pick it up.
 """
 
@@ -9,11 +9,13 @@ from __future__ import annotations
 import os
 import uuid
 
+from dotenv import load_dotenv
+
+load_dotenv(".env.local", override=True)
+
 os.environ["ENVIRONMENT"] = "development"
 os.environ["AUTH_MODE"] = "local"
 os.environ["LOCAL_JWT_SECRET"] = "test-secret-at-least-32-bytes-long-000"
-os.environ["RETAINER_DATABASE_URL"] = ""
-os.environ.pop("DATABASE_URL", None)
 
 import jwt
 import pytest_asyncio
