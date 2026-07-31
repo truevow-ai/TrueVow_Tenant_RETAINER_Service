@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-07-31T03:42:38.862572+00:00
-- Total memories: 274
+- Generated: 2026-07-31T03:42:49.563830+00:00
+- Total memories: 275
 
-## High-importance decisions (8+, routine noise excluded) - 139
+## High-importance decisions (8+, routine noise excluded) - 140
 
 - **[10][architecture] WebhookSignature v1.0 — Cross-Service Contract Complete** - Frozen WebhookSignature v1.0 deployed to INTAKE (14/14 fixtures), RETAINER (15/15 fixtures), TRACE (17/17 fixtures), SETTLE (conformance-aligned). Per-service key isolation: tv-intake-to-retainer-v1, tv-retainer-to-saas-admin-v1. Legacy auth cutoff 2026-09-01. RETAINER per-service key registry enforces caller+path binding. SaaS Admin evidence pending. Live three-hop E2E pending.
   _by Admin - 2026-07-31 - tags: -_
@@ -196,6 +196,8 @@
   _by Admin - 2026-07-31 - tags: -_
 - **[9][todo] xai_cloud NEXT STEPS after C->B conversion** - DONE: C->B force_message conversion, VQM wiring, per-node VAD, missing test helpers (_VOICES/_DEFAULT_VOICE/_build_collected_data_text/_vad_for_node/_VAD_*), frontend rebuild w/ End Call+event log+report download. 40/40 tests pass. NOT YET DONE / NEXT: (1) USER LIVE TEST PENDING on http://127.0.0.1:3023/demo/xai_cloud_test.html — verify no more repetition loop, check transcripts/{sid}-report.json. (2) Add 3-retry-then-escalate guard in WorkflowEngine (industry doc HIGH priority; pushback loops forever currently). (3) 'You mean X?' repair pattern (Dialogflow §2). (4) Preamble/soft-timeout filler on slow LLM-routing nodes (1.5-3.2s classification nodes: conflict_check_prior_rep, opi_jurisdiction). (5) NOT committed yet — commit after successful live test. Ref: docs/VOICE_AI_INDUSTRY_ANALYSIS.md gap table, VOICE_AGENT_CHECKLIST.md §11.
   _by Admin - 2026-07-13 - tags: -_
+- **[8][architecture] TRACE Phase 2A Complete — 42 Tables on Supabase** - Migration 0017 applied: 31 new tables across evidence (source_locations, evidence_facts, fact_versions, contradiction_pairs, missing_evidence_signals), ontology (injuries, symptoms, diagnoses, treatment_episodes, incidents, claims, damages, insurance, witnesses, custody), workflow (issues, demand_drafts, demand_packages, readiness, record_completeness), shared foundation (business_events, consent_records, policy_records, jurisdiction_profiles, jurisdiction_activations), and client portal (trace_client_access_projections). 5 shared foundation services: AuthorityGate, ConsentLedger, PolicyRegistry, EventStore, StateMachine. Client portal endpoints: /api/client/v1/matters, completion, documents, requests, access. 68 tests pass.
+  _by Admin - 2026-07-31 - tags: -_
 - **[8][architecture] TRACE Phase 2A Schema Migration Applied** - Migration 0017 applied to Supabase Postgres — 31 new tables across 9 layers: global reference (jurisdiction_profiles), tenant-scoped (business_events, policy_records, consent_records), source-linked evidence (source_locations, evidence_facts, fact_versions, contradiction_pairs, missing_evidence_signals), matter structure (incidents, claims, damages), medical (injuries, symptoms, diagnoses, treatment_episodes), workflow (issues, demand_drafts, demand_packages, readiness_assessments, record_completeness_assessments), evidence integrity (chain_of_custody_events, witnesses, witness_statements), insurance/coverage/liability, and client portal (trace_client_access_projections, jurisdiction_activations). Alembic env.py updated with search_path=trace. Ownership model corrected: ClientAccessProjection is TRACE-local temporary mirror of Shared Platform canonical grant. RETAINER never grants MATTER_* scopes.
   _by Admin - 2026-07-31 - tags: -_
 - **[8][architecture] SETTLE Settlement Service Layer** - Built 8 service modules under app/services/settlement/: demand (packages/drafts/transmissions), negotiation (rounds/offers/counteroffers), decision (client settlement decisions + attorney recommendations), agreement (agreements/releases), lien (liens/resolutions), financial (payments/trust-ledger/allocations/closing-statements/disbursements), closure (matter close/reopen), audit (immutable event store). All gated by authority checks enforcing INV-005 (client settlement authority).
@@ -287,7 +289,7 @@
 - **[8][todo] FIX gitignore source-leak: TrueVow-Tenant_Billing-Service** - ASSIGNED to the TrueVow-Tenant_Billing-Service agent. Real lib/ source is currently hidden from git (confirmed). Run the playbook: TrueVow_SaaS_Administration_Service/docs/01-main/ECOSYSTEM_ADVISORY_GITIGNORE_SOURCE_LEAK.md (fix .gitignore: anchor/remove stray lib/ + logs/; secrets-scan; commit recovered source in reviewed batches by explicit path; verify clean-clone build). REPORT RESULT via memory.py remember category=bug title='TrueVow-Tenant_Billing-Service gitignore RESULT' content='FIXED n files | CLEAN | BLOCKED + reason; secrets found?'. NOTE: reporting.py agent-checkin is broken — report via memory.
   _by user - 2026-06-25 - tags: gitignore, todo, assigned_
 
-## architecture (67)
+## architecture (68)
 
 - **[10] WebhookSignature v1.0 — Cross-Service Contract Complete** - Frozen WebhookSignature v1.0 deployed to INTAKE (14/14 fixtures), RETAINER (15/15 fixtures), TRACE (17/17 fixtures), SETTLE (conformance-aligned). Per-service key isolation: tv-intake-to-retainer-v1, tv-retainer-to-saas-admin-v1. Legacy auth cutoff 2026-09-01. RETAINER per-service key registry enfor...
   _by Admin - 2026-07-31_
@@ -383,6 +385,8 @@
   _by user - 2026-06-25_
 - **[9] FM Service Wired to Ecosystem** - TrueVow_Financial_Management_Service is registered in the agent ecosystem with 13 domain agents (orchestrator, code-agent, search-agent, gl-agent, ar-agent, ap-agent, payroll-agent, treasury-agent, intercompany-agent, reporting-agent, affiliates-agent, benjamin-agent, fintech-patterns). Auto-dispatc...
   _by user - 2026-06-25_
+- **[8] TRACE Phase 2A Complete — 42 Tables on Supabase** - Migration 0017 applied: 31 new tables across evidence (source_locations, evidence_facts, fact_versions, contradiction_pairs, missing_evidence_signals), ontology (injuries, symptoms, diagnoses, treatment_episodes, incidents, claims, damages, insurance, witnesses, custody), workflow (issues, demand_dr...
+  _by Admin - 2026-07-31_
 - **[8] TRACE Phase 2A Schema Migration Applied** - Migration 0017 applied to Supabase Postgres — 31 new tables across 9 layers: global reference (jurisdiction_profiles), tenant-scoped (business_events, policy_records, consent_records), source-linked evidence (source_locations, evidence_facts, fact_versions, contradiction_pairs, missing_evidence_sign...
   _by Admin - 2026-07-31_
 - **[8] SETTLE Settlement Service Layer** - Built 8 service modules under app/services/settlement/: demand (packages/drafts/transmissions), negotiation (rounds/offers/counteroffers), decision (client settlement decisions + attorney recommendations), agreement (agreements/releases), lien (liens/resolutions), financial (payments/trust-ledger/al...
