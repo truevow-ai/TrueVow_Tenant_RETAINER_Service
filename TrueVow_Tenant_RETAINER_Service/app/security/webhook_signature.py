@@ -94,9 +94,9 @@ def verify_signature(
     secret_override: str | None = None,
 ) -> VerifyResult:
     """Verify a WebhookSignature v1.0 request. Returns VerifyResult."""
-    key_id = key_id_override or headers.get("X-TrueVow-Key-Id", "")
-    timestamp_str = headers.get("X-TrueVow-Timestamp", "")
-    signature = headers.get("X-TrueVow-Signature", "")
+    key_id = key_id_override or headers.get("x-truevow-key-id", "")
+    timestamp_str = headers.get("x-truevow-timestamp", "")
+    signature = headers.get("x-truevow-signature", "")
 
     if not key_id or not timestamp_str or not signature:
         return VerifyResult(valid=False, reason="MISSING_HEADERS")

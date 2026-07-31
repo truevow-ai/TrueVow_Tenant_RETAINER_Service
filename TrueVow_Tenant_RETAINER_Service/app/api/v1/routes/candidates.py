@@ -12,7 +12,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.deps import AuthContext, get_current_context, get_webhook_context
-from app.core.database import get_db
+from app.core.database import get_db, get_db_public
 from app.domain.candidate import (
     approve_representation,
     assign_responsible_attorney,
@@ -91,7 +91,7 @@ async def import_candidate_endpoint(
 )
 async def candidate_submitted_webhook(
     payload: CandidateHandoffRequest,
-    db: AsyncSession = Depends(get_db),
+    db: AsyncSession = Depends(get_db_public),
     ctx: AuthContext = Depends(get_webhook_context),
 ):
     """Accept a candidate submission from INTAKE via service-to-service webhook.

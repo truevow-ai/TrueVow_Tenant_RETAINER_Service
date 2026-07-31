@@ -88,7 +88,7 @@ async def get_webhook_context(request: Request) -> AuthContext:
     body_bytes = await request.body()
 
     result = verify_signature(
-        dict(request.headers),
+        {k.lower(): v for k, v in request.headers.items()},
         request.method,
         request.url.path,
         body_bytes,
