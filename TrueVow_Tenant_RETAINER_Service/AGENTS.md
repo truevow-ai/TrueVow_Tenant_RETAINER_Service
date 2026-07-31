@@ -53,7 +53,20 @@ python ../TrueVow_Shared_Orchestration/orchestrator.py dispatch "<user's request
 > Add service-specific rules below. The ecosystem preamble above is auto-generated
 > and wires this agent into the TrueVow Agent Ecosystem.
 
-## Cross-Service Webhook Contracts
+### Database: Supabase Postgres only
+
+SQLite is removed. This service communicates only with Supabase Postgres.
+`RETAINER_DATABASE_URL` is required — the app raises `RuntimeError` if absent.
+Tests use `.env.local` for the Supabase connection string.
+
+### Health and readiness
+
+- `GET /health` — process alive, returns `{"status": "healthy"}`
+- `GET /ready` — verifies DB connection, current migration revision, and table count.
+  Returns `{"status": "not_ready"}` with reason if schema is not provisioned.
+  Webhook returns `503 SERVICE_NOT_READY` when not ready.
+
+### Cross-Service Webhook Contracts
 
 ### WebhookSignature v1.0 (Frozen)
 
