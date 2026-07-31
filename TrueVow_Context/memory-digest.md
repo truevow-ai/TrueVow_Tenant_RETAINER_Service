@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-07-31T04:49:44.642888+00:00
-- Total memories: 288
+- Generated: 2026-07-31T05:18:48.848603+00:00
+- Total memories: 297
 
-## High-importance decisions (8+, routine noise excluded) - 149
+## High-importance decisions (8+, routine noise excluded) - 155
 
 - **[10][architecture] WebhookSignature v1.0 — Cross-Service Contract Complete** - Frozen WebhookSignature v1.0 deployed to INTAKE (14/14 fixtures), RETAINER (15/15 fixtures), TRACE (17/17 fixtures), SETTLE (conformance-aligned). Per-service key isolation: tv-intake-to-retainer-v1, tv-retainer-to-saas-admin-v1. Legacy auth cutoff 2026-09-01. RETAINER per-service key registry enforces caller+path binding. SaaS Admin evidence pending. Live three-hop E2E pending.
   _by Admin - 2026-07-31 - tags: -_
@@ -62,6 +62,8 @@
   _by user - 2026-06-25 - tags: intake, voice-bridge, gemini, dograh, assemblyai, pipecat, xai, fsm, workflow, orchestration_
 - **[10][architecture] LEVERAGE (ex-DRAFT) — 3-Tier Rules Engine, NO AI** - LEVERAGE is a 3-tier legal rule validation system: TIER 1: State/Jurisdiction rules (mandatory, cannot be disabled). TIER 2: Practice Area rules (customizable). TIER 3: Firm/Attorney/Client-specific rules. CORE PRINCIPLE: NO AI — no machine learning, no neural networks, no LLM. Uses peer benchmarking (real firm data) and FSM engine analysis. Features: citation checking, server-side validation, customer portal UI (4 tabs: Validate, History, Rules, Downloads), SaaS Admin compliance reports (React), template browser. v2.0 with global templates from SaaS Admin + tenant-specific rules. 98.25% complete. Stack: Python/FastAPI + Next.js frontend. Was previously called DRAFT — fully renamed to LEVERAGE.
   _by user - 2026-06-25 - tags: leverage, rules-engine, no-ai, peer-benchmarking, fsm, 3-tier, citation, compliance_
+- **[10][bug] D3 Fixed: Global Secret Fallback Removed** - RETAINER webhook_signature.py: sign_request() no longer falls back to settings.service_api_key. _resolve_secret() no longer falls back to TRUEVOW_WEBHOOK_SECONDARY_KEYS universal pool. deps.py: legacy bearer validates against per-link keys only. Each key resolved strictly from WEBHOOK_KEY_<KEY_ID> env var. Severity 1 — authentication boundary failure.
+  _by Admin - 2026-07-31 - tags: -_
 - **[10][bug] D3 UPGRADED TO SEVERITY 1: RETAINER per-service key isolation — authentication boundary failure** - RETAINER webhook_signature.py:122-124 maps ALL per-service registry keys to same fallback secret. A compromised service could impersonate another. Required fix: remove every global-secret fallback; resolve explicit per-key records (key_id, secret, caller_service, receiver_service, allowed_method, allowed_path, env, enabled, valid_from, valid_until). tv-intake-to-retainer-v1 must ONLY authorize INTAKE→RETAINER POST /api/v1/retainer/webhooks/candidate-submitted — never activation or TRACE delivery. Owner: ghaus-fsd.
   _by Admin - 2026-07-31 - tags: -_
 - **[10][bug] Engine Name Capture Corruption** - From 2026-07-29 test call transcript: contact_name corrupted through 5 different garbage values in a single 13-min call (call me Shaula → Me. Just Yeshua → Normal Conversation. Takes Place → K. P K). Root cause: _try_extract_intro_name and _try_correct_name over-fire on sentence fragments, treating any multi-word input as a name correction. contact_first_name stored as 'call' (from 'you can call me'). Also: workflow resets to greeting node mid-wrap-up after FAQ answer, error node as dead-end trap (6 occurrences), duplicate contact sequences run twice, phone spoken-digit normalization fails for 'nine two one five five five one three three'.
@@ -78,6 +80,8 @@
   _by Admin - 2026-07-07 - tags: -_
 - **[10][bug] Gitignore Source-Leak FIXED — All 6 services** - All 6 affected services now have anchored .gitignore patterns. lib/, env/, venv/, build/, dist/ now use leading / to prevent accidental source file hiding. Leaked PowerShell commands removed from FM, Billing, and LEVERAGE. SETTLE test_db_conn.py and recover_pyc.py anchored to root only. Internal Ops, SETTLE, and LEVERAGE latent rules also fixed.
   _by Admin - 2026-07-01 - tags: -_
+- **[10][context] TRACE Pilot Review — No Defects Found** - Pilot review D1-D4: (D1) trailing-slash — SaaS Admin issue, TRACE verifier uses exact path match, no normalization. (D3) shared secret fallback — TRACE has zero legacy bearer or global shared-secret path, pure HMAC per-link keys only. (D4) INTAKE contract test — not TRACE's issue. TRACE is clean for all three defects, ready for Release Candidate v3 staging deployment. 68 tests pass, 17 golden fixtures, per-link key tv-saas-admin-to-trace-v1, raw-body hashing, event_id idempotency.
+  _by Admin - 2026-07-31 - tags: -_
 - **[10][context] TRACE WebhookSignature v1.0 Cross-Service Contract Rollout Complete** - All six corrections applied: (1) EventEnvelope v1.0.1 frozen at 18 fields, (2) matter.activated payload normalized to 9 canonical evidence references, (3) webhook auth upgraded from shared-secret to HMAC-SHA256 with X-TrueVow headers, (4) global vs tenant data separation documented, (5) event_id idempotency replay protection added (two-layer: timestamp tolerance + canonical ID), (6) per-link keys replacing global shared secret. 17 golden fixture tests pass. Webhook spine: INTAKE -> signed -> RETAINER -> signed -> SaaS Admin -> signed -> TRACE. Legacy bearer cutoff: 2026-09-01.
   _by Admin - 2026-07-31 - tags: -_
 - **[10][context] TRACE Contract Normalization Complete** - Four contract corrections applied: (1) EventEnvelope frozen at v1.0.1 with 18 required fields, (2) matter.activated payload normalized to 9 canonical evidence references, (3) webhook auth upgraded from shared-secret header to HMAC-SHA256 signature, (4) global vs tenant data separation documented. Golden fixture test proves cross-repository contract validation. Frozen contracts: event_envelope=1.0.1, matter_activated_payload=1.0, webhook_signature=1.0, authority_class_registry=1.0, ontology_registry=1.0.
@@ -174,6 +178,12 @@
   _by user - 2026-06-25 - tags: saas-admin, hub, central, tenant-management, auth, database, architecture_
 - **[9][architecture] FM Service Wired to Ecosystem** - TrueVow_Financial_Management_Service is registered in the agent ecosystem with 13 domain agents (orchestrator, code-agent, search-agent, gl-agent, ar-agent, ap-agent, payroll-agent, treasury-agent, intercompany-agent, reporting-agent, affiliates-agent, benjamin-agent, fintech-patterns). Auto-dispatch routes FM-specific keywords (journal, invoice, payroll, treasury, intercompany, etc.) directly to the right domain agent SKILL.md.
   _by user - 2026-06-25 - tags: ecosystem, fm, financial-management, dispatch, integration, architecture_
+- **[9][bug] D4 FIXED: INTAKE golden fixture tests augmented (23/23 pass)** - INTAKE test_webhook_signature_contract.py already existed with 14 tests. Added 9 new tests: query string rejection, encoded path rejection, double-slash rejection, non-ASCII raw body, deterministic signature, secondary key verification, secondary key gating, exact canonical path, timestamp precision warning. Fixed at commit 8c6ec5c.
+  _by Admin - 2026-07-31 - tags: -_
+- **[9][bug] D3 ALREADY FIXED: RETAINER per-service key isolation at commit 05ee2e3** - RETAINER webhook_signature.py _resolve_secret already uses per-key env vars (WEBHOOK_KEY_<KEY_ID>) with no global fallback. sign_request() requires explicit secret. verify_signature() enforces PATH_NOT_ALLOWED and METHOD_NOT_ALLOWED per key. D3 was fixed before the QA scan — QA agent tested against an older SHA.
+  _by Admin - 2026-07-31 - tags: -_
+- **[9][bug] D1 FIXED: SaaS Admin test env vars aligned (22/22 pass)** - SaaS Admin webhook-signature.test.ts beforeAll was using old env var names (TRUEVOW_WEBHOOK_KEY_ID/SECRET) instead of per-relationship names (TRUEVOW_WEBHOOK_KEY_ID_RETAINER/SECRET_RETAINER). Fixed at commit 2e95a5e. All 22 golden fixture tests pass including trailing-slash, query-string, encoded-path, double-slash rejection.
+  _by Admin - 2026-07-31 - tags: -_
 - **[9][bug] D3: RETAINER per-service key isolation not enforced (Severity 2)** - RETAINER webhook_signature.py:122-124 maps ALL per-service registry keys to same fallback secret. tv-intake-to-retainer-v1 and tv-retainer-to-saas-admin-v1 share credentials in default code path. Owner: ghaus-fsd.
   _by Admin - 2026-07-31 - tags: -_
 - **[9][bug] D1: SaaS Admin trailing-slash canonicalization (Severity 2)** - SaaS Admin webhook-auth.ts:293 strips trailing slashes on verify (path.replace(/\/+$/, '')). Signing for /activate and verifying /activate/ both canonicalize to /activate, defeating wrong-path rejection. Owner: ghous-isb.
@@ -250,6 +260,8 @@
   _by user - 2026-06-25 - tags: analytics, events, warehouse, dashboards, star-schema, platform_
 - **[8][architecture] Tenant Application Service (INTAKE) - Voice + NLP Pipeline** - Phase I intake services. Stack: Python/FastAPI backend, FSM-based deterministic NLP engine, voice pipeline. Purpose: Legal AI intake for personal injury attorneys - captures client information via voice/NLP. Separated from website code (Nov 2025). Technology: Finite State Machine, deterministic NLP (not LLM-based for compliance). Voice pipeline components integrated. Ports: API backend. Depends on: SaaS Admin (tenant management, auth). Related: Benjamin voice agent (STT/TTS), Dialogflow Intake (alternative intake path).
   _by user - 2026-06-25 - tags: intake, nlp, fsm, voice, fastapi, python, tenant-application_
+- **[8][bug] NEW: INTAKE timestamp uses seconds instead of milliseconds — cross-service contract gap** - INTAKE outbox.py uses time.time() (seconds) for webhook timestamp. RETAINER and SaaS Admin use time.time() * 1000 (milliseconds). Frozen WebhookSignature v1.0 contract specifies millisecond timestamps. This will cause signature verification failures between INTAKE and RETAINER if not aligned. Owner: ghaus-fsd.
+  _by Admin - 2026-07-31 - tags: -_
 - **[8][bug] D4: INTAKE missing webhook signature contract tests (Severity 2)** - INTAKE has no tests/test_webhook_signature_contract.py. Cannot validate INTAKE signing against frozen WebhookSignature v1.0 contract. Owner: ghaus-fsd.
   _by Admin - 2026-07-31 - tags: -_
 - **[8][bug] any | None type annotation blocks Python 3.13** - database.py used lowercase 'any' instead of 'Any' from typing. Python 3.13 correctly rejects this since 'any' is a builtin function, not a type. Fixed by importing Any and correcting annotations.
@@ -564,8 +576,10 @@
 - **[8] Golden Fixture Cross-Repository Testing** - Created app/shared/contracts.py with frozen contract versions and deterministic golden fixture (make_golden_envelope, make_golden_fixture_json, compute_golden_hmac). Every TrueVow product must deserialize the same 18-field EventEnvelope and compute the same HMAC over the exact raw fixture. Tests at ...
   _by Admin - 2026-07-31_
 
-## bug (22)
+## bug (27)
 
+- **[10] D3 Fixed: Global Secret Fallback Removed** - RETAINER webhook_signature.py: sign_request() no longer falls back to settings.service_api_key. _resolve_secret() no longer falls back to TRUEVOW_WEBHOOK_SECONDARY_KEYS universal pool. deps.py: legacy bearer validates against per-link keys only. Each key resolved strictly from WEBHOOK_KEY_<KEY_ID> e...
+  _by Admin - 2026-07-31_
 - **[10] D3 UPGRADED TO SEVERITY 1: RETAINER per-service key isolation — authentication boundary failure** - RETAINER webhook_signature.py:122-124 maps ALL per-service registry keys to same fallback secret. A compromised service could impersonate another. Required fix: remove every global-secret fallback; resolve explicit per-key records (key_id, secret, caller_service, receiver_service, allowed_method, al...
   _by Admin - 2026-07-31_
 - **[10] Engine Name Capture Corruption** - From 2026-07-29 test call transcript: contact_name corrupted through 5 different garbage values in a single 13-min call (call me Shaula → Me. Just Yeshua → Normal Conversation. Takes Place → K. P K). Root cause: _try_extract_intro_name and _try_correct_name over-fire on sentence fragments, treating ...
@@ -582,12 +596,20 @@
   _by Admin - 2026-07-07_
 - **[10] Gitignore Source-Leak FIXED — All 6 services** - All 6 affected services now have anchored .gitignore patterns. lib/, env/, venv/, build/, dist/ now use leading / to prevent accidental source file hiding. Leaked PowerShell commands removed from FM, Billing, and LEVERAGE. SETTLE test_db_conn.py and recover_pyc.py anchored to root only. Internal Ops...
   _by Admin - 2026-07-01_
+- **[9] D4 FIXED: INTAKE golden fixture tests augmented (23/23 pass)** - INTAKE test_webhook_signature_contract.py already existed with 14 tests. Added 9 new tests: query string rejection, encoded path rejection, double-slash rejection, non-ASCII raw body, deterministic signature, secondary key verification, secondary key gating, exact canonical path, timestamp precision...
+  _by Admin - 2026-07-31_
+- **[9] D3 ALREADY FIXED: RETAINER per-service key isolation at commit 05ee2e3** - RETAINER webhook_signature.py _resolve_secret already uses per-key env vars (WEBHOOK_KEY_<KEY_ID>) with no global fallback. sign_request() requires explicit secret. verify_signature() enforces PATH_NOT_ALLOWED and METHOD_NOT_ALLOWED per key. D3 was fixed before the QA scan — QA agent tested against ...
+  _by Admin - 2026-07-31_
+- **[9] D1 FIXED: SaaS Admin test env vars aligned (22/22 pass)** - SaaS Admin webhook-signature.test.ts beforeAll was using old env var names (TRUEVOW_WEBHOOK_KEY_ID/SECRET) instead of per-relationship names (TRUEVOW_WEBHOOK_KEY_ID_RETAINER/SECRET_RETAINER). Fixed at commit 2e95a5e. All 22 golden fixture tests pass including trailing-slash, query-string, encoded-pa...
+  _by Admin - 2026-07-31_
 - **[9] D3: RETAINER per-service key isolation not enforced (Severity 2)** - RETAINER webhook_signature.py:122-124 maps ALL per-service registry keys to same fallback secret. tv-intake-to-retainer-v1 and tv-retainer-to-saas-admin-v1 share credentials in default code path. Owner: ghaus-fsd.
   _by Admin - 2026-07-31_
 - **[9] D1: SaaS Admin trailing-slash canonicalization (Severity 2)** - SaaS Admin webhook-auth.ts:293 strips trailing slashes on verify (path.replace(/\/+$/, '')). Signing for /activate and verifying /activate/ both canonicalize to /activate, defeating wrong-path rejection. Owner: ghous-isb.
   _by Admin - 2026-07-31_
 - **[9] contact_info_sequence dropped phone+email** - Root cause: routing INTO a sequence node used _execute_node, which returned the sequence's own intro prompt and left current_node=contact_info_sequence WITHOUT priming the first sub-node. Next turn the C10 terminal guard (workflow_engine.py:518) saw no next/branches/options and returned _build_compl...
   _by Admin - 2026-07-14_
+- **[8] NEW: INTAKE timestamp uses seconds instead of milliseconds — cross-service contract gap** - INTAKE outbox.py uses time.time() (seconds) for webhook timestamp. RETAINER and SaaS Admin use time.time() * 1000 (milliseconds). Frozen WebhookSignature v1.0 contract specifies millisecond timestamps. This will cause signature verification failures between INTAKE and RETAINER if not aligned. Owner:...
+  _by Admin - 2026-07-31_
 - **[8] D4: INTAKE missing webhook signature contract tests (Severity 2)** - INTAKE has no tests/test_webhook_signature_contract.py. Cannot validate INTAKE signing against frozen WebhookSignature v1.0 contract. Owner: ghaus-fsd.
   _by Admin - 2026-07-31_
 - **[8] any | None type annotation blocks Python 3.13** - database.py used lowercase 'any' instead of 'Any' from typing. Python 3.13 correctly rejects this since 'any' is a builtin function, not a type. Fixed by importing Any and correcting annotations.
@@ -611,8 +633,10 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (131)
+## context (135)
 
+- **[10] TRACE Pilot Review — No Defects Found** - Pilot review D1-D4: (D1) trailing-slash — SaaS Admin issue, TRACE verifier uses exact path match, no normalization. (D3) shared secret fallback — TRACE has zero legacy bearer or global shared-secret path, pure HMAC per-link keys only. (D4) INTAKE contract test — not TRACE's issue. TRACE is clean for...
+  _by Admin - 2026-07-31_
 - **[10] TRACE WebhookSignature v1.0 Cross-Service Contract Rollout Complete** - All six corrections applied: (1) EventEnvelope v1.0.1 frozen at 18 fields, (2) matter.activated payload normalized to 9 canonical evidence references, (3) webhook auth upgraded from shared-secret to HMAC-SHA256 with X-TrueVow headers, (4) global vs tenant data separation documented, (5) event_id ide...
   _by Admin - 2026-07-31_
 - **[10] TRACE Contract Normalization Complete** - Four contract corrections applied: (1) EventEnvelope frozen at v1.0.1 with 18 required fields, (2) matter.activated payload normalized to 9 canonical evidence references, (3) webhook auth upgraded from shared-secret header to HMAC-SHA256 signature, (4) global vs tenant data separation documented. Go...
@@ -749,6 +773,12 @@
   _by user - 2026-06-25_
 - **[6] Documentation Status: TrueVow_Documentation is Stale** - TrueVow_Documentation/ contains older documentation (Word docs, markdown exports) including TrueVow_PRD.md, Complete System Technical Documentation, Financial Management guides, and Billing Service updates. These are outdated - they reflect the old architecture with DRAFT naming, CONNECT active, and...
   _by user - 2026-06-25_
+- **[5] Dispatch: fix D4: INTAKE webhook signature contract tests — add golden fixture test file** - Dispatched to skill='incremental-implementation' phase='build' personas=[] tool=
+  _by Admin - 2026-07-31_
+- **[5] Dispatch: fix D3: RETAINER per-service key isolation — remove global-secret fallback, enfo** - Dispatched to skill='debugging-and-error-recovery' phase='verify' personas=[] tool=
+  _by Admin - 2026-07-31_
+- **[5] Dispatch: fix D1: SaaS Admin exact-path verification — remove trailing-slash normalization** - Dispatched to skill='' phase='build' personas=[] tool=
+  _by Admin - 2026-07-31_
 - **[5] Dispatch: start the controlled cross-service pilot validation - freeze all service commits** - Dispatched to skill='planning-and-task-breakdown' phase='plan' personas=[] tool=
   _by Admin - 2026-07-31_
 - **[5] Dispatch: implement BP-00 contract normalization and BP-01 repository bootstrap for the RE** - Dispatched to skill='incremental-implementation' phase='build' personas=[] tool=
