@@ -70,7 +70,13 @@ Golden fixtures: `tests/test_webhook_signature.py`
 
 **Key IDs:** `tv-primary` (default), `tv-secondary` (rotation)
 
+**Per-service keys (production):**
+- RETAINER **accepts** from INTAKE: `tv-intake-to-retainer-v1` (caller: INTAKE, path: `/api/v1/retainer/webhooks/candidate-submitted`, method: POST)
+- RETAINER **signs** to SaaS Admin: `tv-retainer-to-saas-admin-v1` (caller: RETAINER, path: `/api/v1/matters/activate`, method: POST)
+- Key registry enforced in `app/security/webhook_signature.py` → `_resolve_secret()`
+
 **Env vars:** `TRUEVOW_WEBHOOK_KEY_ID`, `TRUEVOW_WEBHOOK_SECRET`
+**Secondary key rotation:** JSON array in `TRUEVOW_WEBHOOK_SECONDARY_KEYS`
 
 **Legacy migration:** Bearer/API-Key auth still accepted with deprecation warning
 (logged as `LEGACY_AUTH`). **Cutoff: 2026-09-01.** After this date, all legacy tokens

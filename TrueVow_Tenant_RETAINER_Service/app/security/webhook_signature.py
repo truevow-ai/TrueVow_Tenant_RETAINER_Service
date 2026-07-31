@@ -21,6 +21,12 @@ REPLAY_WINDOW_MS = 300_000
 VALID_KEY_IDS = {"tv-primary"}
 SIGNATURE_HEX_LENGTH = 64
 
+_PER_SERVICE_KEY_REGISTRY: dict[str, dict] = {
+    "tv-intake-to-retainer-v1": {"caller": "INTAKE", "paths": ["/api/v1/retainer/webhooks/candidate-submitted"], "methods": ["POST"]},
+    "tv-intake-to-retainer-v2": {"caller": "INTAKE", "paths": ["/api/v1/retainer/webhooks/candidate-submitted"], "methods": ["POST"]},
+    "tv-retainer-to-saas-admin-v1": {"caller": "RETAINER", "paths": ["/api/v1/matters/activate"], "methods": ["POST"]},
+}
+
 
 @dataclass
 class VerifyResult:
@@ -112,6 +118,10 @@ def _resolve_secret(key_id: str, override: str | None = None) -> str | None:
 
         if key_id == "tv-primary":
             return settings.intake_webhook_secret or settings.service_api_key
+
+        for registered_id in _PER_SERVICE_KEY_REGISTRY:
+            if key_id == registered_id or key_id.startswith(registered_id):
+                return settings.intake_webhook_secret or settings.service_api_key
 
         secondary_raw = settings.intake_webhook_secret
         if secondary_raw:
