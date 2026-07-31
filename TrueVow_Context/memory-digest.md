@@ -3,11 +3,13 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-07-31T06:07:33.279707+00:00
-- Total memories: 303
+- Generated: 2026-07-31T17:22:37.736520+00:00
+- Total memories: 305
 
-## High-importance decisions (8+, routine noise excluded) - 161
+## High-importance decisions (8+, routine noise excluded) - 162
 
+- **[10][architecture] Cross-Service Webhook Spine — All 3 Hops Live** - Hop 1 (INTAKE→RETAINER): 17/17 PASS. Hop 2 (RETAINER→SaaS Admin): DB verified, activation + duplicate guard. Hop 3 (SaaS Admin→TRACE): HMAC auth proven (401 without, passes with valid key). All hops verified against real Supabase. WebhookSignature v1.0 operational across entire spine. Per-service key isolation enforced. SQLite removed from RETAINER. RETAINER freeze SHA: 70da328.
+  _by Admin - 2026-07-31 - tags: -_
 - **[10][architecture] WebhookSignature v1.0 — Cross-Service Contract Complete** - Frozen WebhookSignature v1.0 deployed to INTAKE (14/14 fixtures), RETAINER (15/15 fixtures), TRACE (17/17 fixtures), SETTLE (conformance-aligned). Per-service key isolation: tv-intake-to-retainer-v1, tv-retainer-to-saas-admin-v1. Legacy auth cutoff 2026-09-01. RETAINER per-service key registry enforces caller+path binding. SaaS Admin evidence pending. Live three-hop E2E pending.
   _by Admin - 2026-07-31 - tags: -_
 - **[10][architecture] Per-Link Key Isolation** - Replaced global TRUEVOW_WEBHOOK_SECRET with per-link key pairs: tv-intake-to-retainer-v1, tv-retainer-to-saas-admin-v1, tv-saas-admin-to-trace-v1. Each key binds to specific caller, receiver, path, and method. A key valid for one link MUST NOT be accepted on another. verifySignature() validates key binding in addition to HMAC. Rotation keys also per-link, not universal.
@@ -331,8 +333,10 @@
 - **[8][todo] FIX gitignore source-leak: TrueVow-Tenant_Billing-Service** - ASSIGNED to the TrueVow-Tenant_Billing-Service agent. Real lib/ source is currently hidden from git (confirmed). Run the playbook: TrueVow_SaaS_Administration_Service/docs/01-main/ECOSYSTEM_ADVISORY_GITIGNORE_SOURCE_LEAK.md (fix .gitignore: anchor/remove stray lib/ + logs/; secrets-scan; commit recovered source in reviewed batches by explicit path; verify clean-clone build). REPORT RESULT via memory.py remember category=bug title='TrueVow-Tenant_Billing-Service gitignore RESULT' content='FIXED n files | CLEAN | BLOCKED + reason; secrets found?'. NOTE: reporting.py agent-checkin is broken — report via memory.
   _by user - 2026-06-25 - tags: gitignore, todo, assigned_
 
-## architecture (69)
+## architecture (70)
 
+- **[10] Cross-Service Webhook Spine — All 3 Hops Live** - Hop 1 (INTAKE→RETAINER): 17/17 PASS. Hop 2 (RETAINER→SaaS Admin): DB verified, activation + duplicate guard. Hop 3 (SaaS Admin→TRACE): HMAC auth proven (401 without, passes with valid key). All hops verified against real Supabase. WebhookSignature v1.0 operational across entire spine. Per-service ke...
+  _by Admin - 2026-07-31_
 - **[10] WebhookSignature v1.0 — Cross-Service Contract Complete** - Frozen WebhookSignature v1.0 deployed to INTAKE (14/14 fixtures), RETAINER (15/15 fixtures), TRACE (17/17 fixtures), SETTLE (conformance-aligned). Per-service key isolation: tv-intake-to-retainer-v1, tv-retainer-to-saas-admin-v1. Legacy auth cutoff 2026-09-01. RETAINER per-service key registry enfor...
   _by Admin - 2026-07-31_
 - **[10] Per-Link Key Isolation** - Replaced global TRUEVOW_WEBHOOK_SECRET with per-link key pairs: tv-intake-to-retainer-v1, tv-retainer-to-saas-admin-v1, tv-saas-admin-to-trace-v1. Each key binds to specific caller, receiver, path, and method. A key valid for one link MUST NOT be accepted on another. verifySignature() validates key ...
@@ -657,7 +661,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (135)
+## context (136)
 
 - **[10] TRACE Pilot Review — No Defects Found** - Pilot review D1-D4: (D1) trailing-slash — SaaS Admin issue, TRACE verifier uses exact path match, no normalization. (D3) shared secret fallback — TRACE has zero legacy bearer or global shared-secret path, pure HMAC per-link keys only. (D4) INTAKE contract test — not TRACE's issue. TRACE is clean for...
   _by Admin - 2026-07-31_
@@ -675,6 +679,8 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: RETAINER: webhook spine complete — all 3 hops live against Supabase | Hop 1 approved (17/17), Hop 2** - {"agent_id": "TrueVow_Tenant_RETAINER_Service", "action": "done", "status": "DONE", "message": "RETAINER: webhook spine complete \u2014 all 3 hops live against Supabase | Hop 1 approved (17/17), Hop 2 activation verified, Hop 3 HMAC proven | SQLite removed, /ready endpoint active, per-service keys e...
+  _by user - 2026-07-31_
 - **[7] [DONE] DONE: CTO Orchestrator: Controlled Pilot v2 complete | outcome: NOT APPROVED (3 S2 defects, no staging env** - {"agent_id": "orchestrator", "action": "done", "status": "DONE", "message": "CTO Orchestrator: Controlled Pilot v2 complete | outcome: NOT APPROVED (3 S2 defects, no staging env) | learned: Portal scope ownership confirmed; webhook key isolation broken in RETAINER default path (D3); SaaS Admin trail...
   _by user - 2026-07-31_
 - **[7] [DONE] DONE: TRACE: cross-service contract rollout complete | outcome: 68 tests pass, 17 golden fixtures, webhook** - {"agent_id": "TrueVow_Tenant_TRACE_Service", "action": "done", "status": "DONE", "message": "TRACE: cross-service contract rollout complete | outcome: 68 tests pass, 17 golden fixtures, webhook auth aligned with SaaS Admin convention, per-link keys documented, migration 0017 applied (42 tables on Su...
