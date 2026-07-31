@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-07-31T04:40:33.615737+00:00
-- Total memories: 285
+- Generated: 2026-07-31T04:49:44.642888+00:00
+- Total memories: 288
 
-## High-importance decisions (8+, routine noise excluded) - 147
+## High-importance decisions (8+, routine noise excluded) - 149
 
 - **[10][architecture] WebhookSignature v1.0 — Cross-Service Contract Complete** - Frozen WebhookSignature v1.0 deployed to INTAKE (14/14 fixtures), RETAINER (15/15 fixtures), TRACE (17/17 fixtures), SETTLE (conformance-aligned). Per-service key isolation: tv-intake-to-retainer-v1, tv-retainer-to-saas-admin-v1. Legacy auth cutoff 2026-09-01. RETAINER per-service key registry enforces caller+path binding. SaaS Admin evidence pending. Live three-hop E2E pending.
   _by Admin - 2026-07-31 - tags: -_
@@ -62,6 +62,8 @@
   _by user - 2026-06-25 - tags: intake, voice-bridge, gemini, dograh, assemblyai, pipecat, xai, fsm, workflow, orchestration_
 - **[10][architecture] LEVERAGE (ex-DRAFT) — 3-Tier Rules Engine, NO AI** - LEVERAGE is a 3-tier legal rule validation system: TIER 1: State/Jurisdiction rules (mandatory, cannot be disabled). TIER 2: Practice Area rules (customizable). TIER 3: Firm/Attorney/Client-specific rules. CORE PRINCIPLE: NO AI — no machine learning, no neural networks, no LLM. Uses peer benchmarking (real firm data) and FSM engine analysis. Features: citation checking, server-side validation, customer portal UI (4 tabs: Validate, History, Rules, Downloads), SaaS Admin compliance reports (React), template browser. v2.0 with global templates from SaaS Admin + tenant-specific rules. 98.25% complete. Stack: Python/FastAPI + Next.js frontend. Was previously called DRAFT — fully renamed to LEVERAGE.
   _by user - 2026-06-25 - tags: leverage, rules-engine, no-ai, peer-benchmarking, fsm, 3-tier, citation, compliance_
+- **[10][bug] D3 UPGRADED TO SEVERITY 1: RETAINER per-service key isolation — authentication boundary failure** - RETAINER webhook_signature.py:122-124 maps ALL per-service registry keys to same fallback secret. A compromised service could impersonate another. Required fix: remove every global-secret fallback; resolve explicit per-key records (key_id, secret, caller_service, receiver_service, allowed_method, allowed_path, env, enabled, valid_from, valid_until). tv-intake-to-retainer-v1 must ONLY authorize INTAKE→RETAINER POST /api/v1/retainer/webhooks/candidate-submitted — never activation or TRACE delivery. Owner: ghaus-fsd.
+  _by Admin - 2026-07-31 - tags: -_
 - **[10][bug] Engine Name Capture Corruption** - From 2026-07-29 test call transcript: contact_name corrupted through 5 different garbage values in a single 13-min call (call me Shaula → Me. Just Yeshua → Normal Conversation. Takes Place → K. P K). Root cause: _try_extract_intro_name and _try_correct_name over-fire on sentence fragments, treating any multi-word input as a name correction. contact_first_name stored as 'call' (from 'you can call me'). Also: workflow resets to greeting node mid-wrap-up after FAQ answer, error node as dead-end trap (6 occurrences), duplicate contact sequences run twice, phone spoken-digit normalization fails for 'nine two one five five five one three three'.
   _by Admin - 2026-07-30 - tags: -_
 - **[10][bug] TRACE 9 bugs fixed Jul 24 2026** - 1) extraction_confidence VARCHAR(10->32) overflow on DO_NOT_REQUEST value. 2) audit_log.action VARCHAR(100->255) overflow on long paths. 3) get_case no firm_id filter (SECURITY: firm isolation gap). 4) ChronologyExporter export_json/export_pdf called with wrong params in qa.py. 5) LOCAL_JWT_SECRET not set in .env.local causing auth failure. 6) .env.local @DOCUMENTATION parse error on line 491. 7) Portal proxy returned 401 (no JWT generation). 8) TRACE not visible to non-admin users (no tenantId fallback). 9) Billing proxy fallback missing trace feature. All fixed in code. Schema fixes (#1, #2) still need ALTER TABLE on Supabase production DB.
@@ -125,6 +127,8 @@
 - **[10][decision] CONNECT Archived - DRAFT Renamed to LEVERAGE - INTAKE Updated** - CONNECT (attorney referral network) is decommissioned and archived from the ecosystem permanently - no longer on TrueVow agenda. DRAFT has been completely replaced by LEVERAGE everywhere (same service, renamed). INTAKE (Tenant Application Service) is no longer just FSM NLP - it is now FSM applied to various voice orchestration bridges, a multi-bridge voice orchestration platform. VERIFY, SETTLE, Customer Portal, and Platform Analytics remain unchanged.
   _by user - 2026-06-25 - tags: decision, archive, connect, draft, leverage, intake, voice-orchestration, rename_
 - **[10][pattern] Per-Service Key Isolation Pattern** - NEVER use one global webhook secret across all services. Each caller-receiver pair gets its own key: tv-intake-to-retainer-v1, tv-retainer-to-saas-admin-v1, tv-saas-admin-to-trace-v1. Key prefixes bound to allowed paths in CANONICAL_PATHS registry. Env vars: TRUEVOW_WEBHOOK_KEY_ID_{SERVICE} + TRUEVOW_WEBHOOK_SECRET_{SERVICE}. Secondary rotation keys per-relationship, not universal. Compromising one service must not allow impersonation of others.
+  _by Admin - 2026-07-31 - tags: -_
+- **[10][todo] Release Candidate v3 freeze — required before pilot re-evaluation** - D1 (SaaS Admin exact-path verification, S2), D3 (RETAINER key isolation, S1), D4 (INTAKE contract test, S2) must all be fixed, independently reviewed, and committed. Then freeze v3 with SHAs + image digests. Then deploy staging, execute all 20 QA phases, CTO architecture review, final recommendation.
   _by Admin - 2026-07-31 - tags: -_
 - **[10][todo] TX Phase 4 DB connectivity blocker** - db.bpzegquhxnygyxdzluyw.supabase.co only resolves to IPv6, Windows dev box has no IPv6. Supabase pooler not enabled for this project (tenant/user not found). Phase 4 scripts (verify_emails_phones, classify_phone_types, verify_attorney_emails) need psycopg2. Workaround: create REST API versions or enable IPv4 on Supabase.
   _by Admin - 2026-07-27 - tags: -_
@@ -560,8 +564,10 @@
 - **[8] Golden Fixture Cross-Repository Testing** - Created app/shared/contracts.py with frozen contract versions and deterministic golden fixture (make_golden_envelope, make_golden_fixture_json, compute_golden_hmac). Every TrueVow product must deserialize the same 18-field EventEnvelope and compute the same HMAC over the exact raw fixture. Tests at ...
   _by Admin - 2026-07-31_
 
-## bug (21)
+## bug (22)
 
+- **[10] D3 UPGRADED TO SEVERITY 1: RETAINER per-service key isolation — authentication boundary failure** - RETAINER webhook_signature.py:122-124 maps ALL per-service registry keys to same fallback secret. A compromised service could impersonate another. Required fix: remove every global-secret fallback; resolve explicit per-key records (key_id, secret, caller_service, receiver_service, allowed_method, al...
+  _by Admin - 2026-07-31_
 - **[10] Engine Name Capture Corruption** - From 2026-07-29 test call transcript: contact_name corrupted through 5 different garbage values in a single 13-min call (call me Shaula → Me. Just Yeshua → Normal Conversation. Takes Place → K. P K). Root cause: _try_extract_intro_name and _try_correct_name over-fire on sentence fragments, treating ...
   _by Admin - 2026-07-30_
 - **[10] TRACE 9 bugs fixed Jul 24 2026** - 1) extraction_confidence VARCHAR(10->32) overflow on DO_NOT_REQUEST value. 2) audit_log.action VARCHAR(100->255) overflow on long paths. 3) get_case no firm_id filter (SECURITY: firm isolation gap). 4) ChronologyExporter export_json/export_pdf called with wrong params in qa.py. 5) LOCAL_JWT_SECRET n...
@@ -605,7 +611,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (130)
+## context (131)
 
 - **[10] TRACE WebhookSignature v1.0 Cross-Service Contract Rollout Complete** - All six corrections applied: (1) EventEnvelope v1.0.1 frozen at 18 fields, (2) matter.activated payload normalized to 9 canonical evidence references, (3) webhook auth upgraded from shared-secret to HMAC-SHA256 with X-TrueVow headers, (4) global vs tenant data separation documented, (5) event_id ide...
   _by Admin - 2026-07-31_
@@ -621,6 +627,8 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: CTO Orchestrator: Controlled Pilot v2 complete | outcome: NOT APPROVED (3 S2 defects, no staging env** - {"agent_id": "orchestrator", "action": "done", "status": "DONE", "message": "CTO Orchestrator: Controlled Pilot v2 complete | outcome: NOT APPROVED (3 S2 defects, no staging env) | learned: Portal scope ownership confirmed; webhook key isolation broken in RETAINER default path (D3); SaaS Admin trail...
+  _by user - 2026-07-31_
 - **[7] [DONE] DONE: TRACE: cross-service contract rollout complete | outcome: 68 tests pass, 17 golden fixtures, webhook** - {"agent_id": "TrueVow_Tenant_TRACE_Service", "action": "done", "status": "DONE", "message": "TRACE: cross-service contract rollout complete | outcome: 68 tests pass, 17 golden fixtures, webhook auth aligned with SaaS Admin convention, per-link keys documented, migration 0017 applied (42 tables on Su...
   _by user - 2026-07-31_
 - **[7] [DONE] DONE: RETAINER: WebhookSignature v1.0 complete — frozen sign/verify module, 15 golden fixtures, per-servic** - {"agent_id": "TrueVow_Tenant_RETAINER_Service", "action": "done", "status": "DONE", "message": "RETAINER: WebhookSignature v1.0 complete \u2014 frozen sign/verify module, 15 golden fixtures, per-service key registry, legacy cutoff 2026-09-01, per-link key IDs documented | outcome: compliant and push...
@@ -868,8 +876,10 @@
 - **[4] [ACTIVE] START: Orchestrator CTO: monitoring all 19 services, building reporting dashboard** - {"agent_id": "orchestrator", "action": "start", "status": "ACTIVE", "message": "Orchestrator CTO: monitoring all 19 services, building reporting dashboard", "timestamp": "2026-06-25T02:06:16.484425+00:00", "working_dir": "C:\\Users\\yasha\\OneDrive\\Documents\\TrueVow\\Cursor"}
   _by user - 2026-06-25_
 
-## todo (12)
+## todo (13)
 
+- **[10] Release Candidate v3 freeze — required before pilot re-evaluation** - D1 (SaaS Admin exact-path verification, S2), D3 (RETAINER key isolation, S1), D4 (INTAKE contract test, S2) must all be fixed, independently reviewed, and committed. Then freeze v3 with SHAs + image digests. Then deploy staging, execute all 20 QA phases, CTO architecture review, final recommendation...
+  _by Admin - 2026-07-31_
 - **[10] TX Phase 4 DB connectivity blocker** - db.bpzegquhxnygyxdzluyw.supabase.co only resolves to IPv6, Windows dev box has no IPv6. Supabase pooler not enabled for this project (tenant/user not found). Phase 4 scripts (verify_emails_phones, classify_phone_types, verify_attorney_emails) need psycopg2. Workaround: create REST API versions or en...
   _by Admin - 2026-07-27_
 - **[9] xai_cloud NEXT STEPS after C->B conversion** - DONE: C->B force_message conversion, VQM wiring, per-node VAD, missing test helpers (_VOICES/_DEFAULT_VOICE/_build_collected_data_text/_vad_for_node/_VAD_*), frontend rebuild w/ End Call+event log+report download. 40/40 tests pass. NOT YET DONE / NEXT: (1) USER LIVE TEST PENDING on http://127.0.0.1:...
