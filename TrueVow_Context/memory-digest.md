@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-07-31T05:18:48.848603+00:00
-- Total memories: 297
+- Generated: 2026-07-31T06:07:33.279707+00:00
+- Total memories: 303
 
-## High-importance decisions (8+, routine noise excluded) - 155
+## High-importance decisions (8+, routine noise excluded) - 161
 
 - **[10][architecture] WebhookSignature v1.0 — Cross-Service Contract Complete** - Frozen WebhookSignature v1.0 deployed to INTAKE (14/14 fixtures), RETAINER (15/15 fixtures), TRACE (17/17 fixtures), SETTLE (conformance-aligned). Per-service key isolation: tv-intake-to-retainer-v1, tv-retainer-to-saas-admin-v1. Legacy auth cutoff 2026-09-01. RETAINER per-service key registry enforces caller+path binding. SaaS Admin evidence pending. Live three-hop E2E pending.
   _by Admin - 2026-07-31 - tags: -_
@@ -92,6 +92,10 @@
   _by Admin - 2026-07-24 - tags: -_
 - **[10][convention] zero hardcoded tunable values** - RULE: This is a multi-tenant platform. Never hardcode ANY value that may need adjustment per-tenant, per-firm, or per-environment. All tunables must live in one of: (1) tenant_config, (2) workflow JSON config, or (3) named module-level constants with clear documentation. Bare numbers, strings, or IDs in logic statements are FORBIDDEN. If you need a value that could change — threshold, timeout, limit, firm identifier, VAD setting, confidence score — expose it via config. Test by asking: 'Could a different law firm need this set differently?'
   _by Admin - 2026-07-15 - tags: -_
+- **[10][decision] INTAKE→RETAINER webhook live-tested against Supabase — 8/8 pass** - All live webhook tests pass against Supabase Pooler (cnbzuiuyppzrygxllgxj): valid primary key (202), unknown key (401), modified body (401), trailing slash (401), query string (401), missing headers (401), expired timestamp (401), secondary key rotation (202). HMAC WebhookSignature v1.0 verified end-to-end with real Supabase. Key fixes: case-insensitive headers, get_db_public for webhooks, TENANT_RETAINER_DATABASE_URL alias, SQLite removed.
+  _by Admin - 2026-07-31 - tags: -_
+- **[10][decision] RETAINER SQLite removed — Supabase Postgres only** - SQLite fallback removed from RETAINER config.py, database.py, and main.py. effective_database_url now raises RuntimeError if no Supabase URL configured. This is a platform rule: all services communicate only with Supabase. No SQLite substitutes accepted as evidence in any QA or staging test. Commits: 8ab03dd (remove SQLite) + 1e91875 (add TENANT_RETAINER_DATABASE_URL alias).
+  _by Admin - 2026-07-31 - tags: -_
 - **[10][decision] Controlled Pilot v2 — NOT APPROVED** - Three Severity-2 defects: D1 (SaaS Admin trailing-slash canonicalization at webhook-auth.ts:293), D3 (RETAINER per-service key isolation not enforced in default code path at webhook_signature.py:122-124), D4 (INTAKE missing webhook signature contract tests). No staging environment deployed. Primary lifecycle not executed end-to-end. Architecture review confirms portal scope ownership, activation authority, and contract registry are correct. Require D1-D4 fixes + staging deployment + full QA re-execution before re-evaluation.
   _by Admin - 2026-07-31 - tags: -_
 - **[10][decision] Canonical Contracts Module** - lib/contracts/index.ts is the authoritative source for WebhookSignature v1.0. Contains CANONICAL_PATHS, CANONICAL_KEY_BINDINGS, SERVICE_WEBHOOK_RESPONSIBILITIES, WEBHOOK_SIGNATURE_CANONICAL_RULES, ACTIVATION_EVIDENCE_REQUIREMENTS. Source traceability: CONTRACT_VERSION, SOURCE_REPO, SOURCE_COMMIT=29d3edc. All backend services import from this module.
@@ -178,6 +182,10 @@
   _by user - 2026-06-25 - tags: saas-admin, hub, central, tenant-management, auth, database, architecture_
 - **[9][architecture] FM Service Wired to Ecosystem** - TrueVow_Financial_Management_Service is registered in the agent ecosystem with 13 domain agents (orchestrator, code-agent, search-agent, gl-agent, ar-agent, ap-agent, payroll-agent, treasury-agent, intercompany-agent, reporting-agent, affiliates-agent, benjamin-agent, fintech-patterns). Auto-dispatch routes FM-specific keywords (journal, invoice, payroll, treasury, intercompany, etc.) directly to the right domain agent SKILL.md.
   _by user - 2026-06-25 - tags: ecosystem, fm, financial-management, dispatch, integration, architecture_
+- **[9][bug] INTAKE engine: call autopsy — 5 failures from bridge testing** - 1) Speak to attorney skips entire intake (routing design). 2) intake_summary fires with only name+phone. 3) Complaint text stored as name — hint gate missing at workflow_engine.py:951 text_input path. 4) Duplicate contact capture after summary complaint. 5) Garbage name → verify loop → caller hangs up. Root cause for #3: lines 748-756 gate only _try_extract_intro_name and _try_correct_name, but _extract_name_from_phrase at line 978 runs regardless. Fix: add hint check at line 951 before name extraction in text_input nodes. Owner: ghaus-fsd.
+  _by Admin - 2026-07-31 - tags: -_
+- **[9][bug] INTAKE timestamp alignment FIXED at d0dd700 (milliseconds now)** - INTAKE outbox.py changed from time.time() (seconds) to time.time() * 1000 (milliseconds). Test reference implementation updated to match. All 24 contract tests pass. Now aligned with RETAINER and SaaS Admin per WebhookSignature v1.0 frozen contract.
+  _by Admin - 2026-07-31 - tags: -_
 - **[9][bug] D4 FIXED: INTAKE golden fixture tests augmented (23/23 pass)** - INTAKE test_webhook_signature_contract.py already existed with 14 tests. Added 9 new tests: query string rejection, encoded path rejection, double-slash rejection, non-ASCII raw body, deterministic signature, secondary key verification, secondary key gating, exact canonical path, timestamp precision warning. Fixed at commit 8c6ec5c.
   _by Admin - 2026-07-31 - tags: -_
 - **[9][bug] D3 ALREADY FIXED: RETAINER per-service key isolation at commit 05ee2e3** - RETAINER webhook_signature.py _resolve_secret already uses per-key env vars (WEBHOOK_KEY_<KEY_ID>) with no global fallback. sign_request() requires explicit secret. verify_signature() enforces PATH_NOT_ALLOWED and METHOD_NOT_ALLOWED per key. D3 was fixed before the QA scan — QA agent tested against an older SHA.
@@ -260,6 +268,10 @@
   _by user - 2026-06-25 - tags: analytics, events, warehouse, dashboards, star-schema, platform_
 - **[8][architecture] Tenant Application Service (INTAKE) - Voice + NLP Pipeline** - Phase I intake services. Stack: Python/FastAPI backend, FSM-based deterministic NLP engine, voice pipeline. Purpose: Legal AI intake for personal injury attorneys - captures client information via voice/NLP. Separated from website code (Nov 2025). Technology: Finite State Machine, deterministic NLP (not LLM-based for compliance). Voice pipeline components integrated. Ports: API backend. Depends on: SaaS Admin (tenant management, auth). Related: Benjamin voice agent (STT/TTS), Dialogflow Intake (alternative intake path).
   _by user - 2026-06-25 - tags: intake, nlp, fsm, voice, fastapi, python, tenant-application_
+- **[8][bug] FAQ False Positive on Complaint Utterances** - From 2026-07-31 call: caller said 'you're having trouble processing it because you're not getting a consultation from the LLM' — FAQ matched on 'consultation' keyword, answered with fee policy. Caller was complaining about AI, not asking about pricing. Fix: added _classify_utterance gate before FAQ matching — complaint/refusal utterances skip FAQ injection. Also added 'having trouble' and 'not get' to complaint regex patterns.
+  _by Admin - 2026-07-31 - tags: -_
+- **[8][bug] INTAKE engine: hint classification is firing correctly — complaint detected** - Bridge classification matches r'why (?:are you|did you|would you|do you)' → complaint. Hint IS being sent to the engine. The gap is that text_input node path at workflow_engine.py:951 is not gated by the hint flag — _extract_name_from_phrase runs on complaint text, storing it as name. Fix is one engine gate: check hint before name extraction in text_input nodes. Owner: ghaus-fsd.
+  _by Admin - 2026-07-31 - tags: -_
 - **[8][bug] NEW: INTAKE timestamp uses seconds instead of milliseconds — cross-service contract gap** - INTAKE outbox.py uses time.time() (seconds) for webhook timestamp. RETAINER and SaaS Admin use time.time() * 1000 (milliseconds). Frozen WebhookSignature v1.0 contract specifies millisecond timestamps. This will cause signature verification failures between INTAKE and RETAINER if not aligned. Owner: ghaus-fsd.
   _by Admin - 2026-07-31 - tags: -_
 - **[8][bug] D4: INTAKE missing webhook signature contract tests (Severity 2)** - INTAKE has no tests/test_webhook_signature_contract.py. Cannot validate INTAKE signing against frozen WebhookSignature v1.0 contract. Owner: ghaus-fsd.
@@ -481,8 +493,12 @@
 - **[6] xai_cloud bridge test suite** - Created tests/test_xai_cloud_bridge.py (34 tests) for XaiCloudBridge. Mirrors test_xai_bridge.py but adapts for cloud bridge: dual registration (xai_cloud + xai_cloud_voice_agent), default voice rex (male-only), end_session returns {bridge,session_id,status} without had_audio, double-start early-ret...
   _by Admin - 2026-07-08_
 
-## decision (35)
+## decision (37)
 
+- **[10] INTAKE→RETAINER webhook live-tested against Supabase — 8/8 pass** - All live webhook tests pass against Supabase Pooler (cnbzuiuyppzrygxllgxj): valid primary key (202), unknown key (401), modified body (401), trailing slash (401), query string (401), missing headers (401), expired timestamp (401), secondary key rotation (202). HMAC WebhookSignature v1.0 verified end...
+  _by Admin - 2026-07-31_
+- **[10] RETAINER SQLite removed — Supabase Postgres only** - SQLite fallback removed from RETAINER config.py, database.py, and main.py. effective_database_url now raises RuntimeError if no Supabase URL configured. This is a platform rule: all services communicate only with Supabase. No SQLite substitutes accepted as evidence in any QA or staging test. Commits...
+  _by Admin - 2026-07-31_
 - **[10] Controlled Pilot v2 — NOT APPROVED** - Three Severity-2 defects: D1 (SaaS Admin trailing-slash canonicalization at webhook-auth.ts:293), D3 (RETAINER per-service key isolation not enforced in default code path at webhook_signature.py:122-124), D4 (INTAKE missing webhook signature contract tests). No staging environment deployed. Primary ...
   _by Admin - 2026-07-31_
 - **[10] Canonical Contracts Module** - lib/contracts/index.ts is the authoritative source for WebhookSignature v1.0. Contains CANONICAL_PATHS, CANONICAL_KEY_BINDINGS, SERVICE_WEBHOOK_RESPONSIBILITIES, WEBHOOK_SIGNATURE_CANONICAL_RULES, ACTIVATION_EVIDENCE_REQUIREMENTS. Source traceability: CONTRACT_VERSION, SOURCE_REPO, SOURCE_COMMIT=29d...
@@ -576,7 +592,7 @@
 - **[8] Golden Fixture Cross-Repository Testing** - Created app/shared/contracts.py with frozen contract versions and deterministic golden fixture (make_golden_envelope, make_golden_fixture_json, compute_golden_hmac). Every TrueVow product must deserialize the same 18-field EventEnvelope and compute the same HMAC over the exact raw fixture. Tests at ...
   _by Admin - 2026-07-31_
 
-## bug (27)
+## bug (31)
 
 - **[10] D3 Fixed: Global Secret Fallback Removed** - RETAINER webhook_signature.py: sign_request() no longer falls back to settings.service_api_key. _resolve_secret() no longer falls back to TRUEVOW_WEBHOOK_SECONDARY_KEYS universal pool. deps.py: legacy bearer validates against per-link keys only. Each key resolved strictly from WEBHOOK_KEY_<KEY_ID> e...
   _by Admin - 2026-07-31_
@@ -596,6 +612,10 @@
   _by Admin - 2026-07-07_
 - **[10] Gitignore Source-Leak FIXED — All 6 services** - All 6 affected services now have anchored .gitignore patterns. lib/, env/, venv/, build/, dist/ now use leading / to prevent accidental source file hiding. Leaked PowerShell commands removed from FM, Billing, and LEVERAGE. SETTLE test_db_conn.py and recover_pyc.py anchored to root only. Internal Ops...
   _by Admin - 2026-07-01_
+- **[9] INTAKE engine: call autopsy — 5 failures from bridge testing** - 1) Speak to attorney skips entire intake (routing design). 2) intake_summary fires with only name+phone. 3) Complaint text stored as name — hint gate missing at workflow_engine.py:951 text_input path. 4) Duplicate contact capture after summary complaint. 5) Garbage name → verify loop → caller hangs ...
+  _by Admin - 2026-07-31_
+- **[9] INTAKE timestamp alignment FIXED at d0dd700 (milliseconds now)** - INTAKE outbox.py changed from time.time() (seconds) to time.time() * 1000 (milliseconds). Test reference implementation updated to match. All 24 contract tests pass. Now aligned with RETAINER and SaaS Admin per WebhookSignature v1.0 frozen contract.
+  _by Admin - 2026-07-31_
 - **[9] D4 FIXED: INTAKE golden fixture tests augmented (23/23 pass)** - INTAKE test_webhook_signature_contract.py already existed with 14 tests. Added 9 new tests: query string rejection, encoded path rejection, double-slash rejection, non-ASCII raw body, deterministic signature, secondary key verification, secondary key gating, exact canonical path, timestamp precision...
   _by Admin - 2026-07-31_
 - **[9] D3 ALREADY FIXED: RETAINER per-service key isolation at commit 05ee2e3** - RETAINER webhook_signature.py _resolve_secret already uses per-key env vars (WEBHOOK_KEY_<KEY_ID>) with no global fallback. sign_request() requires explicit secret. verify_signature() enforces PATH_NOT_ALLOWED and METHOD_NOT_ALLOWED per key. D3 was fixed before the QA scan — QA agent tested against ...
@@ -608,6 +628,10 @@
   _by Admin - 2026-07-31_
 - **[9] contact_info_sequence dropped phone+email** - Root cause: routing INTO a sequence node used _execute_node, which returned the sequence's own intro prompt and left current_node=contact_info_sequence WITHOUT priming the first sub-node. Next turn the C10 terminal guard (workflow_engine.py:518) saw no next/branches/options and returned _build_compl...
   _by Admin - 2026-07-14_
+- **[8] FAQ False Positive on Complaint Utterances** - From 2026-07-31 call: caller said 'you're having trouble processing it because you're not getting a consultation from the LLM' — FAQ matched on 'consultation' keyword, answered with fee policy. Caller was complaining about AI, not asking about pricing. Fix: added _classify_utterance gate before FAQ ...
+  _by Admin - 2026-07-31_
+- **[8] INTAKE engine: hint classification is firing correctly — complaint detected** - Bridge classification matches r'why (?:are you|did you|would you|do you)' → complaint. Hint IS being sent to the engine. The gap is that text_input node path at workflow_engine.py:951 is not gated by the hint flag — _extract_name_from_phrase runs on complaint text, storing it as name. Fix is one eng...
+  _by Admin - 2026-07-31_
 - **[8] NEW: INTAKE timestamp uses seconds instead of milliseconds — cross-service contract gap** - INTAKE outbox.py uses time.time() (seconds) for webhook timestamp. RETAINER and SaaS Admin use time.time() * 1000 (milliseconds). Frozen WebhookSignature v1.0 contract specifies millisecond timestamps. This will cause signature verification failures between INTAKE and RETAINER if not aligned. Owner:...
   _by Admin - 2026-07-31_
 - **[8] D4: INTAKE missing webhook signature contract tests (Severity 2)** - INTAKE has no tests/test_webhook_signature_contract.py. Cannot validate INTAKE signing against frozen WebhookSignature v1.0 contract. Owner: ghaus-fsd.
