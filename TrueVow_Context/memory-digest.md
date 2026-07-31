@@ -3,11 +3,23 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-07-31T03:01:26.327454+00:00
-- Total memories: 254
+- Generated: 2026-07-31T03:41:52.061081+00:00
+- Total memories: 266
 
-## High-importance decisions (8+, routine noise excluded) - 123
+## High-importance decisions (8+, routine noise excluded) - 135
 
+- **[10][architecture] WebhookSignature v1.0 — Cross-Service Contract Complete** - Frozen WebhookSignature v1.0 deployed to INTAKE (14/14 fixtures), RETAINER (15/15 fixtures), TRACE (17/17 fixtures), SETTLE (conformance-aligned). Per-service key isolation: tv-intake-to-retainer-v1, tv-retainer-to-saas-admin-v1. Legacy auth cutoff 2026-09-01. RETAINER per-service key registry enforces caller+path binding. SaaS Admin evidence pending. Live three-hop E2E pending.
+  _by Admin - 2026-07-31 - tags: -_
+- **[10][architecture] Per-Link Key Isolation** - Replaced global TRUEVOW_WEBHOOK_SECRET with per-link key pairs: tv-intake-to-retainer-v1, tv-retainer-to-saas-admin-v1, tv-saas-admin-to-trace-v1. Each key binds to specific caller, receiver, path, and method. A key valid for one link MUST NOT be accepted on another. verifySignature() validates key binding in addition to HMAC. Rotation keys also per-link, not universal.
+  _by Admin - 2026-07-31 - tags: -_
+- **[10][architecture] SETTLE WebhookSignature v1.0 Complete** - SETTLE is now fully contract-aligned: (1) WebhookVerifier hardened with signature format validation, buffer-length guard, raw body hashing, idempotency via event_id, auth_source tracking. (2) Per-service key isolation — no global shared secret. (3) 17 golden fixture tests covering all 16 SaaS Admin categories + legacy migration. (4) CANONICAL_PATHS, SERVICE_WEBHOOK_RESPONSIBILITIES, WEBHOOK_SIGNATURE_CANONICAL_RULES documented in contracts.py. (5) Legacy cutoff 2026-09-01. (6) Authoritative source tracking (SaaS Admin commit a18dae1). 109 tests passing.
+  _by Admin - 2026-07-31 - tags: -_
+- **[10][architecture] Cross-Product Spine Complete — INTAKE→RETAINER→SaaS Admin→TRACE** - The full cross-product pipeline is now integrated end-to-end. INTAKE creates Matter Candidates, Qualification v2 scores them (A+ to D, confidence-weighted), and delivers signed candidate.submitted_for_representation_review events to RETAINER via HMAC-signed webhooks. RETAINER consumes candidates, manages representation review, conflict clearance, package generation, and signatures. SaaS Admin handles canonical matter activation with 9 evidence references. TRACE consumes matter.activated for case production context. All webhook communication uses the frozen WebhookSignature v1.0 contract with per-service key isolation. The static architecture is complete; live E2E validation pending.
+  _by Admin - 2026-07-31 - tags: -_
+- **[10][architecture] WebhookSignature v1.0 — INTAKE Fully Compliant** - INTAKE now signs all outbound webhooks to RETAINER using HMAC-SHA256 per the frozen WebhookSignature v1.0 contract. Signing string: timestamp:POST:path:body_hash. Headers: X-TrueVow-Key-Id, X-TrueVow-Timestamp, X-TrueVow-Signature. Canonical path: /api/v1/retainer/webhooks/candidate-submitted. Implementation: app/services/voice/bridges/intake_engine/fsm/outbox.py. Golden tests: tests/test_webhook_signature_contract.py — 14/14 pass, covers valid, wrong key, modified body, wrong method/path, trailing slash, expired timestamps, malformed headers, invalid signatures. Legacy bearer auth removed — no migration path needed. Per-service key isolation: key_id=tv-intake-to-retainer-v1 scoped to INTAKE→RETAINER relationship only. Fly secrets: TRUEVOW_WEBHOOK_KEY_ID + TRUEVOW_WEBHOOK_SECRET. Replay protection: event_id UUID per EventEnvelope v1.0.1.
+  _by Admin - 2026-07-31 - tags: -_
+- **[10][architecture] WebhookSignature v1.0 Cross-Service Complete** - All 5 backend services now implement WebhookSignature v1.0. INTAKE (14 fixtures), RETAINER (15 fixtures), TRACE (17 fixtures), SETTLE (103 tests), SaaS Admin (16 fixtures, 360-line verifier). Per-service key isolation applied: tv-retainer-to-saas-admin-v1, tv-saas-admin-to-trace-v1 — no global shared secret. Canonical paths frozen. Legacy bearer rejected after 2026-09-01. 3-hop spine: INTAKE→RETAINER→SaaS Admin→TRACE with signed webhooks at each hop.
+  _by Admin - 2026-07-31 - tags: -_
 - **[10][architecture] RETAINER Customer Portal v1 Complete** - Customer Portal now has 6 RETAINER workspaces with contract-mapped types from OpenAPI 3.1.0. 133/133 backend tests pass. INTAKE webhook plumbed. SaaS Admin activation path connected. WebhookSignature v1.0 HMAC implemented. Static gates: contract+TSC+ESLint+build all pass. Contract hash: f136f76318aa142a.
   _by Admin - 2026-07-31 - tags: -_
 - **[10][architecture] RETAINER v1.0 Complete — Release Candidate** - RETAINER service is feature-complete through BP-09. 133 tests pass. 68 endpoints (59 firm + 9 client). 40 tables in Supabase retainer schema at migration 0008. INTAKE→RETAINER webhook impl (HMAC v1.0). Client API v1 frozen at 9 endpoints. Scope transition: ENGAGEMENT_ONLY → ENGAGEMENT_HISTORY (no MATTER_*). Cross-product spine: INTAKE→RETAINER→SaaS Admin verified. Portal architecture: Customer Portal (firm) + Client Portal (prospect) separated. Controlled pilot ready.
@@ -72,6 +84,12 @@
   _by Admin - 2026-07-24 - tags: -_
 - **[10][convention] zero hardcoded tunable values** - RULE: This is a multi-tenant platform. Never hardcode ANY value that may need adjustment per-tenant, per-firm, or per-environment. All tunables must live in one of: (1) tenant_config, (2) workflow JSON config, or (3) named module-level constants with clear documentation. Bare numbers, strings, or IDs in logic statements are FORBIDDEN. If you need a value that could change — threshold, timeout, limit, firm identifier, VAD setting, confidence score — expose it via config. Test by asking: 'Could a different law firm need this set differently?'
   _by Admin - 2026-07-15 - tags: -_
+- **[10][decision] Per-Service Key Isolation — No Global Shared Secret** - Production must use caller-specific key IDs (tv-intake-to-retainer-v1, tv-retainer-to-saas-admin-v1), not one global tv-primary. Each receiver binds key to calling_service + allowed_paths + allowed_methods. Compromising one service must not enable impersonation of others. RETAINER _PER_SERVICE_KEY_REGISTRY enforces this.
+  _by Admin - 2026-07-31 - tags: -_
+- **[10][decision] Per-Service Key Isolation for SETTLE** - Implemented per-relationship key registry in WebhookVerifier. Keys now bind to calling_service, receiving_service, allowed_methods, allowed_paths, and enabled flag. A TRACE key must never be accepted on a non-TRACE path even if HMAC is valid. Disabled keys support rotation (old key disabled, new key active). Backward-compatible with global TRUEVOW_WEBHOOK_KEY_ID format. Per spec from SaaS Admin directive.
+  _by Admin - 2026-07-31 - tags: -_
+- **[10][decision] WebhookSignature v1.0 Hardening + Canonical Paths** - Applied SaaS Admin authoritative corrections to SETTLE: (1) Legacy cutoff corrected to 2026-09-01 per admin directive. (2) Added CANONICAL_PATHS, SERVICE_WEBHOOK_RESPONSIBILITIES, and WEBHOOK_SIGNATURE_CANONICAL_RULES to contracts.py. (3) Added 2 legacy migration tests (cutoff date verification). (4) WebhookVerifier hardened with signature hex format validation, buffer-length guard before compare_digest, idempotency via event_id, auth_source tracking. (5) 17+ golden fixture tests covering all 16 SaaS Admin categories.
+  _by Admin - 2026-07-31 - tags: -_
 - **[10][decision] Portal Scope Ownership** - RETAINER transitions ENGAGEMENT_ONLY to ENGAGEMENT_HISTORY on activation. Shared Platform adds ACTIVE_MATTER after matter.activated. RETAINER never grants MATTER_* scopes. Verified in domain/activation.py:159 and domain/portal.py:27.
   _by Admin - 2026-07-31 - tags: -_
 - **[10][decision] SaaS Admin: 9 Contracts Frozen at v1.0.1** - EventEnvelope (18 fields, extensions prohibited at root), MatterActivatedPayload, ActivationEvidenceManifest (9 refs, SHA-256), WebhookSignature (HMAC-SHA256, constant-time, replay rejection), AuthorityClass (6 classes: SYS_ADMIN,FIRM_POLICY,STAFF_AUTH,ATTY_AUTH,CLIENT_AUTH,PROHIBITED), Ontology Registry, Event Catalog (141 canonical + 19 platform), Transition Contract, RETAINER Activation. Golden fixtures seeded. Breaking changes require new version. Never rename frozen fields in-place.
@@ -98,6 +116,8 @@
   _by user - 2026-06-25 - tags: oss-tools, chatwoot, mattermost, novu, posthog, replacement, archive_
 - **[10][decision] CONNECT Archived - DRAFT Renamed to LEVERAGE - INTAKE Updated** - CONNECT (attorney referral network) is decommissioned and archived from the ecosystem permanently - no longer on TrueVow agenda. DRAFT has been completely replaced by LEVERAGE everywhere (same service, renamed). INTAKE (Tenant Application Service) is no longer just FSM NLP - it is now FSM applied to various voice orchestration bridges, a multi-bridge voice orchestration platform. VERIFY, SETTLE, Customer Portal, and Platform Analytics remain unchanged.
   _by user - 2026-06-25 - tags: decision, archive, connect, draft, leverage, intake, voice-orchestration, rename_
+- **[10][pattern] Per-Service Key Isolation Pattern** - NEVER use one global webhook secret across all services. Each caller-receiver pair gets its own key: tv-intake-to-retainer-v1, tv-retainer-to-saas-admin-v1, tv-saas-admin-to-trace-v1. Key prefixes bound to allowed paths in CANONICAL_PATHS registry. Env vars: TRUEVOW_WEBHOOK_KEY_ID_{SERVICE} + TRUEVOW_WEBHOOK_SECRET_{SERVICE}. Secondary rotation keys per-relationship, not universal. Compromising one service must not allow impersonation of others.
+  _by Admin - 2026-07-31 - tags: -_
 - **[10][todo] TX Phase 4 DB connectivity blocker** - db.bpzegquhxnygyxdzluyw.supabase.co only resolves to IPv6, Windows dev box has no IPv6. Supabase pooler not enabled for this project (tenant/user not found). Phase 4 scripts (verify_emails_phones, classify_phone_types, verify_attorney_emails) need psycopg2. Workaround: create REST API versions or enable IPv4 on Supabase.
   _by Admin - 2026-07-27 - tags: -_
 - **[9][architecture] SaaS Admin: Ontology Compliance Complete** - SaaS Admin built full ontology compliance infrastructure: 326 tables, 269 functions, 174 migrations applied. 52 jurisdiction profiles, 23 authority gates, 18 contracts (9 frozen at v1.0.1), EventEnvelope v1.0.1 (18 fields), 6 authority classes including STAFF_AUTH. RETAINER activation contract: resolve-config + ActivateMatter with 9 evidence refs. Portal architecture: access grants, invitations, threads, branding. Service renamed to INTAKE Service (non-breaking). Shared skills created at ~/.agents/skills/ (truevow-plan/build/verify). Database: aws-1-us-west-1.pooler.supabase.com:6543, project jahhqcypxjkxwrfzpyxd.
@@ -142,6 +162,8 @@
   _by user - 2026-06-25 - tags: ecosystem, fm, financial-management, dispatch, integration, architecture_
 - **[9][bug] contact_info_sequence dropped phone+email** - Root cause: routing INTO a sequence node used _execute_node, which returned the sequence's own intro prompt and left current_node=contact_info_sequence WITHOUT priming the first sub-node. Next turn the C10 terminal guard (workflow_engine.py:518) saw no next/branches/options and returned _build_complete_response — so name-only leads jumped to 'complete', losing phone+email. FIX: _execute_node now delegates type==sequence to _execute_sequence (primes contact_name, prepends intro to first question); terminal guards treat nodes/type==sequence as a valid exit. Verified: name->phone->email chain now runs.
   _by Admin - 2026-07-14 - tags: -_
+- **[9][decision] SaaS Admin Webhook Evidence Recorded** - SaaS Admin verifier: lib/security/webhook-auth.ts (360 lines), 16 golden fixtures at tests/security/webhook-signature.test.ts. Idempotency via command_id replay protection. Raw-body hashing (no JSON re-serialize). timingSafeEqual guard against length mismatch. Canonical paths: POST /api/v1/matters/activate (verify), POST /api/v1/matters/activated (sign). Per-relationship keys. Legacy auth rejected after 2026-09-01.
+  _by Admin - 2026-07-31 - tags: -_
 - **[9][decision] Client API v1 — 9 Endpoints Frozen** - RETAINER Client API: 6 GET + 3 POST under /api/v1/retainer/client/v1/. Post-activation: _has_scope maps ENGAGEMENT_HISTORY → ENGAGEMENT_VIEW + COMPLETED_COPY_DOWNLOAD for reads. State-changing endpoints (questions, decline) blocked after activation. DTO allowlists tested via exact-key assertions. Token=v2 (portal access via query param), not lifetime-long bearer.
   _by Admin - 2026-07-31 - tags: -_
 - **[9][decision] Portal Scope Ownership — Shared Platform vs RETAINER** - RETAINER stores local projection (ClientPortalAccess) with canonical_access_grant_id for reconciliation. RETAINER grants ENGAGEMENT_HISTORY on activation, never MATTER_*. Shared Platform owns canonical grants, identities, invitations, and adds ACTIVE_MATTER after matter.activated. ClientPortalAccess.state separated from .scopes (PENDING_INVITATION/ACTIVE/REVOKED vs ENGAGEMENT_VIEW/ENGAGEMENT_HISTORY).
@@ -160,6 +182,8 @@
   _by Admin - 2026-07-03 - tags: -_
 - **[9][decision] CONNECT Service Deleted** - TrueVow_Tenant_CONNECT_Service directory deleted. Removed from config.yaml services block and .gitignore. Was archived June 2026 — attorney referral network, no longer on TrueVow's agenda.
   _by user - 2026-07-01 - tags: -_
+- **[9][dependency] INTAKE Service — Key Files and Contracts v1.0 Frozen** - Key files: workflow_engine.py (FSM + confidence gates 0% duplicates), intake_ontology.yaml (17 concepts source of truth), ontology_resolver.py (observation model), outbox.py (HMAC signing), personal_injury_v2.yaml (qualification rules), fsm/ registries (state/transition/event). Contracts: EventEnvelope v1.0.1 (19 fields), WebhookSignature v1.0 (HMAC-SHA256), candidate.submitted_for_representation_review (9-field payload). Tests: 14/14 engine, 14/14 webhook signature, 50 E2E scenarios (0% duplicates, 93% accuracy). Architecture: 5 layers frozen — Benjamin Constitution, FSM Orchestrator, Intake Ontology, Practice Module, Qualification & Scoring. AGENTS.md updated with contract references and critical knowledge.
+  _by Admin - 2026-07-31 - tags: -_
 - **[9][dependency] WebhookSignature v1.0** - HMAC signing implemented: lib/security/webhook-auth.ts (TS ref), app/auth/deps.py (Python verify). Signing string: timestamp:method:path:bodyHash. Replay protection: 5min window. Key rotation via TRUEVOW_WEBHOOK_SECONDARY_KEYS.
   _by Admin - 2026-07-31 - tags: -_
 - **[9][todo] xai_cloud NEXT STEPS after C->B conversion** - DONE: C->B force_message conversion, VQM wiring, per-node VAD, missing test helpers (_VOICES/_DEFAULT_VOICE/_build_collected_data_text/_vad_for_node/_VAD_*), frontend rebuild w/ End Call+event log+report download. 40/40 tests pass. NOT YET DONE / NEXT: (1) USER LIVE TEST PENDING on http://127.0.0.1:3023/demo/xai_cloud_test.html — verify no more repetition loop, check transcripts/{sid}-report.json. (2) Add 3-retry-then-escalate guard in WorkflowEngine (industry doc HIGH priority; pushback loops forever currently). (3) 'You mean X?' repair pattern (Dialogflow §2). (4) Preamble/soft-timeout filler on slow LLM-routing nodes (1.5-3.2s classification nodes: conflict_check_prior_rep, opi_jurisdiction). (5) NOT committed yet — commit after successful live test. Ref: docs/VOICE_AI_INDUSTRY_ANALYSIS.md gap table, VOICE_AGENT_CHECKLIST.md §11.
@@ -255,8 +279,20 @@
 - **[8][todo] FIX gitignore source-leak: TrueVow-Tenant_Billing-Service** - ASSIGNED to the TrueVow-Tenant_Billing-Service agent. Real lib/ source is currently hidden from git (confirmed). Run the playbook: TrueVow_SaaS_Administration_Service/docs/01-main/ECOSYSTEM_ADVISORY_GITIGNORE_SOURCE_LEAK.md (fix .gitignore: anchor/remove stray lib/ + logs/; secrets-scan; commit recovered source in reviewed batches by explicit path; verify clean-clone build). REPORT RESULT via memory.py remember category=bug title='TrueVow-Tenant_Billing-Service gitignore RESULT' content='FIXED n files | CLEAN | BLOCKED + reason; secrets found?'. NOTE: reporting.py agent-checkin is broken — report via memory.
   _by user - 2026-06-25 - tags: gitignore, todo, assigned_
 
-## architecture (61)
+## architecture (67)
 
+- **[10] WebhookSignature v1.0 — Cross-Service Contract Complete** - Frozen WebhookSignature v1.0 deployed to INTAKE (14/14 fixtures), RETAINER (15/15 fixtures), TRACE (17/17 fixtures), SETTLE (conformance-aligned). Per-service key isolation: tv-intake-to-retainer-v1, tv-retainer-to-saas-admin-v1. Legacy auth cutoff 2026-09-01. RETAINER per-service key registry enfor...
+  _by Admin - 2026-07-31_
+- **[10] Per-Link Key Isolation** - Replaced global TRUEVOW_WEBHOOK_SECRET with per-link key pairs: tv-intake-to-retainer-v1, tv-retainer-to-saas-admin-v1, tv-saas-admin-to-trace-v1. Each key binds to specific caller, receiver, path, and method. A key valid for one link MUST NOT be accepted on another. verifySignature() validates key ...
+  _by Admin - 2026-07-31_
+- **[10] SETTLE WebhookSignature v1.0 Complete** - SETTLE is now fully contract-aligned: (1) WebhookVerifier hardened with signature format validation, buffer-length guard, raw body hashing, idempotency via event_id, auth_source tracking. (2) Per-service key isolation — no global shared secret. (3) 17 golden fixture tests covering all 16 SaaS Admin ...
+  _by Admin - 2026-07-31_
+- **[10] Cross-Product Spine Complete — INTAKE→RETAINER→SaaS Admin→TRACE** - The full cross-product pipeline is now integrated end-to-end. INTAKE creates Matter Candidates, Qualification v2 scores them (A+ to D, confidence-weighted), and delivers signed candidate.submitted_for_representation_review events to RETAINER via HMAC-signed webhooks. RETAINER consumes candidates, ma...
+  _by Admin - 2026-07-31_
+- **[10] WebhookSignature v1.0 — INTAKE Fully Compliant** - INTAKE now signs all outbound webhooks to RETAINER using HMAC-SHA256 per the frozen WebhookSignature v1.0 contract. Signing string: timestamp:POST:path:body_hash. Headers: X-TrueVow-Key-Id, X-TrueVow-Timestamp, X-TrueVow-Signature. Canonical path: /api/v1/retainer/webhooks/candidate-submitted. Imple...
+  _by Admin - 2026-07-31_
+- **[10] WebhookSignature v1.0 Cross-Service Complete** - All 5 backend services now implement WebhookSignature v1.0. INTAKE (14 fixtures), RETAINER (15 fixtures), TRACE (17 fixtures), SETTLE (103 tests), SaaS Admin (16 fixtures, 360-line verifier). Per-service key isolation applied: tv-retainer-to-saas-admin-v1, tv-saas-admin-to-trace-v1 — no global share...
+  _by Admin - 2026-07-31_
 - **[10] RETAINER Customer Portal v1 Complete** - Customer Portal now has 6 RETAINER workspaces with contract-mapped types from OpenAPI 3.1.0. 133/133 backend tests pass. INTAKE webhook plumbed. SaaS Admin activation path connected. WebhookSignature v1.0 HMAC implemented. Static gates: contract+TSC+ESLint+build all pass. Contract hash: f136f76318aa...
   _by Admin - 2026-07-31_
 - **[10] RETAINER v1.0 Complete — Release Candidate** - RETAINER service is feature-complete through BP-09. 133 tests pass. 68 endpoints (59 firm + 9 client). 40 tables in Supabase retainer schema at migration 0008. INTAKE→RETAINER webhook impl (HMAC v1.0). Client API v1 frozen at 9 endpoints. Scope transition: ENGAGEMENT_ONLY → ENGAGEMENT_HISTORY (no MA...
@@ -380,8 +416,10 @@
 - **[6] LedgerPoster seam boundary: do not swap GL route CRUD** - journal_entry_routes.py posting/reversal/draft paths already use get_ledger_poster() (lines 59/185/259). The 6 remaining JournalEntryService(db) sites only use entry_repo/line_repo, bulk_upsert_lines, and _validate_required_dimensions, which the LedgerPoster Protocol intentionally excludes. Do NOT r...
   _by user - 2026-06-25_
 
-## pattern (8)
+## pattern (9)
 
+- **[10] Per-Service Key Isolation Pattern** - NEVER use one global webhook secret across all services. Each caller-receiver pair gets its own key: tv-intake-to-retainer-v1, tv-retainer-to-saas-admin-v1, tv-saas-admin-to-trace-v1. Key prefixes bound to allowed paths in CANONICAL_PATHS registry. Env vars: TRUEVOW_WEBHOOK_KEY_ID_{SERVICE} + TRUEVO...
+  _by Admin - 2026-07-31_
 - **[8] SETTLE Authority Gate Pattern** - Every material action in SETTLE passes through a three-layer gate: (1) Authority class check - who can do what (CLIENT_AUTH for settlement decisions, ATTY_AUTH for demand/representation, STAFF_AUTH for disbursements). (2) State transition validation - is this move allowed from the current state (6 t...
   _by Admin - 2026-07-31_
 - **[8] SaaS Admin: Migration Runner Pattern** - Migrations must be applied to live DB, not just written as SQL files. Pattern: node scripts/_migrate_NNN_description.js. Uses pg Client with connectionString + ssl: { rejectUnauthorized: false }. Always IF NOT EXISTS guards. Audit triggers use audit_trigger_func_v2() with actor_type='automated_job',...
@@ -399,8 +437,14 @@
 - **[6] xai_cloud bridge test suite** - Created tests/test_xai_cloud_bridge.py (34 tests) for XaiCloudBridge. Mirrors test_xai_bridge.py but adapts for cloud bridge: dual registration (xai_cloud + xai_cloud_voice_agent), default voice rex (male-only), end_session returns {bridge,session_id,status} without had_audio, double-start early-ret...
   _by Admin - 2026-07-08_
 
-## decision (28)
+## decision (32)
 
+- **[10] Per-Service Key Isolation — No Global Shared Secret** - Production must use caller-specific key IDs (tv-intake-to-retainer-v1, tv-retainer-to-saas-admin-v1), not one global tv-primary. Each receiver binds key to calling_service + allowed_paths + allowed_methods. Compromising one service must not enable impersonation of others. RETAINER _PER_SERVICE_KEY_R...
+  _by Admin - 2026-07-31_
+- **[10] Per-Service Key Isolation for SETTLE** - Implemented per-relationship key registry in WebhookVerifier. Keys now bind to calling_service, receiving_service, allowed_methods, allowed_paths, and enabled flag. A TRACE key must never be accepted on a non-TRACE path even if HMAC is valid. Disabled keys support rotation (old key disabled, new key...
+  _by Admin - 2026-07-31_
+- **[10] WebhookSignature v1.0 Hardening + Canonical Paths** - Applied SaaS Admin authoritative corrections to SETTLE: (1) Legacy cutoff corrected to 2026-09-01 per admin directive. (2) Added CANONICAL_PATHS, SERVICE_WEBHOOK_RESPONSIBILITIES, and WEBHOOK_SIGNATURE_CANONICAL_RULES to contracts.py. (3) Added 2 legacy migration tests (cutoff date verification). (4...
+  _by Admin - 2026-07-31_
 - **[10] Portal Scope Ownership** - RETAINER transitions ENGAGEMENT_ONLY to ENGAGEMENT_HISTORY on activation. Shared Platform adds ACTIVE_MATTER after matter.activated. RETAINER never grants MATTER_* scopes. Verified in domain/activation.py:159 and domain/portal.py:27.
   _by Admin - 2026-07-31_
 - **[10] SaaS Admin: 9 Contracts Frozen at v1.0.1** - EventEnvelope (18 fields, extensions prohibited at root), MatterActivatedPayload, ActivationEvidenceManifest (9 refs, SHA-256), WebhookSignature (HMAC-SHA256, constant-time, replay rejection), AuthorityClass (6 classes: SYS_ADMIN,FIRM_POLICY,STAFF_AUTH,ATTY_AUTH,CLIENT_AUTH,PROHIBITED), Ontology Reg...
@@ -427,6 +471,8 @@
   _by user - 2026-06-25_
 - **[10] CONNECT Archived - DRAFT Renamed to LEVERAGE - INTAKE Updated** - CONNECT (attorney referral network) is decommissioned and archived from the ecosystem permanently - no longer on TrueVow agenda. DRAFT has been completely replaced by LEVERAGE everywhere (same service, renamed). INTAKE (Tenant Application Service) is no longer just FSM NLP - it is now FSM applied to...
   _by user - 2026-06-25_
+- **[9] SaaS Admin Webhook Evidence Recorded** - SaaS Admin verifier: lib/security/webhook-auth.ts (360 lines), 16 golden fixtures at tests/security/webhook-signature.test.ts. Idempotency via command_id replay protection. Raw-body hashing (no JSON re-serialize). timingSafeEqual guard against length mismatch. Canonical paths: POST /api/v1/matters/a...
+  _by Admin - 2026-07-31_
 - **[9] Client API v1 — 9 Endpoints Frozen** - RETAINER Client API: 6 GET + 3 POST under /api/v1/retainer/client/v1/. Post-activation: _has_scope maps ENGAGEMENT_HISTORY → ENGAGEMENT_VIEW + COMPLETED_COPY_DOWNLOAD for reads. State-changing endpoints (questions, decline) blocked after activation. DTO allowlists tested via exact-key assertions. To...
   _by Admin - 2026-07-31_
 - **[9] Portal Scope Ownership — Shared Platform vs RETAINER** - RETAINER stores local projection (ClientPortalAccess) with canonical_access_grant_id for reconciliation. RETAINER grants ENGAGEMENT_HISTORY on activation, never MATTER_*. Shared Platform owns canonical grants, identities, invitations, and adds ACTIVE_MATTER after matter.activated. ClientPortalAccess...
@@ -458,8 +504,10 @@
 - **[4] All 18 Active Services Wired to Ecosystem + 1 Archived** - 18 of 18 active TrueVow services wired with AGENTS.md + ecosystem integration. 1 archived: CONNECT (decommissioned June 2026, no longer on TrueVow agenda). Every agent opening any active service reads ecosystem preamble: check in with CTO orchestrator, dispatch tasks, remember decisions, report stat...
   _by user - 2026-06-25_
 
-## dependency (1)
+## dependency (2)
 
+- **[9] INTAKE Service — Key Files and Contracts v1.0 Frozen** - Key files: workflow_engine.py (FSM + confidence gates 0% duplicates), intake_ontology.yaml (17 concepts source of truth), ontology_resolver.py (observation model), outbox.py (HMAC signing), personal_injury_v2.yaml (qualification rules), fsm/ registries (state/transition/event). Contracts: EventEnvel...
+  _by Admin - 2026-07-31_
 - **[9] WebhookSignature v1.0** - HMAC signing implemented: lib/security/webhook-auth.ts (TS ref), app/auth/deps.py (Python verify). Signing string: timestamp:method:path:bodyHash. Replay protection: 5min window. Key rotation via TRUEVOW_WEBHOOK_SECONDARY_KEYS.
   _by Admin - 2026-07-31_
 
