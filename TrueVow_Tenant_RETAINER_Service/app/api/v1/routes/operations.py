@@ -26,6 +26,7 @@ from app.domain.communications import (
 )
 from app.domain.hardening import get_workflow_health, validate_policy_compliance
 from app.domain.trace_handoff import generate_trace_manifest
+from app.domain.activation_client import send_activation_command
 from app.models import (
     ActivationChecklist,
     ActivationChecklistItem,
@@ -258,3 +259,44 @@ async def workflow_health_endpoint(
     except ValueError as e:
         await db.rollback()
         raise HTTPException(status_code=404, detail=str(e)) from None
+
+
+@router.post("/workflows/{workflow_id}/activate-to-saas-admin", status_code=202)
+async def activate_to_saas_admin_endpoint(
+    workflow_id: uuid.UUID,
+    ctx: AuthContext = Depends(get_current_context),
+    db: AsyncSession = Depends(get_db),
+):
+    """Sign and send the ActivateMatterCommand to SaaS Admin."""
+    from app.core.config import settings
+    from app.domain.activation import confirm_matter_activated
+
+    saas_url = getattr(settings, "saas_admin_url", None) or "http://localhost:3001"
+    secret = getattr(settings, "intake_webhook_secret", None) or settings.service_api_key
+
+    try:
+        # Gather activation evidence
+        wf = await db.get(RetainerWorkflow, workflow_id)
+        if wf is None or str(wf.tenant_id) != ctx.firm_id:
+            raise HTTPException(status_code=404, detail="Workflow not found")
+
+        payload = {
+            "tenant_id": str(wf.tenant_id),
+            "engagement_workflow_id": str(workflow_id),
+            "representation_decision_id": str(wf.representation_decision_id) if wf.representation_decision_id else None,
+            "conflict_review_id": str(wf.conflict_review_id) if wf.conflict_review_id else None,
+            "engagement_package_id": str(wf.engagement_package_id) if wf.engagement_package_id else None,
+            "activation_checklist_id": str(wf.activation_checklist_id) if wf.activation_checklist_id else None,
+            "activated_matter_id": str(wf.activated_matter_id) if wf.activated_matter_id else str(uuid.uuid4()),
+            "command_id": str(uuid.uuid4()),
+        }
+
+        result = await send_activation_command(saas_url, payload, webhook_secret=secret)
+        await db.commit()
+
+        if result["success"]:
+            return {"status": "accepted", "saas_admin_response": result.get("data")}
+        return {"status": "failed", "error": result.get("error")}
+    except Exception as e:
+        await db.rollback()
+        raise HTTPException(status_code=502, detail=str(e)) from None
