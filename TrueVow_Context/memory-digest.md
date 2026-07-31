@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-07-31T03:42:49.563830+00:00
-- Total memories: 275
+- Generated: 2026-07-31T03:43:20.571962+00:00
+- Total memories: 278
 
-## High-importance decisions (8+, routine noise excluded) - 140
+## High-importance decisions (8+, routine noise excluded) - 142
 
 - **[10][architecture] WebhookSignature v1.0 — Cross-Service Contract Complete** - Frozen WebhookSignature v1.0 deployed to INTAKE (14/14 fixtures), RETAINER (15/15 fixtures), TRACE (17/17 fixtures), SETTLE (conformance-aligned). Per-service key isolation: tv-intake-to-retainer-v1, tv-retainer-to-saas-admin-v1. Legacy auth cutoff 2026-09-01. RETAINER per-service key registry enforces caller+path binding. SaaS Admin evidence pending. Live three-hop E2E pending.
   _by Admin - 2026-07-31 - tags: -_
@@ -194,6 +194,8 @@
   _by Admin - 2026-07-31 - tags: -_
 - **[9][dependency] WebhookSignature v1.0** - HMAC signing implemented: lib/security/webhook-auth.ts (TS ref), app/auth/deps.py (Python verify). Signing string: timestamp:method:path:bodyHash. Replay protection: 5min window. Key rotation via TRUEVOW_WEBHOOK_SECONDARY_KEYS.
   _by Admin - 2026-07-31 - tags: -_
+- **[9][relationship] Webhook Key Mapping** - INTAKE uses tv-intake-to-retainer-v1. RETAINER uses tv-retainer-to-saas-admin-v1. SaaS Admin uses tv-saas-admin-to-trace-v1. Each key is scoped to a single caller-receiver pair with specific allowed paths and methods. No service shares a key with another link.
+  _by Admin - 2026-07-31 - tags: -_
 - **[9][todo] xai_cloud NEXT STEPS after C->B conversion** - DONE: C->B force_message conversion, VQM wiring, per-node VAD, missing test helpers (_VOICES/_DEFAULT_VOICE/_build_collected_data_text/_vad_for_node/_VAD_*), frontend rebuild w/ End Call+event log+report download. 40/40 tests pass. NOT YET DONE / NEXT: (1) USER LIVE TEST PENDING on http://127.0.0.1:3023/demo/xai_cloud_test.html — verify no more repetition loop, check transcripts/{sid}-report.json. (2) Add 3-retry-then-escalate guard in WorkflowEngine (industry doc HIGH priority; pushback loops forever currently). (3) 'You mean X?' repair pattern (Dialogflow §2). (4) Preamble/soft-timeout filler on slow LLM-routing nodes (1.5-3.2s classification nodes: conflict_check_prior_rep, opi_jurisdiction). (5) NOT committed yet — commit after successful live test. Ref: docs/VOICE_AI_INDUSTRY_ANALYSIS.md gap table, VOICE_AGENT_CHECKLIST.md §11.
   _by Admin - 2026-07-13 - tags: -_
 - **[8][architecture] TRACE Phase 2A Complete — 42 Tables on Supabase** - Migration 0017 applied: 31 new tables across evidence (source_locations, evidence_facts, fact_versions, contradiction_pairs, missing_evidence_signals), ontology (injuries, symptoms, diagnoses, treatment_episodes, incidents, claims, damages, insurance, witnesses, custody), workflow (issues, demand_drafts, demand_packages, readiness, record_completeness), shared foundation (business_events, consent_records, policy_records, jurisdiction_profiles, jurisdiction_activations), and client portal (trace_client_access_projections). 5 shared foundation services: AuthorityGate, ConsentLedger, PolicyRegistry, EventStore, StateMachine. Client portal endpoints: /api/client/v1/matters, completion, documents, requests, access. 68 tests pass.
@@ -248,6 +250,8 @@
   _by Admin - 2026-07-08 - tags: -_
 - **[8][bug] gitignore source-leak ECOSYSTEM AUDIT results (June 25) — which repos still affected** - Audited all sibling git repos for the gitignore source-leak (advisory 64bc43bf). NONE have run the fix yet (advisory just issued). CONFIRMED UNFIXED SOURCE LEAKS (real lib/ source hidden from git): TrueVow_Financial_Management_Service (frontend/lib + frontend/__tests__/lib), TrueVow_Tenant_Application_Service (app/portal/lib, dograh server ui/src/lib, scripts/lib), TrueVow-Tenant_Billing-Service (ui/lib; ALSO its .gitignore has an embedded NULL/control byte — corrupted). LATENT (dangerous unanchored lib/ rule present but no active source leak yet): TrueVow_Internal_Ops_Service, TrueVow_Tenant_SETTLE-Service, TrueVow_Tenant_LEVERAGE_Service. NOT GIT REPOS AT ALL (no version control — separate severe issue): TrueVow_Dialogflow_Intake_Service, TrueVow_Platform_Analytics_Service, TrueVow_Tenant_VERIFY_Service, TrueVow_TWIML_SoftPhone_App. CLEAN: Website, Customer_Success_CORE, First_Line_Support, Sales_Ops, Tenant_CONNECT, Customer_Portal, cartesia_test. SaaS_Admin already fixed. Each affected repo agent: run docs/01-main/ECOSYSTEM_ADVISORY_GITIGNORE_SOURCE_LEAK.md (in SaaS Admin).
   _by user - 2026-06-25 - tags: gitignore, audit, ecosystem, cross-service_
+- **[8][convention] Cross-Service Contract Rollout** - INTAKE, RETAINER, TRACE compliant with WebhookSignature v1.0. SETTLE contract-aligned. SaaS Admin evidence pending. Live three-hop E2E test chain: INTAKE signs candidate-submitted -> RETAINER validates -> RETAINER signs ActivateMatterCommand -> SaaS Admin validates -> SaaS Admin signs matter.activated -> TRACE validates. Legacy Bearer cutoff: 2026-09-01.
+  _by Admin - 2026-07-31 - tags: -_
 - **[8][convention] RETAINER OpenAPI Contract Pipeline** - npm run generate:retainer-api stores hash of lib/api/retainer/openapi.yaml. npm run check:retainer-contract validates CI drift. Types in lib/api/retainer/generated/schema.ts must remain 1:1 with Pydantic schemas.
   _by Admin - 2026-07-31 - tags: -_
 - **[8][convention] Webhook Auth Migration — HMAC v1.0 + Legacy Bearer** - Webhook endpoint accepts both HMAC (X-TrueVow-Key-Id + X-TrueVow-Timestamp + X-TrueVow-Signature) and legacy Bearer. HMAC uses SHA-256 body hash + HMAC-SHA256 signing string (timestamp:method:path:bodyHash), 5-min replay window, constant-time compare. Legacy logs deprecation warning. Key resolution: tv-primary → INTAKE_WEBHOOK_SECRET.
@@ -529,10 +533,12 @@
 - **[9] WebhookSignature v1.0** - HMAC signing implemented: lib/security/webhook-auth.ts (TS ref), app/auth/deps.py (Python verify). Signing string: timestamp:method:path:bodyHash. Replay protection: 5min window. Key rotation via TRUEVOW_WEBHOOK_SECONDARY_KEYS.
   _by Admin - 2026-07-31_
 
-## convention (4)
+## convention (5)
 
 - **[10] zero hardcoded tunable values** - RULE: This is a multi-tenant platform. Never hardcode ANY value that may need adjustment per-tenant, per-firm, or per-environment. All tunables must live in one of: (1) tenant_config, (2) workflow JSON config, or (3) named module-level constants with clear documentation. Bare numbers, strings, or ID...
   _by Admin - 2026-07-15_
+- **[8] Cross-Service Contract Rollout** - INTAKE, RETAINER, TRACE compliant with WebhookSignature v1.0. SETTLE contract-aligned. SaaS Admin evidence pending. Live three-hop E2E test chain: INTAKE signs candidate-submitted -> RETAINER validates -> RETAINER signs ActivateMatterCommand -> SaaS Admin validates -> SaaS Admin signs matter.activat...
+  _by Admin - 2026-07-31_
 - **[8] RETAINER OpenAPI Contract Pipeline** - npm run generate:retainer-api stores hash of lib/api/retainer/openapi.yaml. npm run check:retainer-contract validates CI drift. Types in lib/api/retainer/generated/schema.ts must remain 1:1 with Pydantic schemas.
   _by Admin - 2026-07-31_
 - **[8] Webhook Auth Migration — HMAC v1.0 + Legacy Bearer** - Webhook endpoint accepts both HMAC (X-TrueVow-Key-Id + X-TrueVow-Timestamp + X-TrueVow-Signature) and legacy Bearer. HMAC uses SHA-256 body hash + HMAC-SHA256 signing string (timestamp:method:path:bodyHash), 5-min replay window, constant-time compare. Legacy logs deprecation warning. Key resolution:...
@@ -579,7 +585,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (127)
+## context (128)
 
 - **[10] TRACE WebhookSignature v1.0 Cross-Service Contract Rollout Complete** - All six corrections applied: (1) EventEnvelope v1.0.1 frozen at 18 fields, (2) matter.activated payload normalized to 9 canonical evidence references, (3) webhook auth upgraded from shared-secret to HMAC-SHA256 with X-TrueVow headers, (4) global vs tenant data separation documented, (5) event_id ide...
   _by Admin - 2026-07-31_
@@ -593,6 +599,8 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: TRACE: cross-service contract rollout complete | outcome: 68 tests pass, 17 golden fixtures, webhook** - {"agent_id": "TrueVow_Tenant_TRACE_Service", "action": "done", "status": "DONE", "message": "TRACE: cross-service contract rollout complete | outcome: 68 tests pass, 17 golden fixtures, webhook auth aligned with SaaS Admin convention, per-link keys documented, migration 0017 applied (42 tables on Su...
+  _by user - 2026-07-31_
 - **[7] [DONE] DONE: RETAINER: WebhookSignature v1.0 complete — frozen sign/verify module, 15 golden fixtures, per-servic** - {"agent_id": "TrueVow_Tenant_RETAINER_Service", "action": "done", "status": "DONE", "message": "RETAINER: WebhookSignature v1.0 complete \u2014 frozen sign/verify module, 15 golden fixtures, per-service key registry, legacy cutoff 2026-09-01, per-link key IDs documented | outcome: compliant and push...
   _by user - 2026-07-31_
 - **[7] [DONE] DONE: SaaS Admin: WebhookSignature v1.0 hardened + evidence recorded | outcome: per-service key isolation,** - {"agent_id": "TrueVow_SaaS_Administration_Service", "action": "done", "status": "DONE", "message": "SaaS Admin: WebhookSignature v1.0 hardened + evidence recorded | outcome: per-service key isolation, 16 golden fixtures, idempotency, raw-body hashing, canonical paths frozen, legacy cutoff 2026-09-01...
@@ -862,4 +870,9 @@
   _by user - 2026-07-01_
 - **[1] FIXED: gitignore latent rule: Internal Ops** - FIXED July 1. All unanchored patterns now root-anchored with leading /.
   _by user - 2026-07-01_
+
+## relationship (1)
+
+- **[9] Webhook Key Mapping** - INTAKE uses tv-intake-to-retainer-v1. RETAINER uses tv-retainer-to-saas-admin-v1. SaaS Admin uses tv-saas-admin-to-trace-v1. Each key is scoped to a single caller-receiver pair with specific allowed paths and methods. No service shares a key with another link.
+  _by Admin - 2026-07-31_
 
