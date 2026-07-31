@@ -3,7 +3,7 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-07-31T03:43:20.571962+00:00
+- Generated: 2026-07-31T03:43:22.551082+00:00
 - Total memories: 278
 
 ## High-importance decisions (8+, routine noise excluded) - 142
