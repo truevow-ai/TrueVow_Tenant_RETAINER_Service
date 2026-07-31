@@ -25,7 +25,7 @@ class Settings(BaseSettings):
 
     retainer_database_url: str | None = Field(
         default=None,
-        validation_alias=AliasChoices("RETAINER_DATABASE_URL", "DATABASE_URL"),
+        validation_alias=AliasChoices("TENANT_RETAINER_DATABASE_URL", "RETAINER_DATABASE_URL", "DATABASE_URL"),
     )
 
     sentry_dsn: str = ""
