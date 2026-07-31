@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-07-31T03:43:22.551082+00:00
-- Total memories: 278
+- Generated: 2026-07-31T04:40:33.615737+00:00
+- Total memories: 285
 
-## High-importance decisions (8+, routine noise excluded) - 142
+## High-importance decisions (8+, routine noise excluded) - 147
 
 - **[10][architecture] WebhookSignature v1.0 — Cross-Service Contract Complete** - Frozen WebhookSignature v1.0 deployed to INTAKE (14/14 fixtures), RETAINER (15/15 fixtures), TRACE (17/17 fixtures), SETTLE (conformance-aligned). Per-service key isolation: tv-intake-to-retainer-v1, tv-retainer-to-saas-admin-v1. Legacy auth cutoff 2026-09-01. RETAINER per-service key registry enforces caller+path binding. SaaS Admin evidence pending. Live three-hop E2E pending.
   _by Admin - 2026-07-31 - tags: -_
@@ -86,6 +86,8 @@
   _by Admin - 2026-07-24 - tags: -_
 - **[10][convention] zero hardcoded tunable values** - RULE: This is a multi-tenant platform. Never hardcode ANY value that may need adjustment per-tenant, per-firm, or per-environment. All tunables must live in one of: (1) tenant_config, (2) workflow JSON config, or (3) named module-level constants with clear documentation. Bare numbers, strings, or IDs in logic statements are FORBIDDEN. If you need a value that could change — threshold, timeout, limit, firm identifier, VAD setting, confidence score — expose it via config. Test by asking: 'Could a different law firm need this set differently?'
   _by Admin - 2026-07-15 - tags: -_
+- **[10][decision] Controlled Pilot v2 — NOT APPROVED** - Three Severity-2 defects: D1 (SaaS Admin trailing-slash canonicalization at webhook-auth.ts:293), D3 (RETAINER per-service key isolation not enforced in default code path at webhook_signature.py:122-124), D4 (INTAKE missing webhook signature contract tests). No staging environment deployed. Primary lifecycle not executed end-to-end. Architecture review confirms portal scope ownership, activation authority, and contract registry are correct. Require D1-D4 fixes + staging deployment + full QA re-execution before re-evaluation.
+  _by Admin - 2026-07-31 - tags: -_
 - **[10][decision] Canonical Contracts Module** - lib/contracts/index.ts is the authoritative source for WebhookSignature v1.0. Contains CANONICAL_PATHS, CANONICAL_KEY_BINDINGS, SERVICE_WEBHOOK_RESPONSIBILITIES, WEBHOOK_SIGNATURE_CANONICAL_RULES, ACTIVATION_EVIDENCE_REQUIREMENTS. Source traceability: CONTRACT_VERSION, SOURCE_REPO, SOURCE_COMMIT=29d3edc. All backend services import from this module.
   _by Admin - 2026-07-31 - tags: -_
 - **[10][decision] TRACE Per-Link Webhook Key Isolation** - Webhook keys are now per-service-relationship, not global. TRACE uses tv-saas-admin-to-trace-v1 for incoming matter.activated from SaaS Admin. Same key must not be reused for INTAKE->RETAINER or RETAINER->SaaS Admin. Compromising one service must not enable impersonation of all others. Secondary rotation keys also per-link (tv-saas-admin-to-trace-v2). Documented in AGENTS.md implementation rules.
@@ -126,6 +128,8 @@
   _by Admin - 2026-07-31 - tags: -_
 - **[10][todo] TX Phase 4 DB connectivity blocker** - db.bpzegquhxnygyxdzluyw.supabase.co only resolves to IPv6, Windows dev box has no IPv6. Supabase pooler not enabled for this project (tenant/user not found). Phase 4 scripts (verify_emails_phones, classify_phone_types, verify_attorney_emails) need psycopg2. Workaround: create REST API versions or enable IPv4 on Supabase.
   _by Admin - 2026-07-27 - tags: -_
+- **[9][architecture] Controlled Pilot Architecture Review: Portal scope ownership confirmed** - RETAINER never grants MATTER_* scopes. SaaS Admin fn_upgrade_portal_access_on_activation correctly adds 5 MATTER_* permissions. Portal upgrade chain intact (previous_grant_id). Contract registry + golden fixtures present and aligned across services. Webhook key isolation intent correct but implementation defect D3 in RETAINER.
+  _by Admin - 2026-07-31 - tags: -_
 - **[9][architecture] SaaS Admin: Ontology Compliance Complete** - SaaS Admin built full ontology compliance infrastructure: 326 tables, 269 functions, 174 migrations applied. 52 jurisdiction profiles, 23 authority gates, 18 contracts (9 frozen at v1.0.1), EventEnvelope v1.0.1 (18 fields), 6 authority classes including STAFF_AUTH. RETAINER activation contract: resolve-config + ActivateMatter with 9 evidence refs. Portal architecture: access grants, invitations, threads, branding. Service renamed to INTAKE Service (non-breaking). Shared skills created at ~/.agents/skills/ (truevow-plan/build/verify). Database: aws-1-us-west-1.pooler.supabase.com:6543, project jahhqcypxjkxwrfzpyxd.
   _by Admin - 2026-07-31 - tags: -_
 - **[9][architecture] Qualification Engine v2.0 — Case Quality Scoring** - Refactored from intake-completeness scoring to case-opportunity scoring. Two independent scores: case_quality (0-100) and intake_completion (0-100%). 7 categories totaling 100 pts: Liability 30, Injury 25, Treatment 15, Evidence 10, Insurance 10, Damages 5, Client Fit 5. Starting score 0 (earned, not deducted). Confidence-weighted: category points multiplied by avg confidence of matched fields. Penalties: statute -20/-50, represented -40, no injury -25. Grade: A+ 90, A 75, B 55, C 35, D 0. Priority: immediate/24h/review/nurture/decline. Rules in config/qualification/personal_injury_v2.yaml. Backward compatible. Test: fracture+police+full insurance = 98 A+ immediate.
@@ -166,6 +170,10 @@
   _by user - 2026-06-25 - tags: saas-admin, hub, central, tenant-management, auth, database, architecture_
 - **[9][architecture] FM Service Wired to Ecosystem** - TrueVow_Financial_Management_Service is registered in the agent ecosystem with 13 domain agents (orchestrator, code-agent, search-agent, gl-agent, ar-agent, ap-agent, payroll-agent, treasury-agent, intercompany-agent, reporting-agent, affiliates-agent, benjamin-agent, fintech-patterns). Auto-dispatch routes FM-specific keywords (journal, invoice, payroll, treasury, intercompany, etc.) directly to the right domain agent SKILL.md.
   _by user - 2026-06-25 - tags: ecosystem, fm, financial-management, dispatch, integration, architecture_
+- **[9][bug] D3: RETAINER per-service key isolation not enforced (Severity 2)** - RETAINER webhook_signature.py:122-124 maps ALL per-service registry keys to same fallback secret. tv-intake-to-retainer-v1 and tv-retainer-to-saas-admin-v1 share credentials in default code path. Owner: ghaus-fsd.
+  _by Admin - 2026-07-31 - tags: -_
+- **[9][bug] D1: SaaS Admin trailing-slash canonicalization (Severity 2)** - SaaS Admin webhook-auth.ts:293 strips trailing slashes on verify (path.replace(/\/+$/, '')). Signing for /activate and verifying /activate/ both canonicalize to /activate, defeating wrong-path rejection. Owner: ghous-isb.
+  _by Admin - 2026-07-31 - tags: -_
 - **[9][bug] contact_info_sequence dropped phone+email** - Root cause: routing INTO a sequence node used _execute_node, which returned the sequence's own intro prompt and left current_node=contact_info_sequence WITHOUT priming the first sub-node. Next turn the C10 terminal guard (workflow_engine.py:518) saw no next/branches/options and returned _build_complete_response — so name-only leads jumped to 'complete', losing phone+email. FIX: _execute_node now delegates type==sequence to _execute_sequence (primes contact_name, prepends intro to first question); terminal guards treat nodes/type==sequence as a valid exit. Verified: name->phone->email chain now runs.
   _by Admin - 2026-07-14 - tags: -_
 - **[9][decision] SaaS Admin Webhook Evidence Recorded** - SaaS Admin verifier: lib/security/webhook-auth.ts (360 lines), 16 golden fixtures at tests/security/webhook-signature.test.ts. Idempotency via command_id replay protection. Raw-body hashing (no JSON re-serialize). timingSafeEqual guard against length mismatch. Canonical paths: POST /api/v1/matters/activate (verify), POST /api/v1/matters/activated (sign). Per-relationship keys. Legacy auth rejected after 2026-09-01.
@@ -238,6 +246,8 @@
   _by user - 2026-06-25 - tags: analytics, events, warehouse, dashboards, star-schema, platform_
 - **[8][architecture] Tenant Application Service (INTAKE) - Voice + NLP Pipeline** - Phase I intake services. Stack: Python/FastAPI backend, FSM-based deterministic NLP engine, voice pipeline. Purpose: Legal AI intake for personal injury attorneys - captures client information via voice/NLP. Separated from website code (Nov 2025). Technology: Finite State Machine, deterministic NLP (not LLM-based for compliance). Voice pipeline components integrated. Ports: API backend. Depends on: SaaS Admin (tenant management, auth). Related: Benjamin voice agent (STT/TTS), Dialogflow Intake (alternative intake path).
   _by user - 2026-06-25 - tags: intake, nlp, fsm, voice, fastapi, python, tenant-application_
+- **[8][bug] D4: INTAKE missing webhook signature contract tests (Severity 2)** - INTAKE has no tests/test_webhook_signature_contract.py. Cannot validate INTAKE signing against frozen WebhookSignature v1.0 contract. Owner: ghaus-fsd.
+  _by Admin - 2026-07-31 - tags: -_
 - **[8][bug] any | None type annotation blocks Python 3.13** - database.py used lowercase 'any' instead of 'Any' from typing. Python 3.13 correctly rejects this since 'any' is a builtin function, not a type. Fixed by importing Any and correcting annotations.
   _by Admin - 2026-07-26 - tags: -_
 - **[8][bug] naic_complaints queried wrong Socrata dataset** - scripts/scraping-factory/insurance-carrier/naic_complaints.py filtered by 'naic' column on the raw records dataset jjc8-mxkg which has NO carrier column (HTTP 400). Fixed to use complaint-index dataset pa9u-9s9w with naic_id/year/col1-3. Verified real data.
@@ -293,7 +303,7 @@
 - **[8][todo] FIX gitignore source-leak: TrueVow-Tenant_Billing-Service** - ASSIGNED to the TrueVow-Tenant_Billing-Service agent. Real lib/ source is currently hidden from git (confirmed). Run the playbook: TrueVow_SaaS_Administration_Service/docs/01-main/ECOSYSTEM_ADVISORY_GITIGNORE_SOURCE_LEAK.md (fix .gitignore: anchor/remove stray lib/ + logs/; secrets-scan; commit recovered source in reviewed batches by explicit path; verify clean-clone build). REPORT RESULT via memory.py remember category=bug title='TrueVow-Tenant_Billing-Service gitignore RESULT' content='FIXED n files | CLEAN | BLOCKED + reason; secrets found?'. NOTE: reporting.py agent-checkin is broken — report via memory.
   _by user - 2026-06-25 - tags: gitignore, todo, assigned_
 
-## architecture (68)
+## architecture (69)
 
 - **[10] WebhookSignature v1.0 — Cross-Service Contract Complete** - Frozen WebhookSignature v1.0 deployed to INTAKE (14/14 fixtures), RETAINER (15/15 fixtures), TRACE (17/17 fixtures), SETTLE (conformance-aligned). Per-service key isolation: tv-intake-to-retainer-v1, tv-retainer-to-saas-admin-v1. Legacy auth cutoff 2026-09-01. RETAINER per-service key registry enfor...
   _by Admin - 2026-07-31_
@@ -349,6 +359,8 @@
   _by user - 2026-06-25_
 - **[10] LEVERAGE (ex-DRAFT) — 3-Tier Rules Engine, NO AI** - LEVERAGE is a 3-tier legal rule validation system: TIER 1: State/Jurisdiction rules (mandatory, cannot be disabled). TIER 2: Practice Area rules (customizable). TIER 3: Firm/Attorney/Client-specific rules. CORE PRINCIPLE: NO AI — no machine learning, no neural networks, no LLM. Uses peer benchmarkin...
   _by user - 2026-06-25_
+- **[9] Controlled Pilot Architecture Review: Portal scope ownership confirmed** - RETAINER never grants MATTER_* scopes. SaaS Admin fn_upgrade_portal_access_on_activation correctly adds 5 MATTER_* permissions. Portal upgrade chain intact (previous_grant_id). Contract registry + golden fixtures present and aligned across services. Webhook key isolation intent correct but implement...
+  _by Admin - 2026-07-31_
 - **[9] SaaS Admin: Ontology Compliance Complete** - SaaS Admin built full ontology compliance infrastructure: 326 tables, 269 functions, 174 migrations applied. 52 jurisdiction profiles, 23 authority gates, 18 contracts (9 frozen at v1.0.1), EventEnvelope v1.0.1 (18 fields), 6 authority classes including STAFF_AUTH. RETAINER activation contract: reso...
   _by Admin - 2026-07-31_
 - **[9] Qualification Engine v2.0 — Case Quality Scoring** - Refactored from intake-completeness scoring to case-opportunity scoring. Two independent scores: case_quality (0-100) and intake_completion (0-100%). 7 categories totaling 100 pts: Liability 30, Injury 25, Treatment 15, Evidence 10, Insurance 10, Damages 5, Client Fit 5. Starting score 0 (earned, no...
@@ -453,8 +465,10 @@
 - **[6] xai_cloud bridge test suite** - Created tests/test_xai_cloud_bridge.py (34 tests) for XaiCloudBridge. Mirrors test_xai_bridge.py but adapts for cloud bridge: dual registration (xai_cloud + xai_cloud_voice_agent), default voice rex (male-only), end_session returns {bridge,session_id,status} without had_audio, double-start early-ret...
   _by Admin - 2026-07-08_
 
-## decision (34)
+## decision (35)
 
+- **[10] Controlled Pilot v2 — NOT APPROVED** - Three Severity-2 defects: D1 (SaaS Admin trailing-slash canonicalization at webhook-auth.ts:293), D3 (RETAINER per-service key isolation not enforced in default code path at webhook_signature.py:122-124), D4 (INTAKE missing webhook signature contract tests). No staging environment deployed. Primary ...
+  _by Admin - 2026-07-31_
 - **[10] Canonical Contracts Module** - lib/contracts/index.ts is the authoritative source for WebhookSignature v1.0. Contains CANONICAL_PATHS, CANONICAL_KEY_BINDINGS, SERVICE_WEBHOOK_RESPONSIBILITIES, WEBHOOK_SIGNATURE_CANONICAL_RULES, ACTIVATION_EVIDENCE_REQUIREMENTS. Source traceability: CONTRACT_VERSION, SOURCE_REPO, SOURCE_COMMIT=29d...
   _by Admin - 2026-07-31_
 - **[10] TRACE Per-Link Webhook Key Isolation** - Webhook keys are now per-service-relationship, not global. TRACE uses tv-saas-admin-to-trace-v1 for incoming matter.activated from SaaS Admin. Same key must not be reused for INTAKE->RETAINER or RETAINER->SaaS Admin. Compromising one service must not enable impersonation of all others. Secondary rot...
@@ -546,7 +560,7 @@
 - **[8] Golden Fixture Cross-Repository Testing** - Created app/shared/contracts.py with frozen contract versions and deterministic golden fixture (make_golden_envelope, make_golden_fixture_json, compute_golden_hmac). Every TrueVow product must deserialize the same 18-field EventEnvelope and compute the same HMAC over the exact raw fixture. Tests at ...
   _by Admin - 2026-07-31_
 
-## bug (18)
+## bug (21)
 
 - **[10] Engine Name Capture Corruption** - From 2026-07-29 test call transcript: contact_name corrupted through 5 different garbage values in a single 13-min call (call me Shaula → Me. Just Yeshua → Normal Conversation. Takes Place → K. P K). Root cause: _try_extract_intro_name and _try_correct_name over-fire on sentence fragments, treating ...
   _by Admin - 2026-07-30_
@@ -562,8 +576,14 @@
   _by Admin - 2026-07-07_
 - **[10] Gitignore Source-Leak FIXED — All 6 services** - All 6 affected services now have anchored .gitignore patterns. lib/, env/, venv/, build/, dist/ now use leading / to prevent accidental source file hiding. Leaked PowerShell commands removed from FM, Billing, and LEVERAGE. SETTLE test_db_conn.py and recover_pyc.py anchored to root only. Internal Ops...
   _by Admin - 2026-07-01_
+- **[9] D3: RETAINER per-service key isolation not enforced (Severity 2)** - RETAINER webhook_signature.py:122-124 maps ALL per-service registry keys to same fallback secret. tv-intake-to-retainer-v1 and tv-retainer-to-saas-admin-v1 share credentials in default code path. Owner: ghaus-fsd.
+  _by Admin - 2026-07-31_
+- **[9] D1: SaaS Admin trailing-slash canonicalization (Severity 2)** - SaaS Admin webhook-auth.ts:293 strips trailing slashes on verify (path.replace(/\/+$/, '')). Signing for /activate and verifying /activate/ both canonicalize to /activate, defeating wrong-path rejection. Owner: ghous-isb.
+  _by Admin - 2026-07-31_
 - **[9] contact_info_sequence dropped phone+email** - Root cause: routing INTO a sequence node used _execute_node, which returned the sequence's own intro prompt and left current_node=contact_info_sequence WITHOUT priming the first sub-node. Next turn the C10 terminal guard (workflow_engine.py:518) saw no next/branches/options and returned _build_compl...
   _by Admin - 2026-07-14_
+- **[8] D4: INTAKE missing webhook signature contract tests (Severity 2)** - INTAKE has no tests/test_webhook_signature_contract.py. Cannot validate INTAKE signing against frozen WebhookSignature v1.0 contract. Owner: ghaus-fsd.
+  _by Admin - 2026-07-31_
 - **[8] any | None type annotation blocks Python 3.13** - database.py used lowercase 'any' instead of 'Any' from typing. Python 3.13 correctly rejects this since 'any' is a builtin function, not a type. Fixed by importing Any and correcting annotations.
   _by Admin - 2026-07-26_
 - **[8] naic_complaints queried wrong Socrata dataset** - scripts/scraping-factory/insurance-carrier/naic_complaints.py filtered by 'naic' column on the raw records dataset jjc8-mxkg which has NO carrier column (HTTP 400). Fixed to use complaint-index dataset pa9u-9s9w with naic_id/year/col1-3. Verified real data.
@@ -585,7 +605,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (128)
+## context (130)
 
 - **[10] TRACE WebhookSignature v1.0 Cross-Service Contract Rollout Complete** - All six corrections applied: (1) EventEnvelope v1.0.1 frozen at 18 fields, (2) matter.activated payload normalized to 9 canonical evidence references, (3) webhook auth upgraded from shared-secret to HMAC-SHA256 with X-TrueVow headers, (4) global vs tenant data separation documented, (5) event_id ide...
   _by Admin - 2026-07-31_
@@ -595,6 +615,8 @@
   _by Admin - 2026-07-27_
 - **[10] TRACE documentation and memory updated July 24 2026** - All documentation updated: AGENTS.md (250+ lines with full service reference), README.md (updated stack/status), TRACE-Agent-Coding-Instructions.md (300+ line Appendix A with architecture, API reference, data flow, troubleshooting). Platform map updated (TRACE: port 3036, active). DEVELOPERS.md upda...
   _by Admin - 2026-07-24_
+- **[8] Git Scan: 2026-07-31T03:44:13** - { "summary": { "timestamp": "2026-07-31T03:44:13.633577+00:00", "total": 14, "clean": 5, "dirty": 8, "missing": 1, "errors": 0, "stale_services": 9, "active_services": 5, "status_breakdown": { "HEALTHY": 4, "ACTIVE": 0, "STALE": 2, "NEGLECTED": 7, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY": ...
+  _by Admin - 2026-07-31_
 - **[8] Git Scan: 2026-07-27T15:23:35** - { "summary": { "timestamp": "2026-07-27T15:23:35.204323+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 10, "active_services": 4, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 3, "STALE": 1, "NEGLECTED": 9, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY"...
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
@@ -719,6 +741,8 @@
   _by user - 2026-06-25_
 - **[6] Documentation Status: TrueVow_Documentation is Stale** - TrueVow_Documentation/ contains older documentation (Word docs, markdown exports) including TrueVow_PRD.md, Complete System Technical Documentation, Financial Management guides, and Billing Service updates. These are outdated - they reflect the old architecture with DRAFT naming, CONNECT active, and...
   _by user - 2026-06-25_
+- **[5] Dispatch: start the controlled cross-service pilot validation - freeze all service commits** - Dispatched to skill='planning-and-task-breakdown' phase='plan' personas=[] tool=
+  _by Admin - 2026-07-31_
 - **[5] Dispatch: implement BP-00 contract normalization and BP-01 repository bootstrap for the RE** - Dispatched to skill='incremental-implementation' phase='build' personas=[] tool=
   _by Admin - 2026-07-29_
 - **[5] Dispatch: Cross-service fix: Every service deployed on fly.io needs setInterval.unref() on** - Dispatched to skill='debugging-and-error-recovery' phase='verify' personas=[] tool=
