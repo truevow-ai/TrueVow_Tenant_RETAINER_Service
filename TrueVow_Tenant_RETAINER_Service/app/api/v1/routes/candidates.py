@@ -11,7 +11,7 @@ from retainer_contracts.states import EngagementState
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.auth.deps import AuthContext, get_current_context, get_webhook_context
+from app.auth.deps import AuthContext, get_current_context, get_webhook_context, require_readiness
 from app.core.database import get_db, get_db_public
 from app.domain.candidate import (
     approve_representation,
@@ -93,6 +93,7 @@ async def candidate_submitted_webhook(
     payload: CandidateHandoffRequest,
     db: AsyncSession = Depends(get_db_public),
     ctx: AuthContext = Depends(get_webhook_context),
+    _ready: None = Depends(require_readiness),
 ):
     """Accept a candidate submission from INTAKE via service-to-service webhook.
 

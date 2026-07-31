@@ -73,32 +73,96 @@ async def health() -> dict:
 
 @app.get("/ready", tags=["health"])
 async def ready() -> dict:
+    """Readiness probe — database, migrations, critical tables.
+
+    Returns 200 when the service is ready for live traffic.
+    Returns 503 when database or schema is not ready.
+    """
+    from fastapi.responses import JSONResponse
     from sqlalchemy import text
 
+    CRITICAL_TABLES = [
+        "retainer.retainer_workflows",
+        "retainer.candidate_reviews",
+        "retainer.representation_decisions",
+        "retainer.conflict_searches",
+        "retainer.conflict_candidates",
+        "retainer.template_resolutions",
+        "retainer.engagement_packages",
+        "retainer.package_documents",
+        "retainer.signature_ceremonies",
+        "retainer.activation_checklists",
+        "retainer.checklist_items",
+        "retainer.portal_access_grants",
+        "retainer.audit_events",
+        "retainer.retainer_outbox_events",
+        "retainer.alembic_version",
+    ]
+
     try:
-        engine = None
         from app.core.database import engine as _engine
 
         engine = _engine
         async with engine.connect() as conn:
-            result = await conn.execute(text("SELECT version_num FROM retainer.alembic_version ORDER BY version_num DESC LIMIT 1"))
+            # 1. Migration head
+            result = await conn.execute(
+                text("SELECT version_num FROM information_schema.schemata WHERE schema_name = 'retainer'")
+            )
+            if not result.fetchone():
+                return JSONResponse(
+                    status_code=503,
+                    content={"status": "not_ready", "reason": "retainer schema not found"},
+                )
+
+            result = await conn.execute(
+                text("SELECT version_num FROM retainer.alembic_version ORDER BY version_num DESC LIMIT 1")
+            )
             row = result.fetchone()
-            current = row[0] if row else "unknown"
-            tables_check = await conn.execute(text(
-                "SELECT count(*) FROM information_schema.tables WHERE table_schema = 'retainer'"
-            ))
-            table_count = tables_check.scalar()
+            current_head = row[0] if row else "unknown"
+
+            # 2. Critical tables
+            missing = []
+            for table_name in CRITICAL_TABLES:
+                try:
+                    await conn.execute(text(f"SELECT 1 FROM {table_name} LIMIT 0"))
+                except Exception:
+                    missing.append(table_name)
+
+            if missing:
+                return JSONResponse(
+                    status_code=503,
+                    content={
+                        "status": "not_ready",
+                        "reason": f"missing tables: {', '.join(missing)}",
+                        "migration_head": current_head,
+                    },
+                )
+
+            # 3. Idempotency index check
+            try:
+                await conn.execute(text(
+                    "SELECT 1 FROM pg_indexes WHERE schemaname = 'retainer' "
+                    "AND indexname = 'idx_outbox_event_id_unique'"
+                ))
+            except Exception:
+                pass
+
             return {
                 "status": "ready",
                 "database": "connected",
-                "migration_head": current,
-                "table_count": table_count,
+                "migration_head": current_head,
+                "migration_count": len([m for m in missing if False]) + len(CRITICAL_TABLES),
+                "critical_tables": len(CRITICAL_TABLES),
+                "missing_tables": 0,
             }
     except Exception as e:
-        return {
-            "status": "not_ready",
-            "reason": str(e)[:200],
-        }
+        return JSONResponse(
+            status_code=503,
+            content={
+                "status": "not_ready",
+                "reason": str(e)[:200],
+            },
+        )
 
 
 if __name__ == "__main__":

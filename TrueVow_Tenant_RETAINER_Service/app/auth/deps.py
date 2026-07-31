@@ -14,6 +14,36 @@ from app.security.webhook_signature import verify_signature
 logger = logging.getLogger("retainer.auth")
 
 
+async def require_readiness() -> None:
+    """FastAPI dependency: raise 503 if the service is not ready.
+
+    Checks database connectivity before allowing any webhook processing.
+    Prevents unstructured 500 errors when migrations are pending.
+    """
+    from sqlalchemy import text
+
+    from app.core.database import engine
+
+    try:
+        async with engine.connect() as conn:
+            result = await conn.execute(
+                text("SELECT version_num FROM retainer.alembic_version ORDER BY version_num DESC LIMIT 1")
+            )
+            row = result.fetchone()
+            if not row:
+                raise HTTPException(
+                    status_code=503,
+                    detail="SERVICE_NOT_READY: No migration revision found. Apply migrations before serving traffic.",
+                )
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=503,
+            detail=f"SERVICE_NOT_READY: Database unavailable. {str(e)[:100]}",
+        ) from None
+
+
 @dataclass
 class AuthContext:
     user_id: str
