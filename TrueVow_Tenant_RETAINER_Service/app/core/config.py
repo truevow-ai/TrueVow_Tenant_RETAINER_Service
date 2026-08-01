@@ -6,7 +6,9 @@ Values load from environment and .env / .env.local.
 
 from __future__ import annotations
 
-from pydantic import AliasChoices, Field
+import json
+
+from pydantic import AliasChoices, Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -55,6 +57,16 @@ class Settings(BaseSettings):
         default={},
         validation_alias=AliasChoices("TRUEVOW_WEBHOOK_KEYS", "WEBHOOK_KEYS"),
     )
+
+    @field_validator("webhook_keys", mode="before")
+    @classmethod
+    def parse_webhook_keys(cls, v):
+        if isinstance(v, str):
+            try:
+                return json.loads(v)
+            except (json.JSONDecodeError, TypeError):
+                return {}
+        return v or {}
 
     model_config = SettingsConfigDict(
         env_file=(".env", ".env.local"),
