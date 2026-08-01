@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-01T03:49:49.102995+00:00
-- Total memories: 318
+- Generated: 2026-08-01T03:52:44.507090+00:00
+- Total memories: 321
 
-## High-importance decisions (8+, routine noise excluded) - 174
+## High-importance decisions (8+, routine noise excluded) - 175
 
 - **[10][architecture] Cross-Service Webhook Spine — All 3 Hops Live** - Hop 1 (INTAKE→RETAINER): 17/17 PASS. Hop 2 (RETAINER→SaaS Admin): DB verified, activation + duplicate guard. Hop 3 (SaaS Admin→TRACE): HMAC auth proven (401 without, passes with valid key). All hops verified against real Supabase. WebhookSignature v1.0 operational across entire spine. Per-service key isolation enforced. SQLite removed from RETAINER. RETAINER freeze SHA: 70da328.
   _by Admin - 2026-07-31 - tags: -_
@@ -154,6 +154,8 @@
   _by Admin - 2026-07-31 - tags: -_
 - **[10][todo] TX Phase 4 DB connectivity blocker** - db.bpzegquhxnygyxdzluyw.supabase.co only resolves to IPv6, Windows dev box has no IPv6. Supabase pooler not enabled for this project (tenant/user not found). Phase 4 scripts (verify_emails_phones, classify_phone_types, verify_attorney_emails) need psycopg2. Workaround: create REST API versions or enable IPv4 on Supabase.
   _by Admin - 2026-07-27 - tags: -_
+- **[9][architecture] SaaS Admin: Billing Entitlements + Portal Grant Verified** - Migration 175: 1727 product entitlements across 578 tenants. Portal grant transition: 9/9 assertions PASS with relational fixture. PROSPECTIVE_ENGAGEMENT → READ_ONLY_HISTORY → ACTIVE_MATTER with all 5 MATTER permissions. Trigger copies portal_identity_id. Activation routes switched from Clerk to HMAC. /ready endpoint verifies 37 tables + 7 functions. RC v3: Engineering APPROVED.
+  _by Admin - 2026-08-01 - tags: -_
 - **[9][architecture] RETAINER Fly.io deployment verified — production path proven** - RETAINER Dockerfile: Python 3.11-slim, uvicorn port 8080, health check at /health. Fly.io config: internal_port 8080, IAD region, 512MB. Secrets: DATABASE_URL, WEBHOOK_KEYS (JSON string parsed via webhook_keys_raw). Dependencies: retainer_contracts installed from local packages dir. Key fix: pydantic-settings Field type changed from dict to str for WEBHOOK_KEYS compatibility. TRACE runs on same region (IAD) with same Supabase pooler — connectivity proven.
   _by Admin - 2026-08-01 - tags: -_
 - **[9][architecture] Controlled Pilot Architecture Review: Portal scope ownership confirmed** - RETAINER never grants MATTER_* scopes. SaaS Admin fn_upgrade_portal_access_on_activation correctly adds 5 MATTER_* permissions. Portal upgrade chain intact (previous_grant_id). Contract registry + golden fixtures present and aligned across services. Webhook key isolation intent correct but implementation defect D3 in RETAINER.
@@ -357,7 +359,7 @@
 - **[8][todo] FIX gitignore source-leak: TrueVow-Tenant_Billing-Service** - ASSIGNED to the TrueVow-Tenant_Billing-Service agent. Real lib/ source is currently hidden from git (confirmed). Run the playbook: TrueVow_SaaS_Administration_Service/docs/01-main/ECOSYSTEM_ADVISORY_GITIGNORE_SOURCE_LEAK.md (fix .gitignore: anchor/remove stray lib/ + logs/; secrets-scan; commit recovered source in reviewed batches by explicit path; verify clean-clone build). REPORT RESULT via memory.py remember category=bug title='TrueVow-Tenant_Billing-Service gitignore RESULT' content='FIXED n files | CLEAN | BLOCKED + reason; secrets found?'. NOTE: reporting.py agent-checkin is broken — report via memory.
   _by user - 2026-06-25 - tags: gitignore, todo, assigned_
 
-## architecture (72)
+## architecture (73)
 
 - **[10] Cross-Service Webhook Spine — All 3 Hops Live** - Hop 1 (INTAKE→RETAINER): 17/17 PASS. Hop 2 (RETAINER→SaaS Admin): DB verified, activation + duplicate guard. Hop 3 (SaaS Admin→TRACE): HMAC auth proven (401 without, passes with valid key). All hops verified against real Supabase. WebhookSignature v1.0 operational across entire spine. Per-service ke...
   _by Admin - 2026-07-31_
@@ -415,6 +417,8 @@
   _by user - 2026-06-25_
 - **[10] LEVERAGE (ex-DRAFT) — 3-Tier Rules Engine, NO AI** - LEVERAGE is a 3-tier legal rule validation system: TIER 1: State/Jurisdiction rules (mandatory, cannot be disabled). TIER 2: Practice Area rules (customizable). TIER 3: Firm/Attorney/Client-specific rules. CORE PRINCIPLE: NO AI — no machine learning, no neural networks, no LLM. Uses peer benchmarkin...
   _by user - 2026-06-25_
+- **[9] SaaS Admin: Billing Entitlements + Portal Grant Verified** - Migration 175: 1727 product entitlements across 578 tenants. Portal grant transition: 9/9 assertions PASS with relational fixture. PROSPECTIVE_ENGAGEMENT → READ_ONLY_HISTORY → ACTIVE_MATTER with all 5 MATTER permissions. Trigger copies portal_identity_id. Activation routes switched from Clerk to HMA...
+  _by Admin - 2026-08-01_
 - **[9] RETAINER Fly.io deployment verified — production path proven** - RETAINER Dockerfile: Python 3.11-slim, uvicorn port 8080, health check at /health. Fly.io config: internal_port 8080, IAD region, 512MB. Secrets: DATABASE_URL, WEBHOOK_KEYS (JSON string parsed via webhook_keys_raw). Dependencies: retainer_contracts installed from local packages dir. Key fix: pydanti...
   _by Admin - 2026-08-01_
 - **[9] Controlled Pilot Architecture Review: Portal scope ownership confirmed** - RETAINER never grants MATTER_* scopes. SaaS Admin fn_upgrade_portal_access_on_activation correctly adds 5 MATTER_* permissions. Portal upgrade chain intact (previous_grant_id). Contract registry + golden fixtures present and aligned across services. Webhook key isolation intent correct but implement...
@@ -709,7 +713,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (137)
+## context (139)
 
 - **[10] TRACE Pilot Review — No Defects Found** - Pilot review D1-D4: (D1) trailing-slash — SaaS Admin issue, TRACE verifier uses exact path match, no normalization. (D3) shared secret fallback — TRACE has zero legacy bearer or global shared-secret path, pure HMAC per-link keys only. (D4) INTAKE contract test — not TRACE's issue. TRACE is clean for...
   _by Admin - 2026-07-31_
@@ -727,6 +731,10 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: SaaS Admin: pilot validation — 3-hop DB verification, Gate 1 HMAC fix, portal grant 9/9 PASS, produc** - {"agent_id": "TrueVow_SaaS_Administration_Service", "action": "done", "status": "DONE", "message": "SaaS Admin: pilot validation \u2014 3-hop DB verification, Gate 1 HMAC fix, portal grant 9/9 PASS, product entitlements 1727 rows, webhook hardening D1+D3 | outcome: Engineering APPROVED, pilot NOT YE...
+  _by user - 2026-08-01_
+- **[7] [DONE] DONE: INTAKE: deployed 4 engine fixes for transfer re-engagement + billing architecture saved to memory |** - {"agent_id": "TrueVow_Tenant_Application_Service", "action": "done", "status": "DONE", "message": "INTAKE: deployed 4 engine fixes for transfer re-engagement + billing architecture saved to memory | outcome: tests pass (38/38), deployed to Fly, call analysis completed | learned: (1) conflict_check_p...
+  _by user - 2026-08-01_
 - **[7] [DONE] DONE: TRACE: billing plan code, millisecond timestamp fix, migration 0018, /ready endpoint live | outcome:** - {"agent_id": "TrueVow_Tenant_TRACE_Service", "action": "done", "status": "DONE", "message": "TRACE: billing plan code, millisecond timestamp fix, migration 0018, /ready endpoint live | outcome: 68 tests pass, 17 golden fixtures, Hop 3 HMAC auth proven against SaaS Admin, all 3 hops operational again...
   _by user - 2026-08-01_
 - **[7] [DONE] DONE: RETAINER: webhook spine complete — all 3 hops live against Supabase | Hop 1 approved (17/17), Hop 2** - {"agent_id": "TrueVow_Tenant_RETAINER_Service", "action": "done", "status": "DONE", "message": "RETAINER: webhook spine complete \u2014 all 3 hops live against Supabase | Hop 1 approved (17/17), Hop 2 activation verified, Hop 3 HMAC proven | SQLite removed, /ready endpoint active, per-service keys e...
