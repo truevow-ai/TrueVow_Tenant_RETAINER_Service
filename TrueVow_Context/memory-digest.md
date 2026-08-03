@@ -3,8 +3,8 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-03T20:00:38.331364+00:00
-- Total memories: 338
+- Generated: 2026-08-03T20:17:11.074570+00:00
+- Total memories: 339
 
 ## High-importance decisions (8+, routine noise excluded) - 182
 
@@ -741,7 +741,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (148)
+## context (149)
 
 - **[10] TRACE Pilot Review — No Defects Found** - Pilot review D1-D4: (D1) trailing-slash — SaaS Admin issue, TRACE verifier uses exact path match, no normalization. (D3) shared secret fallback — TRACE has zero legacy bearer or global shared-secret path, pure HMAC per-link keys only. (D4) INTAKE contract test — not TRACE's issue. TRACE is clean for...
   _by Admin - 2026-07-31_
@@ -765,6 +765,8 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: SaaS Admin: PLG-SA-01 durable onboarding orchestration — replaced fire-and-forget with persisted run** - {"agent_id": "TrueVow_SaaS_Administration_Service", "action": "done", "status": "DONE", "message": "SaaS Admin: PLG-SA-01 durable onboarding orchestration \u2014 replaced fire-and-forget with persisted runs/steps/commands + worker with dependency enforcement + reconciliation + 17 tests pass | outcom...
+  _by user - 2026-08-03_
 - **[7] [DONE] DONE: Sales Ops: PLG-SO-01 IMPLEMENTATION COMPLETE. Restored STANDARD/SPECIAL_COHORT segmentation. Migrati** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "done", "status": "DONE", "message": "Sales Ops: PLG-SO-01 IMPLEMENTATION COMPLETE. Restored STANDARD/SPECIAL_COHORT segmentation. Migration 179 ready (segment_classification + special_cohort_pipeline + campaign_eligibility). Created 5 governed ser...
   _by user - 2026-08-03_
 - **[7] [ACTIVE] START: Sales Ops: PLG-SO-01 — Restore Lead Segmentation and Approval Authority | inspecting current cohort/** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "start", "status": "ACTIVE", "message": "Sales Ops: PLG-SO-01 \u2014 Restore Lead Segmentation and Approval Authority | inspecting current cohort/archival state | goal: 15-step implementation per CTO directive", "timestamp": "2026-08-03T19:38:59.07...
