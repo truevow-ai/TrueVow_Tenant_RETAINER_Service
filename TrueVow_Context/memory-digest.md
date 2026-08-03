@@ -3,8 +3,8 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-03T21:15:27.266697+00:00
-- Total memories: 350
+- Generated: 2026-08-03T21:42:51.190094+00:00
+- Total memories: 352
 
 ## High-importance decisions (8+, routine noise excluded) - 185
 
@@ -753,7 +753,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (157)
+## context (159)
 
 - **[10] TRACE Pilot Review — No Defects Found** - Pilot review D1-D4: (D1) trailing-slash — SaaS Admin issue, TRACE verifier uses exact path match, no normalization. (D3) shared secret fallback — TRACE has zero legacy bearer or global shared-secret path, pure HMAC per-link keys only. (D4) INTAKE contract test — not TRACE's issue. TRACE is clean for...
   _by Admin - 2026-07-31_
@@ -777,6 +777,10 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: SaaS Admin: PLG-SA-02 COMPLETE — migration 183 applied (plan catalogue, trial entitlements, usage le** - {"agent_id": "TrueVow_SaaS_Administration_Service", "action": "done", "status": "DONE", "message": "SaaS Admin: PLG-SA-02 COMPLETE \u2014 migration 183 applied (plan catalogue, trial entitlements, usage ledger, review view), canonical commercial model replaces free/growth/premium, trial is governed ...
+  _by user - 2026-08-03_
+- **[7] [ACTIVE] START: Sales Ops: PLG-SO-02B — Fix 5 failing tests + prep staging commissioning | identifying failures | go** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "start", "status": "ACTIVE", "message": "Sales Ops: PLG-SO-02B \u2014 Fix 5 failing tests + prep staging commissioning | identifying failures | goal: 0 failures, production-ready", "timestamp": "2026-08-03T21:23:21.424909+00:00", "working_dir": "C:...
+  _by user - 2026-08-03_
 - **[7] [DONE] DONE: Sales Ops: PLG-SO-02A DB INVARIANTS APPLIED. Migration 182: triggers enforce 250-member max + ACTIVE** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "done", "status": "DONE", "message": "Sales Ops: PLG-SO-02A DB INVARIANTS APPLIED. Migration 182: triggers enforce 250-member max + ACTIVE-batch immutability + membership freeze. 4 new PLG-SO-02A test suites (DB invariants, disabled-channel, suppre...
   _by user - 2026-08-03_
 - **[7] [DONE] DONE: SaaS Admin: PLG-SA-01A COMPLETE — single ensureOnboardingRun() primitive, dual triggers converge, de** - {"agent_id": "TrueVow_SaaS_Administration_Service", "action": "done", "status": "DONE", "message": "SaaS Admin: PLG-SA-01A COMPLETE \u2014 single ensureOnboardingRun() primitive, dual triggers converge, delivery mode safety (disabled/sandbox/live), cron auth proven, Billing sandbox, immutable confli...
