@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-03T23:00:54.878036+00:00
-- Total memories: 360
+- Generated: 2026-08-03T23:12:24.571059+00:00
+- Total memories: 362
 
-## High-importance decisions (8+, routine noise excluded) - 187
+## High-importance decisions (8+, routine noise excluded) - 188
 
 - **[10][architecture] Cross-Service Webhook Spine — All 3 Hops Live** - Hop 1 (INTAKE→RETAINER): 17/17 PASS. Hop 2 (RETAINER→SaaS Admin): DB verified, activation + duplicate guard. Hop 3 (SaaS Admin→TRACE): HMAC auth proven (401 without, passes with valid key). All hops verified against real Supabase. WebhookSignature v1.0 operational across entire spine. Per-service key isolation enforced. SQLite removed from RETAINER. RETAINER freeze SHA: 70da328.
   _by Admin - 2026-07-31 - tags: -_
@@ -154,6 +154,8 @@
   _by Admin - 2026-07-31 - tags: -_
 - **[10][todo] TX Phase 4 DB connectivity blocker** - db.bpzegquhxnygyxdzluyw.supabase.co only resolves to IPv6, Windows dev box has no IPv6. Supabase pooler not enabled for this project (tenant/user not found). Phase 4 scripts (verify_emails_phones, classify_phone_types, verify_attorney_emails) need psycopg2. Workaround: create REST API versions or enable IPv4 on Supabase.
   _by Admin - 2026-07-27 - tags: -_
+- **[9][architecture] HITL authorization: 6-gate requireInternalRole() with explicit permissions** - requireInternalRole() now enforces: Supabase identity, email_confirmed_at (rejects service/machine credentials), scope==='internal' (rejects tenant/unknown/service), assigned internal role. requireHITLPermission() adds role-specific gate: sdr/bdr/ae/gtm can review; admin/revops/sales_manager can approve/reject. 8 negative proofs documented. Local dev UUID blocked in prod/staging.
+  _by Admin - 2026-08-03 - tags: -_
 - **[9][architecture] PLG-SO-02: Channel-neutral campaign model + regional batches of 250** - Migration 181 extends existing campaign tables (no parallel tables). Four concepts separated: campaign programs, audience batches (≤250), enrollments, delivery chunks. Channel adapters: Email active (wraps Resend), SMS/SOCIAL/PAID_MEDIA disabled (CHANNEL_NOT_ENABLED). RegionPartitionFactory with deterministic STATE_FIRST partitioning. Existing email campaigns preserved via table extension.
   _by Admin - 2026-08-03 - tags: -_
 - **[9][architecture] SaaS Admin: Billing Entitlements + Portal Grant Verified** - Migration 175: 1727 product entitlements across 578 tenants. Portal grant transition: 9/9 assertions PASS with relational fixture. PROSPECTIVE_ENGAGEMENT → READ_ONLY_HISTORY → ACTIVE_MATTER with all 5 MATTER permissions. Trigger copies portal_identity_id. Activation routes switched from Clerk to HMAC. /ready endpoint verifies 37 tables + 7 functions. RC v3: Engineering APPROVED.
@@ -383,7 +385,7 @@
 - **[8][todo] FIX gitignore source-leak: TrueVow-Tenant_Billing-Service** - ASSIGNED to the TrueVow-Tenant_Billing-Service agent. Real lib/ source is currently hidden from git (confirmed). Run the playbook: TrueVow_SaaS_Administration_Service/docs/01-main/ECOSYSTEM_ADVISORY_GITIGNORE_SOURCE_LEAK.md (fix .gitignore: anchor/remove stray lib/ + logs/; secrets-scan; commit recovered source in reviewed batches by explicit path; verify clean-clone build). REPORT RESULT via memory.py remember category=bug title='TrueVow-Tenant_Billing-Service gitignore RESULT' content='FIXED n files | CLEAN | BLOCKED + reason; secrets found?'. NOTE: reporting.py agent-checkin is broken — report via memory.
   _by user - 2026-06-25 - tags: gitignore, todo, assigned_
 
-## architecture (77)
+## architecture (78)
 
 - **[10] Cross-Service Webhook Spine — All 3 Hops Live** - Hop 1 (INTAKE→RETAINER): 17/17 PASS. Hop 2 (RETAINER→SaaS Admin): DB verified, activation + duplicate guard. Hop 3 (SaaS Admin→TRACE): HMAC auth proven (401 without, passes with valid key). All hops verified against real Supabase. WebhookSignature v1.0 operational across entire spine. Per-service ke...
   _by Admin - 2026-07-31_
@@ -441,6 +443,8 @@
   _by user - 2026-06-25_
 - **[10] LEVERAGE (ex-DRAFT) — 3-Tier Rules Engine, NO AI** - LEVERAGE is a 3-tier legal rule validation system: TIER 1: State/Jurisdiction rules (mandatory, cannot be disabled). TIER 2: Practice Area rules (customizable). TIER 3: Firm/Attorney/Client-specific rules. CORE PRINCIPLE: NO AI — no machine learning, no neural networks, no LLM. Uses peer benchmarkin...
   _by user - 2026-06-25_
+- **[9] HITL authorization: 6-gate requireInternalRole() with explicit permissions** - requireInternalRole() now enforces: Supabase identity, email_confirmed_at (rejects service/machine credentials), scope==='internal' (rejects tenant/unknown/service), assigned internal role. requireHITLPermission() adds role-specific gate: sdr/bdr/ae/gtm can review; admin/revops/sales_manager can app...
+  _by Admin - 2026-08-03_
 - **[9] PLG-SO-02: Channel-neutral campaign model + regional batches of 250** - Migration 181 extends existing campaign tables (no parallel tables). Four concepts separated: campaign programs, audience batches (≤250), enrollments, delivery chunks. Channel adapters: Email active (wraps Resend), SMS/SOCIAL/PAID_MEDIA disabled (CHANNEL_NOT_ENABLED). RegionPartitionFactory with det...
   _by Admin - 2026-08-03_
 - **[9] SaaS Admin: Billing Entitlements + Portal Grant Verified** - Migration 175: 1727 product entitlements across 578 tenants. Portal grant transition: 9/9 assertions PASS with relational fixture. PROSPECTIVE_ENGAGEMENT → READ_ONLY_HISTORY → ACTIVE_MATTER with all 5 MATTER permissions. Trigger copies portal_identity_id. Activation routes switched from Clerk to HMA...
@@ -761,7 +765,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (165)
+## context (166)
 
 - **[10] TRACE Pilot Review — No Defects Found** - Pilot review D1-D4: (D1) trailing-slash — SaaS Admin issue, TRACE verifier uses exact path match, no normalization. (D3) shared secret fallback — TRACE has zero legacy bearer or global shared-secret path, pure HMAC per-link keys only. (D4) INTAKE contract test — not TRACE's issue. TRACE is clean for...
   _by Admin - 2026-07-31_
@@ -785,6 +789,8 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: Sales Ops: PLG-SO-02C PRE-HANDOFF COMPLETE. requireInternalRole() hardened: 6-gate check (Supabase i** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "done", "status": "DONE", "message": "Sales Ops: PLG-SO-02C PRE-HANDOFF COMPLETE. requireInternalRole() hardened: 6-gate check (Supabase identity, human identity, internal scope, assigned role, HITL access, approve/reject). requireHITLPermission() ...
+  _by user - 2026-08-03_
 - **[7] [DONE] DONE: Sales Ops: PLG-SO-02C READY FOR STAGING. Local auth guard production-safe (NODE_ENV check). HITL use** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "done", "status": "DONE", "message": "Sales Ops: PLG-SO-02C READY FOR STAGING. Local auth guard production-safe (NODE_ENV check). HITL uses requireInternalRole() - blocks tenant users + records actual actor. Service key server-only. Staging handoff...
   _by user - 2026-08-03_
 - **[7] [ACTIVE] START: Sales Ops: PLG-SO-02C — Pre-handoff security checks + staging prep | verifying local auth guard + HI** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "start", "status": "ACTIVE", "message": "Sales Ops: PLG-SO-02C \u2014 Pre-handoff security checks + staging prep | verifying local auth guard + HITL authorization | goal: staging-ready handoff", "timestamp": "2026-08-03T22:56:08.694032+00:00", "wor...
