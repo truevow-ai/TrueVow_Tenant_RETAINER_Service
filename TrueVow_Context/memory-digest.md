@@ -3,8 +3,8 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-03T23:23:15.247924+00:00
-- Total memories: 365
+- Generated: 2026-08-03T23:28:55.808793+00:00
+- Total memories: 366
 
 ## High-importance decisions (8+, routine noise excluded) - 189
 
@@ -769,7 +769,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (168)
+## context (169)
 
 - **[10] TRACE Pilot Review — No Defects Found** - Pilot review D1-D4: (D1) trailing-slash — SaaS Admin issue, TRACE verifier uses exact path match, no normalization. (D3) shared secret fallback — TRACE has zero legacy bearer or global shared-secret path, pure HMAC per-link keys only. (D4) INTAKE contract test — not TRACE's issue. TRACE is clean for...
   _by Admin - 2026-07-31_
@@ -793,6 +793,8 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: Sales Ops: PLG-SO-02C AUTHORIZED FOR STAGING. All code work complete. Frozen baseline: commit c31c23** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "done", "status": "DONE", "message": "Sales Ops: PLG-SO-02C AUTHORIZED FOR STAGING. All code work complete. Frozen baseline: commit c31c233, 677/677 PASS. IAM 5-gate check accepted. Staging handoff: docs/plg/PLG-SO-02C-STAGING-HANDOFF.md. Awaiting ...
+  _by user - 2026-08-03_
 - **[7] [DONE] DONE: Sales Ops: COMMITTED c31c233. IAM permissions hardened: requireInternalRole() checks platform_staff_** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "done", "status": "DONE", "message": "Sales Ops: COMMITTED c31c233. IAM permissions hardened: requireInternalRole() checks platform_staff_membership + SALES_OPS app grant. requireHITLPermission() uses canonical IAM codes with compatibility role map...
   _by user - 2026-08-03_
 - **[7] [ACTIVE] START: Sales Ops: PLG-SO-02C — Canonical IAM permission proof | hardening requireHITLPermission() to IAM pe** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "start", "status": "ACTIVE", "message": "Sales Ops: PLG-SO-02C \u2014 Canonical IAM permission proof | hardening requireHITLPermission() to IAM permission codes | goal: committed handoff-ready SHA", "timestamp": "2026-08-03T23:18:52.189100+00:00", ...
