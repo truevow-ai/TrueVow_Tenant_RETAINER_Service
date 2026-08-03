@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-03T21:05:52.114470+00:00
-- Total memories: 348
+- Generated: 2026-08-03T21:15:27.266697+00:00
+- Total memories: 350
 
-## High-importance decisions (8+, routine noise excluded) - 184
+## High-importance decisions (8+, routine noise excluded) - 185
 
 - **[10][architecture] Cross-Service Webhook Spine — All 3 Hops Live** - Hop 1 (INTAKE→RETAINER): 17/17 PASS. Hop 2 (RETAINER→SaaS Admin): DB verified, activation + duplicate guard. Hop 3 (SaaS Admin→TRACE): HMAC auth proven (401 without, passes with valid key). All hops verified against real Supabase. WebhookSignature v1.0 operational across entire spine. Per-service key isolation enforced. SQLite removed from RETAINER. RETAINER freeze SHA: 70da328.
   _by Admin - 2026-07-31 - tags: -_
@@ -222,6 +222,8 @@
   _by Admin - 2026-07-31 - tags: -_
 - **[9][bug] contact_info_sequence dropped phone+email** - Root cause: routing INTO a sequence node used _execute_node, which returned the sequence's own intro prompt and left current_node=contact_info_sequence WITHOUT priming the first sub-node. Next turn the C10 terminal guard (workflow_engine.py:518) saw no next/branches/options and returned _build_complete_response — so name-only leads jumped to 'complete', losing phone+email. FIX: _execute_node now delegates type==sequence to _execute_sequence (primes contact_name, prepends intro to first question); terminal guards treat nodes/type==sequence as a valid exit. Verified: name->phone->email chain now runs.
   _by Admin - 2026-07-14 - tags: -_
+- **[9][decision] PLG-SO-02A: DB invariants enforce 250-limit and ACTIVE-batch immutability** - Migration 182 adds: trg_batch_member_limit (advisory lock, 250-max), trg_prevent_active_batch_mutation (12 immutable fields), trg_prevent_member_delete (membership freeze), governed_remove_batch_member() (soft-delete), v_batch_size_mismatches (0 rows expected). Full regression: 563 TS + 17 Python. PLG suites: 139/139 PASS.
+  _by Admin - 2026-08-03 - tags: -_
 - **[9][decision] PLG-SO-01A: Corrected default STANDARD → REVIEW_REQUIRED** - Migration 179 Phase 4 corrected: unresolved leads default to REVIEW_REQUIRED, not STANDARD. Firm-name matching requires corroboration (state/website/email). Migration 180 provides idempotent forward safety correction. REVIEW_REQUIRED → campaign HELD enforced before score/cadence/region evaluation. Classification provenance recorded on every record. v_classification_review_queue created.
   _by Admin - 2026-08-03 - tags: -_
 - **[9][decision] IAM-001: TRACE Clerk-to-Supabase migration complete** - Migrated TRACE service from Clerk JWKS to Supabase Auth via truevow_auth (vendored). Replaced AUTH_MODE=clerk with AUTH_MODE=supabase. Removed _JWKSCache class. Renamed clerk_user_id to auth_user_sub in firm_users. Fail-closed — no Clerk fallback. 68/68 tests pass.
@@ -555,7 +557,7 @@
 - **[6] xai_cloud bridge test suite** - Created tests/test_xai_cloud_bridge.py (34 tests) for XaiCloudBridge. Mirrors test_xai_bridge.py but adapts for cloud bridge: dual registration (xai_cloud + xai_cloud_voice_agent), default voice rex (male-only), end_session returns {bridge,session_id,status} without had_audio, double-start early-ret...
   _by Admin - 2026-07-08_
 
-## decision (47)
+## decision (48)
 
 - **[10] Portal grant transition gate CLOSED — 9/9 assertions pass against live Supabase** - PROSPECTIVE_ENGAGEMENT -> READ_ONLY_HISTORY + ACTIVE_MATTER with MATTER_VIEW/MATTER_MESSAGE/MATTER_UPLOAD/REQUEST_RESPOND/DOCUMENT_DOWNLOAD verified. Shared Platform owns MATTER_* permissions. RETAINER keeps ENGAGEMENT_HISTORY only. TRACE consumes tenant-scoped projection linked to canonical grant. ...
   _by Admin - 2026-08-01_
@@ -609,6 +611,8 @@
   _by user - 2026-06-25_
 - **[10] CONNECT Archived - DRAFT Renamed to LEVERAGE - INTAKE Updated** - CONNECT (attorney referral network) is decommissioned and archived from the ecosystem permanently - no longer on TrueVow agenda. DRAFT has been completely replaced by LEVERAGE everywhere (same service, renamed). INTAKE (Tenant Application Service) is no longer just FSM NLP - it is now FSM applied to...
   _by user - 2026-06-25_
+- **[9] PLG-SO-02A: DB invariants enforce 250-limit and ACTIVE-batch immutability** - Migration 182 adds: trg_batch_member_limit (advisory lock, 250-max), trg_prevent_active_batch_mutation (12 immutable fields), trg_prevent_member_delete (membership freeze), governed_remove_batch_member() (soft-delete), v_batch_size_mismatches (0 rows expected). Full regression: 563 TS + 17 Python. P...
+  _by Admin - 2026-08-03_
 - **[9] PLG-SO-01A: Corrected default STANDARD → REVIEW_REQUIRED** - Migration 179 Phase 4 corrected: unresolved leads default to REVIEW_REQUIRED, not STANDARD. Firm-name matching requires corroboration (state/website/email). Migration 180 provides idempotent forward safety correction. REVIEW_REQUIRED → campaign HELD enforced before score/cadence/region evaluation. C...
   _by Admin - 2026-08-03_
 - **[9] IAM-001: TRACE Clerk-to-Supabase migration complete** - Migrated TRACE service from Clerk JWKS to Supabase Auth via truevow_auth (vendored). Replaced AUTH_MODE=clerk with AUTH_MODE=supabase. Removed _JWKSCache class. Renamed clerk_user_id to auth_user_sub in firm_users. Fail-closed — no Clerk fallback. 68/68 tests pass.
@@ -749,7 +753,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (156)
+## context (157)
 
 - **[10] TRACE Pilot Review — No Defects Found** - Pilot review D1-D4: (D1) trailing-slash — SaaS Admin issue, TRACE verifier uses exact path match, no normalization. (D3) shared secret fallback — TRACE has zero legacy bearer or global shared-secret path, pure HMAC per-link keys only. (D4) INTAKE contract test — not TRACE's issue. TRACE is clean for...
   _by Admin - 2026-07-31_
@@ -773,6 +777,8 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: Sales Ops: PLG-SO-02A DB INVARIANTS APPLIED. Migration 182: triggers enforce 250-member max + ACTIVE** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "done", "status": "DONE", "message": "Sales Ops: PLG-SO-02A DB INVARIANTS APPLIED. Migration 182: triggers enforce 250-member max + ACTIVE-batch immutability + membership freeze. 4 new PLG-SO-02A test suites (DB invariants, disabled-channel, suppre...
+  _by user - 2026-08-03_
 - **[7] [DONE] DONE: SaaS Admin: PLG-SA-01A COMPLETE — single ensureOnboardingRun() primitive, dual triggers converge, de** - {"agent_id": "TrueVow_SaaS_Administration_Service", "action": "done", "status": "DONE", "message": "SaaS Admin: PLG-SA-01A COMPLETE \u2014 single ensureOnboardingRun() primitive, dual triggers converge, delivery mode safety (disabled/sandbox/live), cron auth proven, Billing sandbox, immutable confli...
   _by user - 2026-08-03_
 - **[7] [ACTIVE] START: Sales Ops: PLG-SO-02A — Campaign Staging Commissioning & Invariant Proof | reconciling test counts +** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "start", "status": "ACTIVE", "message": "Sales Ops: PLG-SO-02A \u2014 Campaign Staging Commissioning & Invariant Proof | reconciling test counts + DB enforcement | goal: close PLG-SO-02", "timestamp": "2026-08-03T21:00:50.391698+00:00", "working_di...
