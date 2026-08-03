@@ -3,8 +3,8 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-03T20:32:05.453300+00:00
-- Total memories: 342
+- Generated: 2026-08-03T20:43:38.199615+00:00
+- Total memories: 344
 
 ## High-importance decisions (8+, routine noise excluded) - 183
 
@@ -745,7 +745,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (151)
+## context (153)
 
 - **[10] TRACE Pilot Review — No Defects Found** - Pilot review D1-D4: (D1) trailing-slash — SaaS Admin issue, TRACE verifier uses exact path match, no normalization. (D3) shared secret fallback — TRACE has zero legacy bearer or global shared-secret path, pure HMAC per-link keys only. (D4) INTAKE contract test — not TRACE's issue. TRACE is clean for...
   _by Admin - 2026-07-31_
@@ -769,6 +769,10 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: SaaS Admin: PLG-SA-01 COMPLETE — migration 182 applied to staging, deployed to Fly.io, controlled on** - {"agent_id": "TrueVow_SaaS_Administration_Service", "action": "done", "status": "DONE", "message": "SaaS Admin: PLG-SA-01 COMPLETE \u2014 migration 182 applied to staging, deployed to Fly.io, controlled onboarding proof passes all 6 phases, 923 tests pass / 0 fail, 0 lint errors | outcome: durable o...
+  _by user - 2026-08-03_
+- **[7] [ACTIVE] START: Sales Ops: PLG-SO-02 — Channel-Neutral Campaign Architecture + Regional Batches of 250 | inspecting** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "start", "status": "ACTIVE", "message": "Sales Ops: PLG-SO-02 \u2014 Channel-Neutral Campaign Architecture + Regional Batches of 250 | inspecting current campaign implementation | goal: 30-step implementation per CTO directive", "timestamp": "2026-...
+  _by user - 2026-08-03_
 - **[7] [DONE] DONE: Sales Ops: PLG-SO-01A CORRECTION APPLIED. Migration 179 corrected (REVIEW_REQUIRED default, not STAN** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "done", "status": "DONE", "message": "Sales Ops: PLG-SO-01A CORRECTION APPLIED. Migration 179 corrected (REVIEW_REQUIRED default, not STANDARD). Migration 180 forward safety correction created. Firm-name requires corroboration. REVIEW_REQUIRED\u219...
   _by user - 2026-08-03_
 - **[7] [ACTIVE] START: Sales Ops: PLG-SO-01A — Correct segment backfill safety | fixing default STANDARD → REVIEW_REQUIRED** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "start", "status": "ACTIVE", "message": "Sales Ops: PLG-SO-01A \u2014 Correct segment backfill safety | fixing default STANDARD \u2192 REVIEW_REQUIRED | goal: CTO-specified safety correction", "timestamp": "2026-08-03T20:24:04.141443+00:00", "worki...
