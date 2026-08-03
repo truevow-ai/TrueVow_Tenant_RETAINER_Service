@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-01T03:52:44.507090+00:00
-- Total memories: 321
+- Generated: 2026-08-03T19:36:48.646516+00:00
+- Total memories: 333
 
-## High-importance decisions (8+, routine noise excluded) - 175
+## High-importance decisions (8+, routine noise excluded) - 179
 
 - **[10][architecture] Cross-Service Webhook Spine — All 3 Hops Live** - Hop 1 (INTAKE→RETAINER): 17/17 PASS. Hop 2 (RETAINER→SaaS Admin): DB verified, activation + duplicate guard. Hop 3 (SaaS Admin→TRACE): HMAC auth proven (401 without, passes with valid key). All hops verified against real Supabase. WebhookSignature v1.0 operational across entire spine. Per-service key isolation enforced. SQLite removed from RETAINER. RETAINER freeze SHA: 70da328.
   _by Admin - 2026-07-31 - tags: -_
@@ -220,6 +220,8 @@
   _by Admin - 2026-07-31 - tags: -_
 - **[9][bug] contact_info_sequence dropped phone+email** - Root cause: routing INTO a sequence node used _execute_node, which returned the sequence's own intro prompt and left current_node=contact_info_sequence WITHOUT priming the first sub-node. Next turn the C10 terminal guard (workflow_engine.py:518) saw no next/branches/options and returned _build_complete_response — so name-only leads jumped to 'complete', losing phone+email. FIX: _execute_node now delegates type==sequence to _execute_sequence (primes contact_name, prepends intro to first question); terminal guards treat nodes/type==sequence as a valid exit. Verified: name->phone->email chain now runs.
   _by Admin - 2026-07-14 - tags: -_
+- **[9][decision] IAM-001: TRACE Clerk-to-Supabase migration complete** - Migrated TRACE service from Clerk JWKS to Supabase Auth via truevow_auth (vendored). Replaced AUTH_MODE=clerk with AUTH_MODE=supabase. Removed _JWKSCache class. Renamed clerk_user_id to auth_user_sub in firm_users. Fail-closed — no Clerk fallback. 68/68 tests pass.
+  _by Admin - 2026-08-03 - tags: -_
 - **[9][decision] Portal grant transition classified as staging fixture blocker, not code defect** - Portal grant ownership model, schemas, trigger, and RETAINER scope restrictions are implemented and verified by code and database inspection. The full PROSPECTIVE_ENGAGEMENT -> ACTIVE_MATTER transition remains pending because the current environment lacks a complete relational fixture spanning RETAINER engagement records, Shared Platform identity/grant records, and a valid SaaS Admin client person. This is a staging test-data and integration-validation task, not a confirmed application defect. Required fixture chain: Tenant -> SaaS Admin contact -> Shared Platform portal_identity -> RETAINER candidate/workflow/engagement_package/client_portal_access -> PROSPECTIVE_ENGAGEMENT grant -> Matter activation -> trigger creates ACTIVE_MATTER grant.
   _by Admin - 2026-08-01 - tags: -_
 - **[9][decision] SaaS Admin Webhook Evidence Recorded** - SaaS Admin verifier: lib/security/webhook-auth.ts (360 lines), 16 golden fixtures at tests/security/webhook-signature.test.ts. Idempotency via command_id replay protection. Raw-body hashing (no JSON re-serialize). timingSafeEqual guard against length mismatch. Canonical paths: POST /api/v1/matters/activate (verify), POST /api/v1/matters/activated (sign). Per-relationship keys. Legacy auth rejected after 2026-09-01.
@@ -252,6 +254,10 @@
   _by Admin - 2026-07-31 - tags: -_
 - **[9][todo] xai_cloud NEXT STEPS after C->B conversion** - DONE: C->B force_message conversion, VQM wiring, per-node VAD, missing test helpers (_VOICES/_DEFAULT_VOICE/_build_collected_data_text/_vad_for_node/_VAD_*), frontend rebuild w/ End Call+event log+report download. 40/40 tests pass. NOT YET DONE / NEXT: (1) USER LIVE TEST PENDING on http://127.0.0.1:3023/demo/xai_cloud_test.html — verify no more repetition loop, check transcripts/{sid}-report.json. (2) Add 3-retry-then-escalate guard in WorkflowEngine (industry doc HIGH priority; pushback loops forever currently). (3) 'You mean X?' repair pattern (Dialogflow §2). (4) Preamble/soft-timeout filler on slow LLM-routing nodes (1.5-3.2s classification nodes: conflict_check_prior_rep, opi_jurisdiction). (5) NOT committed yet — commit after successful live test. Ref: docs/VOICE_AI_INDUSTRY_ANALYSIS.md gap table, VOICE_AGENT_CHECKLIST.md §11.
   _by Admin - 2026-07-13 - tags: -_
+- **[8][architecture] Repository LEGACY_TO_CANONICAL handles pipeline_stage translation** - leads-repository.ts has LEGACY_TO_CANONICAL and LEGACY_TO_TRANSITION maps that auto-translate legacy pipeline_stage writes to canonical states + transitionLead calls. Most write sites go through the repo and are already covered. Direct supabaseAdmin writes still need explicit canonical_pipeline_stage.
+  _by Admin - 2026-08-03 - tags: -_
+- **[8][architecture] RETAINER: Clerk→Supabase Auth migration complete** - Migrated RETAINER Service from Clerk JWKS verification to Supabase Auth via truevow_auth. Replaced app/auth/clerk.py with truevow_auth.verify_supabase_jwt(), updated config.py (clerk_* → supabase_*), updated main.py lifespan with configure() call and AUTH_MODE=supabase enforcement. Fail-closed — no Clerk fallback. Zero Clerk references remain. IAM_MIGRATION_INVENTORY.md and IAM_CLERK_ZERO_REFERENCE_REPORT.md produced in docs/iam/.
+  _by Admin - 2026-08-03 - tags: -_
 - **[8][architecture] Billing Architecture: Calls Not Minutes** - INTAKE customer pricing is per billable call (Solo: 40/5, Growth: 100/2, Team: 200/0). Duration is internal cost metric only. Product services emit usage events; Billing rates and controls entitlements; Financial Accounting creates invoices; Customer Portal displays plans/usage/invoices. INTAKE emits intake.call.completed events with session_id, duration_seconds, highest_intake_state, billing_qualification_hint. Four-layer entitlement gates. Subscription states: PENDING/TRIAL/ACTIVE/PAST_DUE/GRACE/SUSPENDED/CANCELLED/EXPIRED. Fail-closed for new commercial commitments, preserve legal records access.
   _by Admin - 2026-08-01 - tags: -_
 - **[8][architecture] TRACE Phase 2A Complete — 42 Tables on Supabase** - Migration 0017 applied: 31 new tables across evidence (source_locations, evidence_facts, fact_versions, contradiction_pairs, missing_evidence_signals), ontology (injuries, symptoms, diagnoses, treatment_episodes, incidents, claims, damages, insurance, witnesses, custody), workflow (issues, demand_drafts, demand_packages, readiness, record_completeness), shared foundation (business_events, consent_records, policy_records, jurisdiction_profiles, jurisdiction_activations), and client portal (trace_client_access_projections). 5 shared foundation services: AuthorityGate, ConsentLedger, PolicyRegistry, EventStore, StateMachine. Client portal endpoints: /api/client/v1/matters, completion, documents, requests, access. 68 tests pass.
@@ -334,6 +340,8 @@
   _by Admin - 2026-07-08 - tags: -_
 - **[8][decision] FM RLS canonical GUC + migration 010 staged** - Canonical RLS GUC for FM is app.current_tenant_id (set by app/core/database.py get_db_session). Migration 008 + compliance/001_rls_policies.sql wrongly use app.current_legal_entity_id (app never sets it). Staged migration 010_missing_tables_and_rls_fix creates approval_policy, reconciliation_adjustment_batch, treasury_sync_batch (had ORM models but no DDL anywhere) + tenant RLS, and fixes 008 treasury_bank_* RLS. Verified offline (py_compile + alembic history single head 009->010). NOT applied; DB down until 2026-06-26. Also fixed MockBillingAdapter NameError in ar billing_sync_routes.
   _by user - 2026-06-25 - tags: -_
+- **[8][dependency] D-001 Fix: enrichment_pending -> PROFILED** - enrichment_pending maps to canonical PROFILED per CTO frozen decision. Next valid transition: T004 (PROFILED -> CONTACT_ENRICHED). Reason code: legacy_state_migrated. Fixed in contracts.ts, migration 177, website-intake/manager.ts, and leads-repository.ts.
+  _by Admin - 2026-08-03 - tags: -_
 - **[8][pattern] SETTLE Authority Gate Pattern** - Every material action in SETTLE passes through a three-layer gate: (1) Authority class check - who can do what (CLIENT_AUTH for settlement decisions, ATTY_AUTH for demand/representation, STAFF_AUTH for disbursements). (2) State transition validation - is this move allowed from the current state (6 transition maps: demand_package, offer, lien, allocation, disbursement, consent). (3) Invariant validation - does this action violate any non-negotiable rule (INV-005 client settlement authority, INV-013 money reconciliation, INV-006 immutable document versions). Failure mode is always fail-closed (TV-CMP-002).
   _by Admin - 2026-07-31 - tags: -_
 - **[8][pattern] SaaS Admin: Migration Runner Pattern** - Migrations must be applied to live DB, not just written as SQL files. Pattern: node scripts/_migrate_NNN_description.js. Uses pg Client with connectionString + ssl: { rejectUnauthorized: false }. Always IF NOT EXISTS guards. Audit triggers use audit_trigger_func_v2() with actor_type='automated_job', event_category='configuration'. Never use psql \set commands with pg client.
@@ -359,7 +367,7 @@
 - **[8][todo] FIX gitignore source-leak: TrueVow-Tenant_Billing-Service** - ASSIGNED to the TrueVow-Tenant_Billing-Service agent. Real lib/ source is currently hidden from git (confirmed). Run the playbook: TrueVow_SaaS_Administration_Service/docs/01-main/ECOSYSTEM_ADVISORY_GITIGNORE_SOURCE_LEAK.md (fix .gitignore: anchor/remove stray lib/ + logs/; secrets-scan; commit recovered source in reviewed batches by explicit path; verify clean-clone build). REPORT RESULT via memory.py remember category=bug title='TrueVow-Tenant_Billing-Service gitignore RESULT' content='FIXED n files | CLEAN | BLOCKED + reason; secrets found?'. NOTE: reporting.py agent-checkin is broken — report via memory.
   _by user - 2026-06-25 - tags: gitignore, todo, assigned_
 
-## architecture (73)
+## architecture (75)
 
 - **[10] Cross-Service Webhook Spine — All 3 Hops Live** - Hop 1 (INTAKE→RETAINER): 17/17 PASS. Hop 2 (RETAINER→SaaS Admin): DB verified, activation + duplicate guard. Hop 3 (SaaS Admin→TRACE): HMAC auth proven (401 without, passes with valid key). All hops verified against real Supabase. WebhookSignature v1.0 operational across entire spine. Per-service ke...
   _by Admin - 2026-07-31_
@@ -463,6 +471,10 @@
   _by user - 2026-06-25_
 - **[9] FM Service Wired to Ecosystem** - TrueVow_Financial_Management_Service is registered in the agent ecosystem with 13 domain agents (orchestrator, code-agent, search-agent, gl-agent, ar-agent, ap-agent, payroll-agent, treasury-agent, intercompany-agent, reporting-agent, affiliates-agent, benjamin-agent, fintech-patterns). Auto-dispatc...
   _by user - 2026-06-25_
+- **[8] Repository LEGACY_TO_CANONICAL handles pipeline_stage translation** - leads-repository.ts has LEGACY_TO_CANONICAL and LEGACY_TO_TRANSITION maps that auto-translate legacy pipeline_stage writes to canonical states + transitionLead calls. Most write sites go through the repo and are already covered. Direct supabaseAdmin writes still need explicit canonical_pipeline_stag...
+  _by Admin - 2026-08-03_
+- **[8] RETAINER: Clerk→Supabase Auth migration complete** - Migrated RETAINER Service from Clerk JWKS verification to Supabase Auth via truevow_auth. Replaced app/auth/clerk.py with truevow_auth.verify_supabase_jwt(), updated config.py (clerk_* → supabase_*), updated main.py lifespan with configure() call and AUTH_MODE=supabase enforcement. Fail-closed — no ...
+  _by Admin - 2026-08-03_
 - **[8] Billing Architecture: Calls Not Minutes** - INTAKE customer pricing is per billable call (Solo: 40/5, Growth: 100/2, Team: 200/0). Duration is internal cost metric only. Product services emit usage events; Billing rates and controls entitlements; Financial Accounting creates invoices; Customer Portal displays plans/usage/invoices. INTAKE emit...
   _by Admin - 2026-08-01_
 - **[8] TRACE Phase 2A Complete — 42 Tables on Supabase** - Migration 0017 applied: 31 new tables across evidence (source_locations, evidence_facts, fact_versions, contradiction_pairs, missing_evidence_signals), ontology (injuries, symptoms, diagnoses, treatment_episodes, incidents, claims, damages, insurance, witnesses, custody), workflow (issues, demand_dr...
@@ -529,7 +541,7 @@
 - **[6] xai_cloud bridge test suite** - Created tests/test_xai_cloud_bridge.py (34 tests) for XaiCloudBridge. Mirrors test_xai_bridge.py but adapts for cloud bridge: dual registration (xai_cloud + xai_cloud_voice_agent), default voice rex (male-only), end_session returns {bridge,session_id,status} without had_audio, double-start early-ret...
   _by Admin - 2026-07-08_
 
-## decision (44)
+## decision (45)
 
 - **[10] Portal grant transition gate CLOSED — 9/9 assertions pass against live Supabase** - PROSPECTIVE_ENGAGEMENT -> READ_ONLY_HISTORY + ACTIVE_MATTER with MATTER_VIEW/MATTER_MESSAGE/MATTER_UPLOAD/REQUEST_RESPOND/DOCUMENT_DOWNLOAD verified. Shared Platform owns MATTER_* permissions. RETAINER keeps ENGAGEMENT_HISTORY only. TRACE consumes tenant-scoped projection linked to canonical grant. ...
   _by Admin - 2026-08-01_
@@ -583,6 +595,8 @@
   _by user - 2026-06-25_
 - **[10] CONNECT Archived - DRAFT Renamed to LEVERAGE - INTAKE Updated** - CONNECT (attorney referral network) is decommissioned and archived from the ecosystem permanently - no longer on TrueVow agenda. DRAFT has been completely replaced by LEVERAGE everywhere (same service, renamed). INTAKE (Tenant Application Service) is no longer just FSM NLP - it is now FSM applied to...
   _by user - 2026-06-25_
+- **[9] IAM-001: TRACE Clerk-to-Supabase migration complete** - Migrated TRACE service from Clerk JWKS to Supabase Auth via truevow_auth (vendored). Replaced AUTH_MODE=clerk with AUTH_MODE=supabase. Removed _JWKSCache class. Renamed clerk_user_id to auth_user_sub in firm_users. Fail-closed — no Clerk fallback. 68/68 tests pass.
+  _by Admin - 2026-08-03_
 - **[9] Portal grant transition classified as staging fixture blocker, not code defect** - Portal grant ownership model, schemas, trigger, and RETAINER scope restrictions are implemented and verified by code and database inspection. The full PROSPECTIVE_ENGAGEMENT -> ACTIVE_MATTER transition remains pending because the current environment lacks a complete relational fixture spanning RETAI...
   _by Admin - 2026-08-01_
 - **[9] SaaS Admin Webhook Evidence Recorded** - SaaS Admin verifier: lib/security/webhook-auth.ts (360 lines), 16 golden fixtures at tests/security/webhook-signature.test.ts. Idempotency via command_id replay protection. Raw-body hashing (no JSON re-serialize). timingSafeEqual guard against length mismatch. Canonical paths: POST /api/v1/matters/a...
@@ -620,7 +634,7 @@
 - **[4] All 18 Active Services Wired to Ecosystem + 1 Archived** - 18 of 18 active TrueVow services wired with AGENTS.md + ecosystem integration. 1 archived: CONNECT (decommissioned June 2026, no longer on TrueVow agenda). Every agent opening any active service reads ecosystem preamble: check in with CTO orchestrator, dispatch tasks, remember decisions, report stat...
   _by user - 2026-06-25_
 
-## dependency (3)
+## dependency (4)
 
 - **[9] Golden Fixture Tests** - tests/security/webhook-signature.test.ts has 16 golden fixture tests that must pass identically in TypeScript and Python. Covers: golden verify, deterministic HMAC, sign+verify roundtrip, expired, future, tampered, wrong path, trailing slash, reserialized JSON, missing headers, non-numeric timestamp...
   _by Admin - 2026-07-31_
@@ -628,6 +642,8 @@
   _by Admin - 2026-07-31_
 - **[9] WebhookSignature v1.0** - HMAC signing implemented: lib/security/webhook-auth.ts (TS ref), app/auth/deps.py (Python verify). Signing string: timestamp:method:path:bodyHash. Replay protection: 5min window. Key rotation via TRUEVOW_WEBHOOK_SECONDARY_KEYS.
   _by Admin - 2026-07-31_
+- **[8] D-001 Fix: enrichment_pending -> PROFILED** - enrichment_pending maps to canonical PROFILED per CTO frozen decision. Next valid transition: T004 (PROFILED -> CONTACT_ENRICHED). Reason code: legacy_state_migrated. Fixed in contracts.ts, migration 177, website-intake/manager.ts, and leads-repository.ts.
+  _by Admin - 2026-08-03_
 
 ## convention (5)
 
@@ -713,7 +729,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (139)
+## context (146)
 
 - **[10] TRACE Pilot Review — No Defects Found** - Pilot review D1-D4: (D1) trailing-slash — SaaS Admin issue, TRACE verifier uses exact path match, no normalization. (D3) shared secret fallback — TRACE has zero legacy bearer or global shared-secret path, pure HMAC per-link keys only. (D4) INTAKE contract test — not TRACE's issue. TRACE is clean for...
   _by Admin - 2026-07-31_
@@ -725,12 +741,24 @@
   _by Admin - 2026-07-27_
 - **[10] TRACE documentation and memory updated July 24 2026** - All documentation updated: AGENTS.md (250+ lines with full service reference), README.md (updated stack/status), TRACE-Agent-Coding-Instructions.md (300+ line Appendix A with architecture, API reference, data flow, troubleshooting). Platform map updated (TRACE: port 3036, active). DEVELOPERS.md upda...
   _by Admin - 2026-07-24_
+- **[8] Git Scan: 2026-08-03T19:16:37** - { "summary": { "timestamp": "2026-08-03T19:16:37.011042+00:00", "total": 14, "clean": 2, "dirty": 10, "missing": 2, "errors": 0, "stale_services": 12, "active_services": 2, "status_breakdown": { "HEALTHY": 1, "ACTIVE": 0, "STALE": 3, "NEGLECTED": 9, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY"...
+  _by Admin - 2026-08-03_
+- **[8] Git Scan: 2026-08-03T19:14:33** - { "summary": { "timestamp": "2026-08-03T19:14:33.413605+00:00", "total": 14, "clean": 2, "dirty": 10, "missing": 2, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 4, "NEGLECTED": 10, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
+  _by Admin - 2026-08-03_
+- **[8] Git Scan: 2026-08-03T19:10:06** - { "summary": { "timestamp": "2026-08-03T19:10:06.063452+00:00", "total": 14, "clean": 2, "dirty": 10, "missing": 2, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 4, "NEGLECTED": 10, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
+  _by Admin - 2026-08-03_
 - **[8] Git Scan: 2026-07-31T03:44:13** - { "summary": { "timestamp": "2026-07-31T03:44:13.633577+00:00", "total": 14, "clean": 5, "dirty": 8, "missing": 1, "errors": 0, "stale_services": 9, "active_services": 5, "status_breakdown": { "HEALTHY": 4, "ACTIVE": 0, "STALE": 2, "NEGLECTED": 7, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY": ...
   _by Admin - 2026-07-31_
 - **[8] Git Scan: 2026-07-27T15:23:35** - { "summary": { "timestamp": "2026-07-27T15:23:35.204323+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 10, "active_services": 4, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 3, "STALE": 1, "NEGLECTED": 9, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY"...
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: Sales Ops: D-001 fixed (enrichment_pending -> PROFILED mapping). Added legacy_state_migrated reason** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "done", "status": "DONE", "message": "Sales Ops: D-001 fixed (enrichment_pending -> PROFILED mapping). Added legacy_state_migrated reason code. Phase 5 partial: fixed 2 direct supabaseAdmin writes (multi-channel-sequence-service, onboarding/route)....
+  _by user - 2026-08-03_
+- **[7] [ACTIVE] START: Sales Ops: Phase 3 complete (state migration + HMAC + handoff), resuming to advance Phase 4/5 pipeli** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "start", "status": "ACTIVE", "message": "Sales Ops: Phase 3 complete (state migration + HMAC + handoff), resuming to advance Phase 4/5 pipeline convergence | last commit: REST API pipeline runner + enrichment TX | goal: identify next phase, continu...
+  _by user - 2026-08-03_
+- **[7] [ACTIVE] START: SaaS Admin: resuming from IAM branch saasadmin/iam-supabase-auth | last: PLG-SA-01 durable onboardin** - {"agent_id": "TrueVow_SaaS_Administration_Service", "action": "start", "status": "ACTIVE", "message": "SaaS Admin: resuming from IAM branch saasadmin/iam-supabase-auth | last: PLG-SA-01 durable onboarding + IAM reconciliation | goal: verify current state, run truth gates, determine next action", "ti...
+  _by user - 2026-08-03_
 - **[7] [DONE] DONE: SaaS Admin: pilot validation — 3-hop DB verification, Gate 1 HMAC fix, portal grant 9/9 PASS, produc** - {"agent_id": "TrueVow_SaaS_Administration_Service", "action": "done", "status": "DONE", "message": "SaaS Admin: pilot validation \u2014 3-hop DB verification, Gate 1 HMAC fix, portal grant 9/9 PASS, product entitlements 1727 rows, webhook hardening D1+D3 | outcome: Engineering APPROVED, pilot NOT YE...
   _by user - 2026-08-01_
 - **[7] [DONE] DONE: INTAKE: deployed 4 engine fixes for transfer re-engagement + billing architecture saved to memory |** - {"agent_id": "TrueVow_Tenant_Application_Service", "action": "done", "status": "DONE", "message": "INTAKE: deployed 4 engine fixes for transfer re-engagement + billing architecture saved to memory | outcome: tests pass (38/38), deployed to Fly, call analysis completed | learned: (1) conflict_check_p...
@@ -861,6 +889,8 @@
   _by user - 2026-06-25_
 - **[6] Documentation Status: TrueVow_Documentation is Stale** - TrueVow_Documentation/ contains older documentation (Word docs, markdown exports) including TrueVow_PRD.md, Complete System Technical Documentation, Financial Management guides, and Billing Service updates. These are outdated - they reflect the old architecture with DRAFT naming, CONNECT active, and...
   _by user - 2026-06-25_
+- **[5] Dispatch: Resume SETTLE nationwide scraping expansion session 999bfecf — continue with Mor** - Dispatched to skill='' phase='build' personas=[] tool=
+  _by Admin - 2026-08-03_
 - **[5] Dispatch: fix D4: INTAKE webhook signature contract tests — add golden fixture test file** - Dispatched to skill='incremental-implementation' phase='build' personas=[] tool=
   _by Admin - 2026-07-31_
 - **[5] Dispatch: fix D3: RETAINER per-service key isolation — remove global-secret fallback, enfo** - Dispatched to skill='debugging-and-error-recovery' phase='verify' personas=[] tool=
@@ -994,7 +1024,7 @@
 - **[4] [ACTIVE] START: Orchestrator CTO: monitoring all 19 services, building reporting dashboard** - {"agent_id": "orchestrator", "action": "start", "status": "ACTIVE", "message": "Orchestrator CTO: monitoring all 19 services, building reporting dashboard", "timestamp": "2026-06-25T02:06:16.484425+00:00", "working_dir": "C:\\Users\\yasha\\OneDrive\\Documents\\TrueVow\\Cursor"}
   _by user - 2026-06-25_
 
-## todo (13)
+## todo (14)
 
 - **[10] Release Candidate v3 freeze — required before pilot re-evaluation** - D1 (SaaS Admin exact-path verification, S2), D3 (RETAINER key isolation, S1), D4 (INTAKE contract test, S2) must all be fixed, independently reviewed, and committed. Then freeze v3 with SHAs + image digests. Then deploy staging, execute all 20 QA phases, CTO architecture review, final recommendation...
   _by Admin - 2026-07-31_
@@ -1012,6 +1042,8 @@
   _by user - 2026-06-25_
 - **[8] FIX gitignore source-leak: TrueVow-Tenant_Billing-Service** - ASSIGNED to the TrueVow-Tenant_Billing-Service agent. Real lib/ source is currently hidden from git (confirmed). Run the playbook: TrueVow_SaaS_Administration_Service/docs/01-main/ECOSYSTEM_ADVISORY_GITIGNORE_SOURCE_LEAK.md (fix .gitignore: anchor/remove stray lib/ + logs/; secrets-scan; commit reco...
   _by user - 2026-06-25_
+- **[5] Phase 5: Remaining ungoverned pipeline_stage writes** - 26+ legacy pipeline_stage write sites identified. Most go through leadsRepo.update() which auto-translates. Remaining direct supabaseAdmin writes: lead-promotion-service (waitlist path unmapped), test-call-service.ts, demos/request/route.ts, demos/book-discovery/route.ts (lead create). Also onboardi...
+  _by Admin - 2026-08-03_
 - **[1] FIXED: gitignore source-leak: Tenant App** - FIXED July 1.
   _by user - 2026-07-01_
 - **[1] FIXED: gitignore source-leak: FM** - FIXED July 1.
