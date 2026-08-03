@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-03T21:58:21.392470+00:00
-- Total memories: 355
+- Generated: 2026-08-03T23:00:54.878036+00:00
+- Total memories: 360
 
-## High-importance decisions (8+, routine noise excluded) - 186
+## High-importance decisions (8+, routine noise excluded) - 187
 
 - **[10][architecture] Cross-Service Webhook Spine — All 3 Hops Live** - Hop 1 (INTAKE→RETAINER): 17/17 PASS. Hop 2 (RETAINER→SaaS Admin): DB verified, activation + duplicate guard. Hop 3 (SaaS Admin→TRACE): HMAC auth proven (401 without, passes with valid key). All hops verified against real Supabase. WebhookSignature v1.0 operational across entire spine. Per-service key isolation enforced. SQLite removed from RETAINER. RETAINER freeze SHA: 70da328.
   _by Admin - 2026-07-31 - tags: -_
@@ -222,6 +222,8 @@
   _by Admin - 2026-07-31 - tags: -_
 - **[9][bug] contact_info_sequence dropped phone+email** - Root cause: routing INTO a sequence node used _execute_node, which returned the sequence's own intro prompt and left current_node=contact_info_sequence WITHOUT priming the first sub-node. Next turn the C10 terminal guard (workflow_engine.py:518) saw no next/branches/options and returned _build_complete_response — so name-only leads jumped to 'complete', losing phone+email. FIX: _execute_node now delegates type==sequence to _execute_sequence (primes contact_name, prepends intro to first question); terminal guards treat nodes/type==sequence as a valid exit. Verified: name->phone->email chain now runs.
   _by Admin - 2026-07-14 - tags: -_
+- **[9][decision] Pre-handoff security: local auth guard + HITL authorization verified** - lib/auth.ts: local dev UUID blocked in production/staging (NODE_ENV guard). Added requireInternalRole() - rejects tenant users. HITL route now uses requireInternalRole() instead of bare requireAuth(). Audit records actual actor (not assignedTo). SUPABASE_SERVICE_ROLE_KEY server-side only - no NEXT_PUBLIC_ prefix. 660 TS + 17 Python = 677 passed, 0 failed.
+  _by Admin - 2026-08-03 - tags: -_
 - **[9][decision] PLG-SO-02B: All 5 failing tests fixed** - auth-middleware.test.ts (local mode UUID), scraping-orchestrator.test.ts (too-short firm names), cold-outreach-workers.test.ts (Supabase mocks), hitl-approvals.test.ts (createClient mock + assert fix). Full regression: 47 suites, 660 passed, 0 failed, 5 skipped. UI tests excluded from count (rendering env issues, not code defects).
   _by Admin - 2026-08-03 - tags: -_
 - **[9][decision] PLG-SO-02A: DB invariants enforce 250-limit and ACTIVE-batch immutability** - Migration 182 adds: trg_batch_member_limit (advisory lock, 250-max), trg_prevent_active_batch_mutation (12 immutable fields), trg_prevent_member_delete (membership freeze), governed_remove_batch_member() (soft-delete), v_batch_size_mismatches (0 rows expected). Full regression: 563 TS + 17 Python. PLG suites: 139/139 PASS.
@@ -559,7 +561,7 @@
 - **[6] xai_cloud bridge test suite** - Created tests/test_xai_cloud_bridge.py (34 tests) for XaiCloudBridge. Mirrors test_xai_bridge.py but adapts for cloud bridge: dual registration (xai_cloud + xai_cloud_voice_agent), default voice rex (male-only), end_session returns {bridge,session_id,status} without had_audio, double-start early-ret...
   _by Admin - 2026-07-08_
 
-## decision (49)
+## decision (50)
 
 - **[10] Portal grant transition gate CLOSED — 9/9 assertions pass against live Supabase** - PROSPECTIVE_ENGAGEMENT -> READ_ONLY_HISTORY + ACTIVE_MATTER with MATTER_VIEW/MATTER_MESSAGE/MATTER_UPLOAD/REQUEST_RESPOND/DOCUMENT_DOWNLOAD verified. Shared Platform owns MATTER_* permissions. RETAINER keeps ENGAGEMENT_HISTORY only. TRACE consumes tenant-scoped projection linked to canonical grant. ...
   _by Admin - 2026-08-01_
@@ -613,6 +615,8 @@
   _by user - 2026-06-25_
 - **[10] CONNECT Archived - DRAFT Renamed to LEVERAGE - INTAKE Updated** - CONNECT (attorney referral network) is decommissioned and archived from the ecosystem permanently - no longer on TrueVow agenda. DRAFT has been completely replaced by LEVERAGE everywhere (same service, renamed). INTAKE (Tenant Application Service) is no longer just FSM NLP - it is now FSM applied to...
   _by user - 2026-06-25_
+- **[9] Pre-handoff security: local auth guard + HITL authorization verified** - lib/auth.ts: local dev UUID blocked in production/staging (NODE_ENV guard). Added requireInternalRole() - rejects tenant users. HITL route now uses requireInternalRole() instead of bare requireAuth(). Audit records actual actor (not assignedTo). SUPABASE_SERVICE_ROLE_KEY server-side only - no NEXT_P...
+  _by Admin - 2026-08-03_
 - **[9] PLG-SO-02B: All 5 failing tests fixed** - auth-middleware.test.ts (local mode UUID), scraping-orchestrator.test.ts (too-short firm names), cold-outreach-workers.test.ts (Supabase mocks), hitl-approvals.test.ts (createClient mock + assert fix). Full regression: 47 suites, 660 passed, 0 failed, 5 skipped. UI tests excluded from count (renderi...
   _by Admin - 2026-08-03_
 - **[9] PLG-SO-02A: DB invariants enforce 250-limit and ACTIVE-batch immutability** - Migration 182 adds: trg_batch_member_limit (advisory lock, 250-max), trg_prevent_active_batch_mutation (12 immutable fields), trg_prevent_member_delete (membership freeze), governed_remove_batch_member() (soft-delete), v_batch_size_mismatches (0 rows expected). Full regression: 563 TS + 17 Python. P...
@@ -757,7 +761,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (161)
+## context (165)
 
 - **[10] TRACE Pilot Review — No Defects Found** - Pilot review D1-D4: (D1) trailing-slash — SaaS Admin issue, TRACE verifier uses exact path match, no normalization. (D3) shared secret fallback — TRACE has zero legacy bearer or global shared-secret path, pure HMAC per-link keys only. (D4) INTAKE contract test — not TRACE's issue. TRACE is clean for...
   _by Admin - 2026-07-31_
@@ -781,6 +785,14 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: Sales Ops: PLG-SO-02C READY FOR STAGING. Local auth guard production-safe (NODE_ENV check). HITL use** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "done", "status": "DONE", "message": "Sales Ops: PLG-SO-02C READY FOR STAGING. Local auth guard production-safe (NODE_ENV check). HITL uses requireInternalRole() - blocks tenant users + records actual actor. Service key server-only. Staging handoff...
+  _by user - 2026-08-03_
+- **[7] [ACTIVE] START: Sales Ops: PLG-SO-02C — Pre-handoff security checks + staging prep | verifying local auth guard + HI** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "start", "status": "ACTIVE", "message": "Sales Ops: PLG-SO-02C \u2014 Pre-handoff security checks + staging prep | verifying local auth guard + HITL authorization | goal: staging-ready handoff", "timestamp": "2026-08-03T22:56:08.694032+00:00", "wor...
+  _by user - 2026-08-03_
+- **[7] [DONE] DONE: SaaS Admin: Aligned plan codes with Billing Service constants.py — SOLO/PIPELINE/OPERATIONS replaces** - {"agent_id": "TrueVow_SaaS_Administration_Service", "action": "done", "status": "DONE", "message": "SaaS Admin: Aligned plan codes with Billing Service constants.py \u2014 SOLO/PIPELINE/OPERATIONS replaces INTAKE_SOLO/INTAKE_GROWTH/INTAKE_TEAM, added platform product codes (LEVERAGE/SETTLE/TRACE/COM...
+  _by user - 2026-08-03_
+- **[7] [DONE] DONE: SaaS Admin: PLG-SA-02R CLOSED — corrected commercial authority: migration 183 deleted (was Billing-d** - {"agent_id": "TrueVow_SaaS_Administration_Service", "action": "done", "status": "DONE", "message": "SaaS Admin: PLG-SA-02R CLOSED \u2014 corrected commercial authority: migration 183 deleted (was Billing-domain tables in wrong repo), migration 184 applied (drops 4 misplaced tables, creates tenant_bi...
+  _by user - 2026-08-03_
 - **[7] [DONE] DONE: Sales Ops: PLG-SO-02B TEST FIXES APPLIED. 4 failing test suites fixed: auth-middleware (local mode U** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "done", "status": "DONE", "message": "Sales Ops: PLG-SO-02B TEST FIXES APPLIED. 4 failing test suites fixed: auth-middleware (local mode UUID), scraping-orchestrator (firm_name threshold), cold-outreach-workers (Supabase mock), hitl-approvals (crea...
   _by user - 2026-08-03_
 - **[7] [DONE] DONE: SaaS Admin: PLG-SA-02R CORRECTED — migration 183 violations identified (plan catalogue, trial offers** - {"agent_id": "TrueVow_SaaS_Administration_Service", "action": "done", "status": "DONE", "message": "SaaS Admin: PLG-SA-02R CORRECTED \u2014 migration 183 violations identified (plan catalogue, trial offers, usage ledger were misplaced Billing authority), corrective migration 184 applied (dropped 4 B...
