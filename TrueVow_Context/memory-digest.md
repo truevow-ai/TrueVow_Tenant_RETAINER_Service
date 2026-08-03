@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-03T19:36:48.646516+00:00
-- Total memories: 333
+- Generated: 2026-08-03T20:00:38.331364+00:00
+- Total memories: 338
 
-## High-importance decisions (8+, routine noise excluded) - 179
+## High-importance decisions (8+, routine noise excluded) - 182
 
 - **[10][architecture] Cross-Service Webhook Spine — All 3 Hops Live** - Hop 1 (INTAKE→RETAINER): 17/17 PASS. Hop 2 (RETAINER→SaaS Admin): DB verified, activation + duplicate guard. Hop 3 (SaaS Admin→TRACE): HMAC auth proven (401 without, passes with valid key). All hops verified against real Supabase. WebhookSignature v1.0 operational across entire spine. Per-service key isolation enforced. SQLite removed from RETAINER. RETAINER freeze SHA: 70da328.
   _by Admin - 2026-07-31 - tags: -_
@@ -254,6 +254,8 @@
   _by Admin - 2026-07-31 - tags: -_
 - **[9][todo] xai_cloud NEXT STEPS after C->B conversion** - DONE: C->B force_message conversion, VQM wiring, per-node VAD, missing test helpers (_VOICES/_DEFAULT_VOICE/_build_collected_data_text/_vad_for_node/_VAD_*), frontend rebuild w/ End Call+event log+report download. 40/40 tests pass. NOT YET DONE / NEXT: (1) USER LIVE TEST PENDING on http://127.0.0.1:3023/demo/xai_cloud_test.html — verify no more repetition loop, check transcripts/{sid}-report.json. (2) Add 3-retry-then-escalate guard in WorkflowEngine (industry doc HIGH priority; pushback loops forever currently). (3) 'You mean X?' repair pattern (Dialogflow §2). (4) Preamble/soft-timeout filler on slow LLM-routing nodes (1.5-3.2s classification nodes: conflict_check_prior_rep, opi_jurisdiction). (5) NOT committed yet — commit after successful live test. Ref: docs/VOICE_AI_INDUSTRY_ANALYSIS.md gap table, VOICE_AGENT_CHECKLIST.md §11.
   _by Admin - 2026-07-13 - tags: -_
+- **[8][architecture] PLG-SO-01: Segment classification services** - Created SegmentClassifier (governed classification with audit trail), CampaignEligibilityEvaluator (segment+lifecycle+suppression checks), SpecialCohortPipeline (8-status management pipeline), ApplicationRouter (segment-aware routing), HandoffGuard (6 negative proofs). All write to lead_segment_classifications audit table.
+  _by Admin - 2026-08-03 - tags: -_
 - **[8][architecture] Repository LEGACY_TO_CANONICAL handles pipeline_stage translation** - leads-repository.ts has LEGACY_TO_CANONICAL and LEGACY_TO_TRANSITION maps that auto-translate legacy pipeline_stage writes to canonical states + transitionLead calls. Most write sites go through the repo and are already covered. Direct supabaseAdmin writes still need explicit canonical_pipeline_stage.
   _by Admin - 2026-08-03 - tags: -_
 - **[8][architecture] RETAINER: Clerk→Supabase Auth migration complete** - Migrated RETAINER Service from Clerk JWKS verification to Supabase Auth via truevow_auth. Replaced app/auth/clerk.py with truevow_auth.verify_supabase_jwt(), updated config.py (clerk_* → supabase_*), updated main.py lifespan with configure() call and AUTH_MODE=supabase enforcement. Fail-closed — no Clerk fallback. Zero Clerk references remain. IAM_MIGRATION_INVENTORY.md and IAM_CLERK_ZERO_REFERENCE_REPORT.md produced in docs/iam/.
@@ -320,6 +322,8 @@
   _by Admin - 2026-07-08 - tags: -_
 - **[8][bug] gitignore source-leak ECOSYSTEM AUDIT results (June 25) — which repos still affected** - Audited all sibling git repos for the gitignore source-leak (advisory 64bc43bf). NONE have run the fix yet (advisory just issued). CONFIRMED UNFIXED SOURCE LEAKS (real lib/ source hidden from git): TrueVow_Financial_Management_Service (frontend/lib + frontend/__tests__/lib), TrueVow_Tenant_Application_Service (app/portal/lib, dograh server ui/src/lib, scripts/lib), TrueVow-Tenant_Billing-Service (ui/lib; ALSO its .gitignore has an embedded NULL/control byte — corrupted). LATENT (dangerous unanchored lib/ rule present but no active source leak yet): TrueVow_Internal_Ops_Service, TrueVow_Tenant_SETTLE-Service, TrueVow_Tenant_LEVERAGE_Service. NOT GIT REPOS AT ALL (no version control — separate severe issue): TrueVow_Dialogflow_Intake_Service, TrueVow_Platform_Analytics_Service, TrueVow_Tenant_VERIFY_Service, TrueVow_TWIML_SoftPhone_App. CLEAN: Website, Customer_Success_CORE, First_Line_Support, Sales_Ops, Tenant_CONNECT, Customer_Portal, cartesia_test. SaaS_Admin already fixed. Each affected repo agent: run docs/01-main/ECOSYSTEM_ADVISORY_GITIGNORE_SOURCE_LEAK.md (in SaaS Admin).
   _by user - 2026-06-25 - tags: gitignore, audit, ecosystem, cross-service_
+- **[8][convention] Score, segment, lifecycle are separate dimensions** - Per PLG-SO-01: lead_score is quality factor, segment_code is routing key, canonical_pipeline_stage is lifecycle. None replaces the others. High-scoring special-cohort lead stays special — never auto-promoted to standard.
+  _by Admin - 2026-08-03 - tags: -_
 - **[8][convention] Cross-Service Contract Rollout** - INTAKE, RETAINER, TRACE compliant with WebhookSignature v1.0. SETTLE contract-aligned. SaaS Admin evidence pending. Live three-hop E2E test chain: INTAKE signs candidate-submitted -> RETAINER validates -> RETAINER signs ActivateMatterCommand -> SaaS Admin validates -> SaaS Admin signs matter.activated -> TRACE validates. Legacy Bearer cutoff: 2026-09-01.
   _by Admin - 2026-07-31 - tags: -_
 - **[8][convention] RETAINER OpenAPI Contract Pipeline** - npm run generate:retainer-api stores hash of lib/api/retainer/openapi.yaml. npm run check:retainer-contract validates CI drift. Types in lib/api/retainer/generated/schema.ts must remain 1:1 with Pydantic schemas.
@@ -328,6 +332,8 @@
   _by Admin - 2026-07-31 - tags: -_
 - **[8][convention] Golden Fixture Cross-Repository Testing** - Created app/shared/contracts.py with frozen contract versions and deterministic golden fixture (make_golden_envelope, make_golden_fixture_json, compute_golden_hmac). Every TrueVow product must deserialize the same 18-field EventEnvelope and compute the same HMAC over the exact raw fixture. Tests at tests/test_golden_fixtures.py validate envelope serialization, roundtrip deserialization, HMAC determinism, evidence manifest completeness (9 refs), and jurisdiction separation (global vs tenant).
   _by Admin - 2026-07-31 - tags: -_
+- **[8][decision] PLG-SO-01: Restore STANDARD/SPECIAL_COHORT segmentation** - CTO directive resolved BLOCKER-3 ambiguity: removed sensitive-attribute INFERENCE, preserved SPECIAL_COHORT BUSINESS classification. Migration 179 creates segment_classification columns, special_cohort_pipeline table, campaign_eligibility. Score is now eligibility factor within segment context — not a routing decision. Score >= 70 as sole routing rule REMOVED.
+  _by Admin - 2026-08-03 - tags: -_
 - **[8][decision] Transfer Re-engagement: contact_early not contact_info** - When caller says 'speak to attorney', the global _detect_transfer_request fires and routes to _build_transfer_response. This used contact_info_sequence (end-of-path) which jumped to intake_summary. Fixed to use contact_early_sequence (phone+name) which routes to route_to_ladder → identify_practice_area. contact_early guard added to skip when name+phone already captured. route_to_ladder changed from conflict_check_prior_rep to identify_practice_area. Story lock at IPA now routes to conflict_check_prior_rep instead of direct jurisdiction. Global transfer guard prevents re-trigger after contact captured.
   _by Admin - 2026-08-01 - tags: -_
 - **[8][decision] TRACE portal module architecture decisions** - TRACE frontend integrated into Customer Portal (Next.js 14, port 3031, Clerk App3). LEVERAGE hidden from sidebar, replaced by TRACE. Features: 6 pages (landing, cases list, new case wizard, case detail, providers, chronology). Portal-to-backend communication via universal proxy route app/api/trace/[...path]/route.ts that generates HS256 JWT using Node crypto (zero dependencies). Feature gating via billing service with dev fallback. Tenant resolution via useTenantDev() with NEXT_PUBLIC_DEV_TENANT_ID fallback for users without Clerk tenant assignment. DocuSeal and Documo both offline in dev -- case stage advancement forced via DB update for testing.
@@ -367,7 +373,7 @@
 - **[8][todo] FIX gitignore source-leak: TrueVow-Tenant_Billing-Service** - ASSIGNED to the TrueVow-Tenant_Billing-Service agent. Real lib/ source is currently hidden from git (confirmed). Run the playbook: TrueVow_SaaS_Administration_Service/docs/01-main/ECOSYSTEM_ADVISORY_GITIGNORE_SOURCE_LEAK.md (fix .gitignore: anchor/remove stray lib/ + logs/; secrets-scan; commit recovered source in reviewed batches by explicit path; verify clean-clone build). REPORT RESULT via memory.py remember category=bug title='TrueVow-Tenant_Billing-Service gitignore RESULT' content='FIXED n files | CLEAN | BLOCKED + reason; secrets found?'. NOTE: reporting.py agent-checkin is broken — report via memory.
   _by user - 2026-06-25 - tags: gitignore, todo, assigned_
 
-## architecture (75)
+## architecture (76)
 
 - **[10] Cross-Service Webhook Spine — All 3 Hops Live** - Hop 1 (INTAKE→RETAINER): 17/17 PASS. Hop 2 (RETAINER→SaaS Admin): DB verified, activation + duplicate guard. Hop 3 (SaaS Admin→TRACE): HMAC auth proven (401 without, passes with valid key). All hops verified against real Supabase. WebhookSignature v1.0 operational across entire spine. Per-service ke...
   _by Admin - 2026-07-31_
@@ -471,6 +477,8 @@
   _by user - 2026-06-25_
 - **[9] FM Service Wired to Ecosystem** - TrueVow_Financial_Management_Service is registered in the agent ecosystem with 13 domain agents (orchestrator, code-agent, search-agent, gl-agent, ar-agent, ap-agent, payroll-agent, treasury-agent, intercompany-agent, reporting-agent, affiliates-agent, benjamin-agent, fintech-patterns). Auto-dispatc...
   _by user - 2026-06-25_
+- **[8] PLG-SO-01: Segment classification services** - Created SegmentClassifier (governed classification with audit trail), CampaignEligibilityEvaluator (segment+lifecycle+suppression checks), SpecialCohortPipeline (8-status management pipeline), ApplicationRouter (segment-aware routing), HandoffGuard (6 negative proofs). All write to lead_segment_clas...
+  _by Admin - 2026-08-03_
 - **[8] Repository LEGACY_TO_CANONICAL handles pipeline_stage translation** - leads-repository.ts has LEGACY_TO_CANONICAL and LEGACY_TO_TRANSITION maps that auto-translate legacy pipeline_stage writes to canonical states + transitionLead calls. Most write sites go through the repo and are already covered. Direct supabaseAdmin writes still need explicit canonical_pipeline_stag...
   _by Admin - 2026-08-03_
 - **[8] RETAINER: Clerk→Supabase Auth migration complete** - Migrated RETAINER Service from Clerk JWKS verification to Supabase Auth via truevow_auth. Replaced app/auth/clerk.py with truevow_auth.verify_supabase_jwt(), updated config.py (clerk_* → supabase_*), updated main.py lifespan with configure() call and AUTH_MODE=supabase enforcement. Fail-closed — no ...
@@ -541,7 +549,7 @@
 - **[6] xai_cloud bridge test suite** - Created tests/test_xai_cloud_bridge.py (34 tests) for XaiCloudBridge. Mirrors test_xai_bridge.py but adapts for cloud bridge: dual registration (xai_cloud + xai_cloud_voice_agent), default voice rex (male-only), end_session returns {bridge,session_id,status} without had_audio, double-start early-ret...
   _by Admin - 2026-07-08_
 
-## decision (45)
+## decision (46)
 
 - **[10] Portal grant transition gate CLOSED — 9/9 assertions pass against live Supabase** - PROSPECTIVE_ENGAGEMENT -> READ_ONLY_HISTORY + ACTIVE_MATTER with MATTER_VIEW/MATTER_MESSAGE/MATTER_UPLOAD/REQUEST_RESPOND/DOCUMENT_DOWNLOAD verified. Shared Platform owns MATTER_* permissions. RETAINER keeps ENGAGEMENT_HISTORY only. TRACE consumes tenant-scoped projection linked to canonical grant. ...
   _by Admin - 2026-08-01_
@@ -619,6 +627,8 @@
   _by Admin - 2026-07-03_
 - **[9] CONNECT Service Deleted** - TrueVow_Tenant_CONNECT_Service directory deleted. Removed from config.yaml services block and .gitignore. Was archived June 2026 — attorney referral network, no longer on TrueVow's agenda.
   _by user - 2026-07-01_
+- **[8] PLG-SO-01: Restore STANDARD/SPECIAL_COHORT segmentation** - CTO directive resolved BLOCKER-3 ambiguity: removed sensitive-attribute INFERENCE, preserved SPECIAL_COHORT BUSINESS classification. Migration 179 creates segment_classification columns, special_cohort_pipeline table, campaign_eligibility. Score is now eligibility factor within segment context — not...
+  _by Admin - 2026-08-03_
 - **[8] Transfer Re-engagement: contact_early not contact_info** - When caller says 'speak to attorney', the global _detect_transfer_request fires and routes to _build_transfer_response. This used contact_info_sequence (end-of-path) which jumped to intake_summary. Fixed to use contact_early_sequence (phone+name) which routes to route_to_ladder → identify_practice_a...
   _by Admin - 2026-08-01_
 - **[8] TRACE portal module architecture decisions** - TRACE frontend integrated into Customer Portal (Next.js 14, port 3031, Clerk App3). LEVERAGE hidden from sidebar, replaced by TRACE. Features: 6 pages (landing, cases list, new case wizard, case detail, providers, chronology). Portal-to-backend communication via universal proxy route app/api/trace/[...
@@ -645,10 +655,12 @@
 - **[8] D-001 Fix: enrichment_pending -> PROFILED** - enrichment_pending maps to canonical PROFILED per CTO frozen decision. Next valid transition: T004 (PROFILED -> CONTACT_ENRICHED). Reason code: legacy_state_migrated. Fixed in contracts.ts, migration 177, website-intake/manager.ts, and leads-repository.ts.
   _by Admin - 2026-08-03_
 
-## convention (5)
+## convention (6)
 
 - **[10] zero hardcoded tunable values** - RULE: This is a multi-tenant platform. Never hardcode ANY value that may need adjustment per-tenant, per-firm, or per-environment. All tunables must live in one of: (1) tenant_config, (2) workflow JSON config, or (3) named module-level constants with clear documentation. Bare numbers, strings, or ID...
   _by Admin - 2026-07-15_
+- **[8] Score, segment, lifecycle are separate dimensions** - Per PLG-SO-01: lead_score is quality factor, segment_code is routing key, canonical_pipeline_stage is lifecycle. None replaces the others. High-scoring special-cohort lead stays special — never auto-promoted to standard.
+  _by Admin - 2026-08-03_
 - **[8] Cross-Service Contract Rollout** - INTAKE, RETAINER, TRACE compliant with WebhookSignature v1.0. SETTLE contract-aligned. SaaS Admin evidence pending. Live three-hop E2E test chain: INTAKE signs candidate-submitted -> RETAINER validates -> RETAINER signs ActivateMatterCommand -> SaaS Admin validates -> SaaS Admin signs matter.activat...
   _by Admin - 2026-07-31_
 - **[8] RETAINER OpenAPI Contract Pipeline** - npm run generate:retainer-api stores hash of lib/api/retainer/openapi.yaml. npm run check:retainer-contract validates CI drift. Types in lib/api/retainer/generated/schema.ts must remain 1:1 with Pydantic schemas.
@@ -729,7 +741,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (146)
+## context (148)
 
 - **[10] TRACE Pilot Review — No Defects Found** - Pilot review D1-D4: (D1) trailing-slash — SaaS Admin issue, TRACE verifier uses exact path match, no normalization. (D3) shared secret fallback — TRACE has zero legacy bearer or global shared-secret path, pure HMAC per-link keys only. (D4) INTAKE contract test — not TRACE's issue. TRACE is clean for...
   _by Admin - 2026-07-31_
@@ -753,6 +765,10 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: Sales Ops: PLG-SO-01 IMPLEMENTATION COMPLETE. Restored STANDARD/SPECIAL_COHORT segmentation. Migrati** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "done", "status": "DONE", "message": "Sales Ops: PLG-SO-01 IMPLEMENTATION COMPLETE. Restored STANDARD/SPECIAL_COHORT segmentation. Migration 179 ready (segment_classification + special_cohort_pipeline + campaign_eligibility). Created 5 governed ser...
+  _by user - 2026-08-03_
+- **[7] [ACTIVE] START: Sales Ops: PLG-SO-01 — Restore Lead Segmentation and Approval Authority | inspecting current cohort/** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "start", "status": "ACTIVE", "message": "Sales Ops: PLG-SO-01 \u2014 Restore Lead Segmentation and Approval Authority | inspecting current cohort/archival state | goal: 15-step implementation per CTO directive", "timestamp": "2026-08-03T19:38:59.07...
+  _by user - 2026-08-03_
 - **[7] [DONE] DONE: Sales Ops: D-001 fixed (enrichment_pending -> PROFILED mapping). Added legacy_state_migrated reason** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "done", "status": "DONE", "message": "Sales Ops: D-001 fixed (enrichment_pending -> PROFILED mapping). Added legacy_state_migrated reason code. Phase 5 partial: fixed 2 direct supabaseAdmin writes (multi-channel-sequence-service, onboarding/route)....
   _by user - 2026-08-03_
 - **[7] [ACTIVE] START: Sales Ops: Phase 3 complete (state migration + HMAC + handoff), resuming to advance Phase 4/5 pipeli** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "start", "status": "ACTIVE", "message": "Sales Ops: Phase 3 complete (state migration + HMAC + handoff), resuming to advance Phase 4/5 pipeline convergence | last commit: REST API pipeline runner + enrichment TX | goal: identify next phase, continu...
