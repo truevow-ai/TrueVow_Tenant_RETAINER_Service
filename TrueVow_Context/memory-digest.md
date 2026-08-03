@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-03T20:17:11.074570+00:00
-- Total memories: 339
+- Generated: 2026-08-03T20:32:05.453300+00:00
+- Total memories: 342
 
-## High-importance decisions (8+, routine noise excluded) - 182
+## High-importance decisions (8+, routine noise excluded) - 183
 
 - **[10][architecture] Cross-Service Webhook Spine — All 3 Hops Live** - Hop 1 (INTAKE→RETAINER): 17/17 PASS. Hop 2 (RETAINER→SaaS Admin): DB verified, activation + duplicate guard. Hop 3 (SaaS Admin→TRACE): HMAC auth proven (401 without, passes with valid key). All hops verified against real Supabase. WebhookSignature v1.0 operational across entire spine. Per-service key isolation enforced. SQLite removed from RETAINER. RETAINER freeze SHA: 70da328.
   _by Admin - 2026-07-31 - tags: -_
@@ -220,6 +220,8 @@
   _by Admin - 2026-07-31 - tags: -_
 - **[9][bug] contact_info_sequence dropped phone+email** - Root cause: routing INTO a sequence node used _execute_node, which returned the sequence's own intro prompt and left current_node=contact_info_sequence WITHOUT priming the first sub-node. Next turn the C10 terminal guard (workflow_engine.py:518) saw no next/branches/options and returned _build_complete_response — so name-only leads jumped to 'complete', losing phone+email. FIX: _execute_node now delegates type==sequence to _execute_sequence (primes contact_name, prepends intro to first question); terminal guards treat nodes/type==sequence as a valid exit. Verified: name->phone->email chain now runs.
   _by Admin - 2026-07-14 - tags: -_
+- **[9][decision] PLG-SO-01A: Corrected default STANDARD → REVIEW_REQUIRED** - Migration 179 Phase 4 corrected: unresolved leads default to REVIEW_REQUIRED, not STANDARD. Firm-name matching requires corroboration (state/website/email). Migration 180 provides idempotent forward safety correction. REVIEW_REQUIRED → campaign HELD enforced before score/cadence/region evaluation. Classification provenance recorded on every record. v_classification_review_queue created.
+  _by Admin - 2026-08-03 - tags: -_
 - **[9][decision] IAM-001: TRACE Clerk-to-Supabase migration complete** - Migrated TRACE service from Clerk JWKS to Supabase Auth via truevow_auth (vendored). Replaced AUTH_MODE=clerk with AUTH_MODE=supabase. Removed _JWKSCache class. Renamed clerk_user_id to auth_user_sub in firm_users. Fail-closed — no Clerk fallback. 68/68 tests pass.
   _by Admin - 2026-08-03 - tags: -_
 - **[9][decision] Portal grant transition classified as staging fixture blocker, not code defect** - Portal grant ownership model, schemas, trigger, and RETAINER scope restrictions are implemented and verified by code and database inspection. The full PROSPECTIVE_ENGAGEMENT -> ACTIVE_MATTER transition remains pending because the current environment lacks a complete relational fixture spanning RETAINER engagement records, Shared Platform identity/grant records, and a valid SaaS Admin client person. This is a staging test-data and integration-validation task, not a confirmed application defect. Required fixture chain: Tenant -> SaaS Admin contact -> Shared Platform portal_identity -> RETAINER candidate/workflow/engagement_package/client_portal_access -> PROSPECTIVE_ENGAGEMENT grant -> Matter activation -> trigger creates ACTIVE_MATTER grant.
@@ -549,7 +551,7 @@
 - **[6] xai_cloud bridge test suite** - Created tests/test_xai_cloud_bridge.py (34 tests) for XaiCloudBridge. Mirrors test_xai_bridge.py but adapts for cloud bridge: dual registration (xai_cloud + xai_cloud_voice_agent), default voice rex (male-only), end_session returns {bridge,session_id,status} without had_audio, double-start early-ret...
   _by Admin - 2026-07-08_
 
-## decision (46)
+## decision (47)
 
 - **[10] Portal grant transition gate CLOSED — 9/9 assertions pass against live Supabase** - PROSPECTIVE_ENGAGEMENT -> READ_ONLY_HISTORY + ACTIVE_MATTER with MATTER_VIEW/MATTER_MESSAGE/MATTER_UPLOAD/REQUEST_RESPOND/DOCUMENT_DOWNLOAD verified. Shared Platform owns MATTER_* permissions. RETAINER keeps ENGAGEMENT_HISTORY only. TRACE consumes tenant-scoped projection linked to canonical grant. ...
   _by Admin - 2026-08-01_
@@ -603,6 +605,8 @@
   _by user - 2026-06-25_
 - **[10] CONNECT Archived - DRAFT Renamed to LEVERAGE - INTAKE Updated** - CONNECT (attorney referral network) is decommissioned and archived from the ecosystem permanently - no longer on TrueVow agenda. DRAFT has been completely replaced by LEVERAGE everywhere (same service, renamed). INTAKE (Tenant Application Service) is no longer just FSM NLP - it is now FSM applied to...
   _by user - 2026-06-25_
+- **[9] PLG-SO-01A: Corrected default STANDARD → REVIEW_REQUIRED** - Migration 179 Phase 4 corrected: unresolved leads default to REVIEW_REQUIRED, not STANDARD. Firm-name matching requires corroboration (state/website/email). Migration 180 provides idempotent forward safety correction. REVIEW_REQUIRED → campaign HELD enforced before score/cadence/region evaluation. C...
+  _by Admin - 2026-08-03_
 - **[9] IAM-001: TRACE Clerk-to-Supabase migration complete** - Migrated TRACE service from Clerk JWKS to Supabase Auth via truevow_auth (vendored). Replaced AUTH_MODE=clerk with AUTH_MODE=supabase. Removed _JWKSCache class. Renamed clerk_user_id to auth_user_sub in firm_users. Fail-closed — no Clerk fallback. 68/68 tests pass.
   _by Admin - 2026-08-03_
 - **[9] Portal grant transition classified as staging fixture blocker, not code defect** - Portal grant ownership model, schemas, trigger, and RETAINER scope restrictions are implemented and verified by code and database inspection. The full PROSPECTIVE_ENGAGEMENT -> ACTIVE_MATTER transition remains pending because the current environment lacks a complete relational fixture spanning RETAI...
@@ -741,7 +745,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (149)
+## context (151)
 
 - **[10] TRACE Pilot Review — No Defects Found** - Pilot review D1-D4: (D1) trailing-slash — SaaS Admin issue, TRACE verifier uses exact path match, no normalization. (D3) shared secret fallback — TRACE has zero legacy bearer or global shared-secret path, pure HMAC per-link keys only. (D4) INTAKE contract test — not TRACE's issue. TRACE is clean for...
   _by Admin - 2026-07-31_
@@ -765,6 +769,10 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: Sales Ops: PLG-SO-01A CORRECTION APPLIED. Migration 179 corrected (REVIEW_REQUIRED default, not STAN** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "done", "status": "DONE", "message": "Sales Ops: PLG-SO-01A CORRECTION APPLIED. Migration 179 corrected (REVIEW_REQUIRED default, not STANDARD). Migration 180 forward safety correction created. Firm-name requires corroboration. REVIEW_REQUIRED\u219...
+  _by user - 2026-08-03_
+- **[7] [ACTIVE] START: Sales Ops: PLG-SO-01A — Correct segment backfill safety | fixing default STANDARD → REVIEW_REQUIRED** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "start", "status": "ACTIVE", "message": "Sales Ops: PLG-SO-01A \u2014 Correct segment backfill safety | fixing default STANDARD \u2192 REVIEW_REQUIRED | goal: CTO-specified safety correction", "timestamp": "2026-08-03T20:24:04.141443+00:00", "worki...
+  _by user - 2026-08-03_
 - **[7] [DONE] DONE: SaaS Admin: PLG-SA-01 durable onboarding orchestration — replaced fire-and-forget with persisted run** - {"agent_id": "TrueVow_SaaS_Administration_Service", "action": "done", "status": "DONE", "message": "SaaS Admin: PLG-SA-01 durable onboarding orchestration \u2014 replaced fire-and-forget with persisted runs/steps/commands + worker with dependency enforcement + reconciliation + 17 tests pass | outcom...
   _by user - 2026-08-03_
 - **[7] [DONE] DONE: Sales Ops: PLG-SO-01 IMPLEMENTATION COMPLETE. Restored STANDARD/SPECIAL_COHORT segmentation. Migrati** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "done", "status": "DONE", "message": "Sales Ops: PLG-SO-01 IMPLEMENTATION COMPLETE. Restored STANDARD/SPECIAL_COHORT segmentation. Migration 179 ready (segment_classification + special_cohort_pipeline + campaign_eligibility). Created 5 governed ser...
