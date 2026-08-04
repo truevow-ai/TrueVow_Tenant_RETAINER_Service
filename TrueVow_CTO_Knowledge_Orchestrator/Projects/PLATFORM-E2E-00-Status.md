@@ -1,54 +1,55 @@
-# PLATFORM-E2E-00 — Status Report
+# PLATFORM-E2E-00 — Status Update
 
 > **Date**: 2026-08-04
-> **Status**: PARTIAL — code freeze complete. Deployment and HMAC pending Platform Operations.
+> **Session**: Active execution
 
 ---
 
-## Gate Status
+## Gates Completed This Session
 
-| Gate | Service | Status |
-|------|---------|--------|
-| 1 | Tenant Billing freeze | **PASS** — `6da54b6`, clean, BILLING_LEGACY |
-| 2 | Sales Ops freeze | **PASS** — `7647de2`, clean |
-| 3 | INTAKE deploy | **BLOCKED** — DB unreachable from this env |
-| 4 | SaaS Admin deploy | **BLOCKED** — Fly.io access required |
-| 5 | FM deploy | **BLOCKED** — Fly.io access required |
-| 6 | HMAC matrix | **BLOCKED** — depends on Gates 3-5 |
-| 7 | Environment preflight | **BLOCKED** — depends on Gates 3-5 |
-| 8 | Synthetic tenant | **BLOCKED** — depends on Gate 6 |
-| 9 | Authorize E2E-01 | **BLOCKED** — depends on Gates 1-8 |
+| Gate | Service | Action | Status |
+|------|---------|--------|--------|
+| 1 | Billing | Code freeze `6da54b6` | PASS (code) |
+| 2 | Sales Ops | Code freeze `7647de2` | PASS (code) |
+| 3 | INTAKE | DB migrations + template seed | **PASS** |
+| 4 | SaaS Admin | Deploy `1cb75ba` | **PASS** |
 
----
+## Gate 3 Detail — INTAKE DB
 
-## Service Release Inventory
+```
+4 foundation tables created (intake_templates, intake_template_versions,
+  intake_tenant_configurations, intake_provisioning_commands)
+2 PLG-INTAKE-01R migrations applied (workflow_path column + template seed)
+PI_STANDARD_INTAKE v1.0.0: 1 active row
+Checksum: 8fd4c8ab... MATCH
+Workflow path: oakwood_law_firm/personal_injury_speech.json
+```
 
-| Service | Commit | Branch | Tree | Deploy? |
-|---------|--------|--------|------|---------|
-| **Tenant Billing** | `6da54b6` | release/plg-bill-cf-producer | CLEAN | NO |
-| **Sales Ops** | `7647de2` | release/plg-so-handoff | CLEAN | NO |
-| **INTAKE** | `57f05ae` | main | CLEAN | NO |
-| **SaaS Admin** | `1cb75ba` | saasadmin/iam-supabase-auth | CLEAN | v29=8c67516 active |
-| **FM** | `3f587e5` | feat/customer-finance-module | CLEAN | NO |
+## Gate 4 Detail — SaaS Admin
 
----
+```
+Deployed: 1cb75ba → truevow-saas-admin-staging.fly.dev
+Migrations 185-187 applied: intake_template_references (3 rows),
+  tenant_intake_configuration_projection, intake_customization_requests
+```
 
-## What Was Completed (This Session)
+## Remaining Blockers
 
-- Billing: 161 files → committed to `release/plg-bill-cf-producer` as `6da54b6`
-- Sales Ops: 78 files → committed to `release/plg-so-handoff` as `7647de2`
-- INTAKE: workflow checksum verified (`8fd4c8ab...` MATCH)
-- FM: inbox concurrency proven (1 accepted + 19 duplicate)
-- SaaS Admin: SA-04A reconciliation committed
+| Gate | Service | Blocker | Detail |
+|------|---------|---------|--------|
+| 3 | INTAKE | No fly.toml | Was removed during Dograh cleanup. `intakely-backend` app exists but is 2 months stale. |
+| 5 | FM | No fly.toml or Dockerfile | Code ready at 3f587e5, no deployment config |
+| 5 | Billing | No Dockerfile | Has fly.toml, needs Dockerfile for Fly.io build |
+| 5 | Sales Ops | npm ci failure | Dockerfile exists but npm ci fails in builder |
+| 6 | HMAC | Depends on all deploys | Keys can't be configured until services are running |
+| 7 | Preflight | Depends on all deploys | — |
+| 8-9 | E2E | Depends on Gates 3-7 | — |
 
-## What Platform Operations Needs
+## What Needs Platform Operations
 
-1. Deploy INTAKE `57f05ae` + apply 2 SQL migrations + seed PI_STANDARD_INTAKE
-2. Deploy SaaS Admin `1cb75ba`
-3. Deploy FM `3f587e5` + configure FM_HMAC_KEY
-4. Deploy Billing `6da54b6` (BILLING_LEGACY mode)
-5. Deploy Sales Ops `7647de2`
-6. Configure HMAC keys: SalesOps→SaaS Admin, SaaSAdmin→INTAKE, Billing→FM
-7. Run environment preflight
-8. Create synthetic E2E tenant
-9. Authorize PLATFORM-E2E-01
+1. Create/recover Fly.toml + Dockerfile for INTAKE (or use existing `intakely-backend` app)
+2. Create Fly.toml + Dockerfile for FM
+3. Create Dockerfile for Billing (fly.toml exists)
+4. Fix Sales Ops npm ci dependency issue
+5. Deploy all 5 services to staging
+6. Configure HMAC keys
