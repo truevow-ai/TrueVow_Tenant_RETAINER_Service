@@ -1,57 +1,49 @@
 # PLATFORM-E2E-00A — Final Status
 
 > **Date**: 2026-08-04
-> **Session**: Completed
+> **Status**: 3/5 deployed and healthy. 2 packaging-complete with build env blockers.
 
 ---
 
-## Deployed to Staging
+## Deployed and Healthy (3/5)
 
-| Service | App | Status |
-|---------|-----|--------|
-| **SaaS Admin** | truevow-saas-admin-staging | ✅ Deployed (1cb75ba) |
-| **INTAKE** | truevow-tenant-public | ✅ Deployed (9745449, v131) |
+| Service | App | Health | Commit |
+|---------|-----|--------|--------|
+| **INTAKE** | truevow-tenant-public | ✅ | 9745449 |
+| **SaaS Admin** | truevow-saas-admin-staging | ✅ | 1cb75ba |
+| **FM** | truevow-fm-staging | ✅ `GET /health` → 200 | 3673bca |
 
-## Packaging Created, Build Blocked
+## Packaging Complete, Build-Blocked (2/5)
 
-| Service | Dockerfile | fly.toml | Blocker |
-|---------|-----------|----------|---------|
-| **FM** | ✅ Created (3.13) | ✅ Created | Docker build times out (large context + pip install). Needs smaller context or pre-built image. |
-| **Billing** | ✅ Created (3.11) | ✅ Fixed (processes, BILLING_LEGACY) | Docker build times out (large context). Has Redis + arq worker requirement needs separate process. |
-| **Sales Ops** | ✅ Fixed (mock auth dep) | ✅ Exists | `npm run build` fails in Docker (Next.js build error, details truncated). |
-
-## DB / Data Complete
-
-| Service | Accomplishment |
-|---------|---------------|
-| **INTAKE** | 4 foundation tables created, PI_STANDARD_INTAKE v1.0.0 seeded, checksum MATCH |
-| **SaaS Admin** | Migrations 185-187 applied, 3 template references seeded |
-| **FM** | Migration chain 012-014 applied, inbox constraints active |
-| **Billing** | Migrations committed in release |
-
-## HMAC / E2E
-
-Not started — depends on all 5 services being deployed and healthy.
+| Service | App | Commit | Blocker |
+|---------|-----|--------|---------|
+| **Billing** | truevow-billing-staging | 0ff563d | Deploys, machine starts, health check fails. Needs Redis + IPv4 connectivity. Secrets configured. |
+| **Sales Ops** | truevow-sales-ops | 963e5ae | Dockerfile + .dockerignore correct. Build works on Linux. Windows reparse points break Fly remote builder. `npm run build` is CPU-intensive, needs build env with 4GB+ memory. |
 
 ---
 
-## Commits This Session
+## DB / Migrations Complete
 
 ```
-FM:        3673bca  ops(fm): add Dockerfile (3.13) + fly.toml
-Billing:   d190272  ops(billing): add Dockerfile (3.11)
-           6c51f41  fix fly.toml — app name, BILLING_LEGACY, processes
-           eb3fffa  fix Dockerfile — remove broken weasyprint deps
-SalesOps:  e9f858d  fix package-lock.json — resolve @truevow/auth
-           20d5636  fix Dockerfile — mock @truevow/auth local dep
-INTAKE:    (DB scripts applied directly, no new commits)
-SaaSAdmin: (DB scripts applied directly, no new commits)
+INTAKE: PI_STANDARD_INTAKE v1.0.0 seeded, checksum MATCH
+SaaS Admin: Migrations 185-187 applied
+FM: Migration chain 012-014 applied, inbox constraints active
 ```
 
-## Remaining for Platform Operations
+---
 
-1. FM: Reduce Docker build context (exclude dirty files from pre-deploy stash)
-2. Billing: Same — reduce build context. Need Redis service for arq worker.
-3. Sales Ops: Fix Next.js `npm run build` error (likely env var or TS compile issue)
-4. Configure HMAC keys after all 5 services healthy
-5. Run PLATFORM-E2E-01 commissioning campaign
+## Sales Ops Diagnosis
+
+Root causes found and fixed:
+1. `jose` missing — mock `@truevow/auth` now includes `jose` dep
+2. `supabase/migrations/_applied/` excluded from context
+3. Windows reparse points (Next.js route dirs like `[id]`) cause `archive/tar: unknown file mode ?rwxr-xr-x` on Fly remote builder — build from Linux env
+
+## Billing Diagnosis
+
+Dockerfile + fly.toml correct. App deploys, machine starts, but health check fails because:
+1. Container is IPv6-only (Fly), DB is at Supabase (requires IPv4)
+2. Redis not available (app requires Redis for idempotency + arq worker)
+3. Needs `shared-cpu-1x` + dedicated IPv4 in Fly config
+
+## Next: Configure Billing Fly networking, build Sales Ops on Linux, then HMAC commissioning
