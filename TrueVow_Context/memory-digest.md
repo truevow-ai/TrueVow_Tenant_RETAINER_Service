@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-03T23:31:15.281489+00:00
-- Total memories: 368
+- Generated: 2026-08-05T07:30:24.282351+00:00
+- Total memories: 378
 
-## High-importance decisions (8+, routine noise excluded) - 189
+## High-importance decisions (8+, routine noise excluded) - 191
 
 - **[10][architecture] Cross-Service Webhook Spine — All 3 Hops Live** - Hop 1 (INTAKE→RETAINER): 17/17 PASS. Hop 2 (RETAINER→SaaS Admin): DB verified, activation + duplicate guard. Hop 3 (SaaS Admin→TRACE): HMAC auth proven (401 without, passes with valid key). All hops verified against real Supabase. WebhookSignature v1.0 operational across entire spine. Per-service key isolation enforced. SQLite removed from RETAINER. RETAINER freeze SHA: 70da328.
   _by Admin - 2026-07-31 - tags: -_
@@ -84,6 +84,8 @@
   _by Admin - 2026-07-07 - tags: -_
 - **[10][bug] Gitignore Source-Leak FIXED — All 6 services** - All 6 affected services now have anchored .gitignore patterns. lib/, env/, venv/, build/, dist/ now use leading / to prevent accidental source file hiding. Leaked PowerShell commands removed from FM, Billing, and LEVERAGE. SETTLE test_db_conn.py and recover_pyc.py anchored to root only. Internal Ops, SETTLE, and LEVERAGE latent rules also fixed.
   _by Admin - 2026-07-01 - tags: -_
+- **[10][context] FM Customer Finance Commissioning — what FM must build for Billing cutover** - FM must build Customer Finance module with: commercial statement ingestion endpoint (POST /api/v1/internal/customer-finance/commercial-statements), invoice posting, atomic invoice numbering, AR entries, revenue recognition schedules, journal posting. FM takes over Stripe/TELR payment execution, provider webhooks, payment allocations, refund execution, chargebacks. FM must emit 10 financial events back to Billing (invoice.posted, invoice.paid, payment.failed, etc.). FM readiness gate: 16 items must pass before Billing cuts over. Non-negotiable: no cross-database reads/writes, no recalculation of Billing's commercial numbers, no tenant suspension. Docs at TrueVow_Financial_Management_Service/docs/FM_CUSTOMER_FINANCE_COMMISSIONING.md
+  _by Admin - 2026-08-04 - tags: -_
 - **[10][context] TRACE Pilot Review — No Defects Found** - Pilot review D1-D4: (D1) trailing-slash — SaaS Admin issue, TRACE verifier uses exact path match, no normalization. (D3) shared secret fallback — TRACE has zero legacy bearer or global shared-secret path, pure HMAC per-link keys only. (D4) INTAKE contract test — not TRACE's issue. TRACE is clean for all three defects, ready for Release Candidate v3 staging deployment. 68 tests pass, 17 golden fixtures, per-link key tv-saas-admin-to-trace-v1, raw-body hashing, event_id idempotency.
   _by Admin - 2026-07-31 - tags: -_
 - **[10][context] TRACE WebhookSignature v1.0 Cross-Service Contract Rollout Complete** - All six corrections applied: (1) EventEnvelope v1.0.1 frozen at 18 fields, (2) matter.activated payload normalized to 9 canonical evidence references, (3) webhook auth upgraded from shared-secret to HMAC-SHA256 with X-TrueVow headers, (4) global vs tenant data separation documented, (5) event_id idempotency replay protection added (two-layer: timestamp tolerance + canonical ID), (6) per-link keys replacing global shared secret. 17 golden fixture tests pass. Webhook spine: INTAKE -> signed -> RETAINER -> signed -> SaaS Admin -> signed -> TRACE. Legacy bearer cutoff: 2026-09-01.
@@ -96,6 +98,8 @@
   _by Admin - 2026-07-24 - tags: -_
 - **[10][convention] zero hardcoded tunable values** - RULE: This is a multi-tenant platform. Never hardcode ANY value that may need adjustment per-tenant, per-firm, or per-environment. All tunables must live in one of: (1) tenant_config, (2) workflow JSON config, or (3) named module-level constants with clear documentation. Bare numbers, strings, or IDs in logic statements are FORBIDDEN. If you need a value that could change — threshold, timeout, limit, firm identifier, VAD setting, confidence score — expose it via config. Test by asking: 'Could a different law firm need this set differently?'
   _by Admin - 2026-07-15 - tags: -_
+- **[10][decision] Billing-FM Architecture Separation — APPROVED** - Tenant Billing becomes a pure commercial subscription, metering and rating engine. Financial Management owns customer invoices, AR, payment execution, allocations, refunds, collections, treasury reconciliation and accounting. One contract connects them: CommercialStatementFinalized. Billing produces immutable commercial statements with line items; FM converts them into posted invoices, AR entries, and journal postings. Billing must NOT own: invoices, payments, payment providers, refunds, allocations, collections. FM must NOT recalculate pricing, usage, allowances or discounts. The fact that Billing is currently described as production-ready is not a valid reason to retain the wrong boundary. Full decision doc at TrueVow_Financial_Management_Service/docs/BILLING_FM_ARCHITECTURE_DECISION.md
+  _by Admin - 2026-08-04 - tags: -_
 - **[10][decision] Portal grant transition gate CLOSED — 9/9 assertions pass against live Supabase** - PROSPECTIVE_ENGAGEMENT -> READ_ONLY_HISTORY + ACTIVE_MATTER with MATTER_VIEW/MATTER_MESSAGE/MATTER_UPLOAD/REQUEST_RESPOND/DOCUMENT_DOWNLOAD verified. Shared Platform owns MATTER_* permissions. RETAINER keeps ENGAGEMENT_HISTORY only. TRACE consumes tenant-scoped projection linked to canonical grant. Identity continuity, duplicate/orphan prevention, fail-safe missing-grant behavior all proven. Commit: 56720be. Customer pilot now blocked by 5 remaining gates: live activation HTTP, durable outbox traceability, stable staging deployment, Client Portal browser lifecycle, remaining QA phases.
   _by Admin - 2026-08-01 - tags: -_
 - **[10][decision] RC v3 Final Corrected: APPROVED FOR INTERNAL CONTROLLED PILOT** - A single canonical Matter was successfully traced through INTAKE, RETAINER, SaaS Admin, and TRACE using real Supabase Postgres. HMAC authentication, exact-path enforcement, per-service key isolation, canonical Matter activation, duplicate prevention, and event idempotency were verified. Matter spine: APPROVED. WebhookSignature v1.0: APPROVED. Per-link key isolation: APPROVED. Three-hop idempotency: APPROVED. SQLite: REMOVED. For customer pilot, retain operational conditions: deploy frozen commits to stable staging, mitigate pooler connection expiry, verify portal-access grant transition with valid client identity, complete Client Portal browser flow or exclude it.
@@ -569,8 +573,10 @@
 - **[6] xai_cloud bridge test suite** - Created tests/test_xai_cloud_bridge.py (34 tests) for XaiCloudBridge. Mirrors test_xai_bridge.py but adapts for cloud bridge: dual registration (xai_cloud + xai_cloud_voice_agent), default voice rex (male-only), end_session returns {bridge,session_id,status} without had_audio, double-start early-ret...
   _by Admin - 2026-07-08_
 
-## decision (50)
+## decision (51)
 
+- **[10] Billing-FM Architecture Separation — APPROVED** - Tenant Billing becomes a pure commercial subscription, metering and rating engine. Financial Management owns customer invoices, AR, payment execution, allocations, refunds, collections, treasury reconciliation and accounting. One contract connects them: CommercialStatementFinalized. Billing produces...
+  _by Admin - 2026-08-04_
 - **[10] Portal grant transition gate CLOSED — 9/9 assertions pass against live Supabase** - PROSPECTIVE_ENGAGEMENT -> READ_ONLY_HISTORY + ACTIVE_MATTER with MATTER_VIEW/MATTER_MESSAGE/MATTER_UPLOAD/REQUEST_RESPOND/DOCUMENT_DOWNLOAD verified. Shared Platform owns MATTER_* permissions. RETAINER keeps ENGAGEMENT_HISTORY only. TRACE consumes tenant-scoped projection linked to canonical grant. ...
   _by Admin - 2026-08-01_
 - **[10] RC v3 Final Corrected: APPROVED FOR INTERNAL CONTROLLED PILOT** - A single canonical Matter was successfully traced through INTAKE, RETAINER, SaaS Admin, and TRACE using real Supabase Postgres. HMAC authentication, exact-path enforcement, per-service key isolation, canonical Matter activation, duplicate prevention, and event idempotency were verified. Matter spine...
@@ -769,8 +775,10 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (171)
+## context (180)
 
+- **[10] FM Customer Finance Commissioning — what FM must build for Billing cutover** - FM must build Customer Finance module with: commercial statement ingestion endpoint (POST /api/v1/internal/customer-finance/commercial-statements), invoice posting, atomic invoice numbering, AR entries, revenue recognition schedules, journal posting. FM takes over Stripe/TELR payment execution, prov...
+  _by Admin - 2026-08-04_
 - **[10] TRACE Pilot Review — No Defects Found** - Pilot review D1-D4: (D1) trailing-slash — SaaS Admin issue, TRACE verifier uses exact path match, no normalization. (D3) shared secret fallback — TRACE has zero legacy bearer or global shared-secret path, pure HMAC per-link keys only. (D4) INTAKE contract test — not TRACE's issue. TRACE is clean for...
   _by Admin - 2026-07-31_
 - **[10] TRACE WebhookSignature v1.0 Cross-Service Contract Rollout Complete** - All six corrections applied: (1) EventEnvelope v1.0.1 frozen at 18 fields, (2) matter.activated payload normalized to 9 canonical evidence references, (3) webhook auth upgraded from shared-secret to HMAC-SHA256 with X-TrueVow headers, (4) global vs tenant data separation documented, (5) event_id ide...
@@ -781,6 +789,10 @@
   _by Admin - 2026-07-27_
 - **[10] TRACE documentation and memory updated July 24 2026** - All documentation updated: AGENTS.md (250+ lines with full service reference), README.md (updated stack/status), TRACE-Agent-Coding-Instructions.md (300+ line Appendix A with architecture, API reference, data flow, troubleshooting). Platform map updated (TRACE: port 3036, active). DEVELOPERS.md upda...
   _by Admin - 2026-07-24_
+- **[8] Git Scan: 2026-08-04T06:13:13** - { "summary": { "timestamp": "2026-08-04T06:13:13.599154+00:00", "total": 14, "clean": 2, "dirty": 10, "missing": 2, "errors": 0, "stale_services": 12, "active_services": 2, "status_breakdown": { "HEALTHY": 1, "ACTIVE": 1, "STALE": 3, "NEGLECTED": 9, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY"...
+  _by Admin - 2026-08-04_
+- **[8] Git Scan: 2026-08-04T05:58:47** - { "summary": { "timestamp": "2026-08-04T05:58:47.741940+00:00", "total": 14, "clean": 1, "dirty": 11, "missing": 2, "errors": 0, "stale_services": 12, "active_services": 2, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 1, "STALE": 3, "NEGLECTED": 9, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY"...
+  _by Admin - 2026-08-04_
 - **[8] Git Scan: 2026-08-03T19:16:37** - { "summary": { "timestamp": "2026-08-03T19:16:37.011042+00:00", "total": 14, "clean": 2, "dirty": 10, "missing": 2, "errors": 0, "stale_services": 12, "active_services": 2, "status_breakdown": { "HEALTHY": 1, "ACTIVE": 0, "STALE": 3, "NEGLECTED": 9, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY"...
   _by Admin - 2026-08-03_
 - **[8] Git Scan: 2026-08-03T19:14:33** - { "summary": { "timestamp": "2026-08-03T19:14:33.413605+00:00", "total": 14, "clean": 2, "dirty": 10, "missing": 2, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 4, "NEGLECTED": 10, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
@@ -793,6 +805,18 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: INTAKE: TV-INTAKE-BRIDGE-A1 — Track A items A1-01 through A1-04 delivered | outcome: 4/4 closed, 182** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: TV-INTAKE-BRIDGE-A1 \u2014 Track A items A1-01 through A1-04 delivered | outcome: 4/4 closed, 182 agent + 38 engine tests pass, zero regressions | learned: LiveKit native APIs (FallbackAdapter, trun...
+  _by user - 2026-08-05_
+- **[7] [DONE] DONE: SaaS Admin: PLG-SA-04A RECONCILED — v27 attribution error resolved (actual commit 8c67516, not 92330** - {"agent_id": "TrueVow_SaaS_Administration_Service", "action": "done", "status": "DONE", "message": "SaaS Admin: PLG-SA-04A RECONCILED \u2014 v27 attribution error resolved (actual commit 8c67516, not 92330b5), v29 deployed from clean tree with all migrations 185/186/187 traceable, 1 canonical provis...
+  _by user - 2026-08-04_
+- **[7] [DONE] DONE: INTAKE: PLG-INTAKE-01 implemented — template registry (IntakeTemplate + IntakeTemplateVersion ORM mo** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: PLG-INTAKE-01 implemented \u2014 template registry (IntakeTemplate + IntakeTemplateVersion ORM models), provisioning endpoint (POST /api/v1/internal/tenants/provision with HMAC verification, templat...
+  _by user - 2026-08-04_
+- **[7] [ACTIVE] START: INTAKE: PLG-INTAKE-01 — implementing template registry + tenant provisioning endpoint to receive Saa** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "start", "status": "ACTIVE", "message": "INTAKE: PLG-INTAKE-01 \u2014 implementing template registry + tenant provisioning endpoint to receive SaaS Admin template-reference commands | resuming from SaaS Admin PLG-SA-04 | goal: INTAKE becomes so...
+  _by user - 2026-08-04_
+- **[7] [DONE] DONE: SaaS Admin: PLG-SA-04 commissioned — INTAKE provisioning contract corrected: workflow_json replaced** - {"agent_id": "TrueVow_SaaS_Administration_Service", "action": "done", "status": "DONE", "message": "SaaS Admin: PLG-SA-04 commissioned \u2014 INTAKE provisioning contract corrected: workflow_json replaced with template references (template_code + template_version), llm_config provisioning removed, A...
+  _by user - 2026-08-04_
+- **[7] [DONE] DONE: SaaS Admin: PLG-SA-03A CLOSED — complete commissioning closure evidence proven: positive path (case→** - {"agent_id": "TrueVow_SaaS_Administration_Service", "action": "done", "status": "DONE", "message": "SaaS Admin: PLG-SA-03A CLOSED \u2014 complete commissioning closure evidence proven: positive path (case\u2192evidence\u2192review\u2192decision\u2192commissioned), negative path (partial evidence\u21...
+  _by user - 2026-08-03_
 - **[7] [DONE] DONE: Sales Ops: PLG-SO-01 through SO-02C complete. Awaiting staging agent for final commissioning. Baseli** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "done", "status": "DONE", "message": "Sales Ops: PLG-SO-01 through SO-02C complete. Awaiting staging agent for final commissioning. Baseline: c31c233, 677/677 PASS, migrations 181/182 frozen. No further local development authorized unless staging r...
   _by user - 2026-08-03_
 - **[7] [DONE] DONE: SaaS Admin: PLG-SA-03 commissioned — migration 185 applied (commissioning_cases, evidence, decisions** - {"agent_id": "TrueVow_SaaS_Administration_Service", "action": "done", "status": "DONE", "message": "SaaS Admin: PLG-SA-03 commissioned \u2014 migration 185 applied (commissioning_cases, evidence, decisions, policies), single TenantLifecycleService authority, human-only decision route (machine creden...
