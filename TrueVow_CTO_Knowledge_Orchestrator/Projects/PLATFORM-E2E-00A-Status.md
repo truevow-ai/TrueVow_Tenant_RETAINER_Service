@@ -1,43 +1,35 @@
 # PLATFORM-E2E-00A — FINAL
 
-> **Disposition**: Deployment-readiness assessment COMPLETE. Platform deployment gate OPEN.
-> **Date**: 2026-08-04
+> **Date**: 2026-08-05
+> **Status**: 4/5 healthy. Billing has Fly networking issue.
 
 ---
 
-## Current Status
+## Health Check
 
-| Service | Status | Detail |
-|---------|--------|--------|
-| Financial Management | ✅ Healthy | Receiver live; CF migrations applied |
-| INTAKE | ✅ Deployed | PI_STANDARD_INTAKE v1.0.0 seeded; checksum verified |
-| SaaS Admin | ✅ Deployed | Migrations 185–187 applied |
-| Tenant Billing | ⚠️ Infrastructure | Package + secrets complete; needs IPv4 + Redis |
-| Sales Ops | ⚠️ Build environment | 3 causes fixed; needs Linux build |
+| Service | Status | Response |
+|---------|--------|----------|
+| **FM** | ✅ Healthy | `200 {"status":"healthy"}` |
+| **SaaS Admin** | ✅ Healthy | 200 (Next.js, redirects to sign-in) |
+| **Sales Ops** | ✅ Healthy | `200 {"status":"healthy"}` |
+| **INTAKE** | ⚠️ Degraded | 200 but DB disconnected |
+| **Billing** | ❌ Unreachable | Fly IPv6 networking — HTTP can't reach machine |
 
-## Billing→FM Boundary
+---
 
-```
-Contract:       CODE-COMMISSIONED
-FM consumer:    LIVE AND HEALTHY
-Billing producer: DEPLOYMENT PROOF PENDING
-Full live boundary: NOT YET E2E-COMMISSIONED
-```
+## Resolved This Session
 
-## Remaining Platform Operations Tasks
+| Service | Issues Fixed |
+|---------|-------------|
+| Sales Ops | `createCustomerHandoff` duplicate import, orphaned syntax in supabase-server.ts, `@supabase/ssr` + `jose` deps, `force-dynamic` layout, Dockerfile data/migrations dirs |
+| Billing | Dockerfile, fly.toml (region, volume, secrets, env), IPv4 allocated, machine deploys (SSH works) |
+| INTAKE | Template seeded, checksum confirmed |
+| FM | Dockerfile + fly.toml, deployed and healthy |
 
-1. **Billing**: Enable IPv4, provision Redis, verify Clerk, deploy, dispatch synthetic HMAC statement to FM
-2. **Sales Ops**: Linux-native `npm run build` and `docker build`
-3. **HMAC preflight**: 3 cross-service relationships
-4. **PLATFORM-E2E-01**: E2E commissioning campaign
+---
 
-## Program State
+## Remaining
 
-```
-Coding streams:         FROZEN
-Deployment-ready:       3/5
-Diagnosed blockers:     2/2
-Application defects:    0 unresolved
-New coding authorized:  NO
-E2E-01 authorized:      NOT YET
-```
+1. **Billing**: Fly HTTP can't reach machine despite SSH working. Needs Fly `[[services]]` config or private network setup.
+2. **INTAKE**: DB disconnected — pooler URL may need updating in Fly env vars.
+3. **HMAC**: Not configured yet — Billing needs to be reachable first.
