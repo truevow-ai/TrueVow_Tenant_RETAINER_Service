@@ -3,11 +3,13 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-05T07:30:24.282351+00:00
-- Total memories: 378
+- Generated: 2026-08-05T07:49:32.365341+00:00
+- Total memories: 388
 
-## High-importance decisions (8+, routine noise excluded) - 191
+## High-importance decisions (8+, routine noise excluded) - 201
 
+- **[10][architecture] PLG-SA-01 through PLG-SA-04A — SaaS Admin frozen at 8c67516** - SaaS Admin coding stream is FROZEN. All four PLG phases closed: PLG-SA-01/01A (durable onboarding), PLG-SA-02R (commercial containment, Billing owns pricing, SaaS Admin has projection), PLG-SA-03/03A (commissioning authority, single lifecycle mutator, human-only decisions), PLG-SA-04/04A (INTAKE provisioning contract, template references replace workflow_json/llm_config, 0 forbidden fields). Regression: 943/0/574, lint: 0 errors. Next gate PLG-SA-04B blocked on INTAKE 57f05ae staging deployment.
+  _by Admin - 2026-08-05 - tags: -_
 - **[10][architecture] Cross-Service Webhook Spine — All 3 Hops Live** - Hop 1 (INTAKE→RETAINER): 17/17 PASS. Hop 2 (RETAINER→SaaS Admin): DB verified, activation + duplicate guard. Hop 3 (SaaS Admin→TRACE): HMAC auth proven (401 without, passes with valid key). All hops verified against real Supabase. WebhookSignature v1.0 operational across entire spine. Per-service key isolation enforced. SQLite removed from RETAINER. RETAINER freeze SHA: 70da328.
   _by Admin - 2026-07-31 - tags: -_
 - **[10][architecture] WebhookSignature v1.0 — Cross-Service Contract Complete** - Frozen WebhookSignature v1.0 deployed to INTAKE (14/14 fixtures), RETAINER (15/15 fixtures), TRACE (17/17 fixtures), SETTLE (conformance-aligned). Per-service key isolation: tv-intake-to-retainer-v1, tv-retainer-to-saas-admin-v1. Legacy auth cutoff 2026-09-01. RETAINER per-service key registry enforces caller+path binding. SaaS Admin evidence pending. Live three-hop E2E pending.
@@ -158,6 +160,12 @@
   _by Admin - 2026-07-31 - tags: -_
 - **[10][todo] TX Phase 4 DB connectivity blocker** - db.bpzegquhxnygyxdzluyw.supabase.co only resolves to IPv6, Windows dev box has no IPv6. Supabase pooler not enabled for this project (tenant/user not found). Phase 4 scripts (verify_emails_phones, classify_phone_types, verify_attorney_emails) need psycopg2. Workaround: create REST API versions or enable IPv4 on Supabase.
   _by Admin - 2026-07-27 - tags: -_
+- **[9][architecture] PLG-SO-02C: IAM authorization — 5-gate requireInternalRole() + canonical permission codes** - requireInternalRole(): Supabase session → internal scope → active platform_staff_membership → SALES_OPS app grant → assigned role. requireHITLPermission() uses canonical codes (sales_applications.review/approve/reject/request_information). IAM_PERMISSION_ROLE_MAP is compatibility bridge pending SaaS Admin IAM. Frozen baseline: commit c31c233, migrations 181/182 checksum-frozen. Staging handoff: docs/plg/PLG-SO-02C-STAGING-HANDOFF.md.
+  _by Admin - 2026-08-05 - tags: -_
+- **[9][architecture] PLG-SO-02: Channel-neutral campaign model + regional batches of 250** - Extended existing 17-table campaign system (no parallel tables). Migration 181 adds program_code, primary_channel, geographic_partition_policy to campaigns. New tables: campaign_audience_batches (≤250), campaign_batch_members, campaign_delivery_chunks, campaign_channel_enablement, campaign_strategies. RegionPartitionFactory with STATE_FIRST deterministic partitioning. 4 channel adapters (Email active via Resend, SMS/SOCIAL/PAID_MEDIA disabled → CHANNEL_NOT_ENABLED).
+  _by Admin - 2026-08-05 - tags: -_
+- **[9][architecture] PLG-SO-01: Segmentation restored — STANDARD vs SPECIAL_COHORT** - Removed score-only routing (score>=70 → IN_CAMPAIGN). Segment is routing key, score is eligibility factor. Migration 179 adds segment_code, classification_status, special_cohort_pipeline table. SegmentClassifier, CampaignEligibilityEvaluator, SpecialCohortPipeline services created. 48 tests PASS.
+  _by Admin - 2026-08-05 - tags: -_
 - **[9][architecture] IAM permission check: requireHITLPermission() uses canonical codes, not hardcoded role lists** - requireInternalRole() checks: Supabase session, internal scope, ACTIVE platform_staff_membership, SALES_OPS app grant, assigned role. requireHITLPermission() accepts canonical IAM permission codes (sales_applications.review/approve/reject/request_information). IAM_PERMISSION_ROLE_MAP is a compatibility bridge pending SaaS Admin IAM sync. Commit: c31c233. 677/677 PASS.
   _by Admin - 2026-08-03 - tags: -_
 - **[9][architecture] HITL authorization: 6-gate requireInternalRole() with explicit permissions** - requireInternalRole() now enforces: Supabase identity, email_confirmed_at (rejects service/machine credentials), scope==='internal' (rejects tenant/unknown/service), assigned internal role. requireHITLPermission() adds role-specific gate: sdr/bdr/ae/gtm can review; admin/revops/sales_manager can approve/reject. 8 negative proofs documented. Local dev UUID blocked in prod/staging.
@@ -230,6 +238,10 @@
   _by Admin - 2026-07-31 - tags: -_
 - **[9][bug] contact_info_sequence dropped phone+email** - Root cause: routing INTO a sequence node used _execute_node, which returned the sequence's own intro prompt and left current_node=contact_info_sequence WITHOUT priming the first sub-node. Next turn the C10 terminal guard (workflow_engine.py:518) saw no next/branches/options and returned _build_complete_response — so name-only leads jumped to 'complete', losing phone+email. FIX: _execute_node now delegates type==sequence to _execute_sequence (primes contact_name, prepends intro to first question); terminal guards treat nodes/type==sequence as a valid exit. Verified: name->phone->email chain now runs.
   _by Admin - 2026-07-14 - tags: -_
+- **[9][decision] PLG-SO-02A: Database invariants — 250-limit + ACTIVE immutability** - Migration 182 adds: trg_batch_member_limit (pg_advisory_xact_lock per batch, 250-max), trg_prevent_active_batch_mutation (12 immutable fields), trg_prevent_member_delete (membership freeze), governed_remove_batch_member() (soft-delete), v_batch_size_mismatches (expected 0 rows). Concurrent final-slot insertion: exactly one succeeds.
+  _by Admin - 2026-08-05 - tags: -_
+- **[9][decision] PLG-SO-01A: REVIEW_REQUIRED default — never fallback STANDARD** - Corrected Phase 4 backfill: unresolved leads → REVIEW_REQUIRED, not STANDARD. Firm-name matching requires corroboration (state/website/email). Migration 180 idempotent safety correction. CampaignEligibilityEvaluator enforces classification_status ≠ CLASSIFIED → HELD. Evidence strength model: authoritative vs supporting vs insufficient.
+  _by Admin - 2026-08-05 - tags: -_
 - **[9][decision] Pre-handoff security: local auth guard + HITL authorization verified** - lib/auth.ts: local dev UUID blocked in production/staging (NODE_ENV guard). Added requireInternalRole() - rejects tenant users. HITL route now uses requireInternalRole() instead of bare requireAuth(). Audit records actual actor (not assignedTo). SUPABASE_SERVICE_ROLE_KEY server-side only - no NEXT_PUBLIC_ prefix. 660 TS + 17 Python = 677 passed, 0 failed.
   _by Admin - 2026-08-03 - tags: -_
 - **[9][decision] PLG-SO-02B: All 5 failing tests fixed** - auth-middleware.test.ts (local mode UUID), scraping-orchestrator.test.ts (too-short firm names), cold-outreach-workers.test.ts (Supabase mocks), hitl-approvals.test.ts (createClient mock + assert fix). Full regression: 47 suites, 660 passed, 0 failed, 5 skipped. UI tests excluded from count (rendering env issues, not code defects).
@@ -340,6 +352,10 @@
   _by Admin - 2026-07-08 - tags: -_
 - **[8][bug] gitignore source-leak ECOSYSTEM AUDIT results (June 25) — which repos still affected** - Audited all sibling git repos for the gitignore source-leak (advisory 64bc43bf). NONE have run the fix yet (advisory just issued). CONFIRMED UNFIXED SOURCE LEAKS (real lib/ source hidden from git): TrueVow_Financial_Management_Service (frontend/lib + frontend/__tests__/lib), TrueVow_Tenant_Application_Service (app/portal/lib, dograh server ui/src/lib, scripts/lib), TrueVow-Tenant_Billing-Service (ui/lib; ALSO its .gitignore has an embedded NULL/control byte — corrupted). LATENT (dangerous unanchored lib/ rule present but no active source leak yet): TrueVow_Internal_Ops_Service, TrueVow_Tenant_SETTLE-Service, TrueVow_Tenant_LEVERAGE_Service. NOT GIT REPOS AT ALL (no version control — separate severe issue): TrueVow_Dialogflow_Intake_Service, TrueVow_Platform_Analytics_Service, TrueVow_Tenant_VERIFY_Service, TrueVow_TWIML_SoftPhone_App. CLEAN: Website, Customer_Success_CORE, First_Line_Support, Sales_Ops, Tenant_CONNECT, Customer_Portal, cartesia_test. SaaS_Admin already fixed. Each affected repo agent: run docs/01-main/ECOSYSTEM_ADVISORY_GITIGNORE_SOURCE_LEAK.md (in SaaS Admin).
   _by user - 2026-06-25 - tags: gitignore, audit, ecosystem, cross-service_
+- **[8][context] PLG-SO-01 through SO-02C: complete session context** - All phases from CTO directive implemented. 92 files created/modified. 7 migrations (177-182). 8 new services. 4 channel adapters. 139 PLG tests. 47 suites, 660 TypeScript + 17 Python = 677/677 PASS. 22 docs in docs/plg/. Next: staging agent applies migrations 181/182, deploys c31c233, executes staging handoff runbook. Then PLG-SO-03: website attribution + Oakwood demo + canonical application matching + 90-day/12-intake trial.
+  _by Admin - 2026-08-05 - tags: -_
+- **[8][convention] Score, segment, lifecycle are separate dimensions** - Per PLG-SO-01: lead_score is quality/eligibility factor, segment_code is routing key (STANDARD/SPECIAL_COHORT), canonical_pipeline_stage is lifecycle state. None replaces the others. High-scoring special-cohort lead stays special — never auto-promoted to standard. Classification_status=REVIEW_REQUIRED blocks all automated outreach regardless of score.
+  _by Admin - 2026-08-05 - tags: -_
 - **[8][convention] Score, segment, lifecycle are separate dimensions** - Per PLG-SO-01: lead_score is quality factor, segment_code is routing key, canonical_pipeline_stage is lifecycle. None replaces the others. High-scoring special-cohort lead stays special — never auto-promoted to standard.
   _by Admin - 2026-08-03 - tags: -_
 - **[8][convention] Cross-Service Contract Rollout** - INTAKE, RETAINER, TRACE compliant with WebhookSignature v1.0. SETTLE contract-aligned. SaaS Admin evidence pending. Live three-hop E2E test chain: INTAKE signs candidate-submitted -> RETAINER validates -> RETAINER signs ActivateMatterCommand -> SaaS Admin validates -> SaaS Admin signs matter.activated -> TRACE validates. Legacy Bearer cutoff: 2026-09-01.
@@ -350,6 +366,8 @@
   _by Admin - 2026-07-31 - tags: -_
 - **[8][convention] Golden Fixture Cross-Repository Testing** - Created app/shared/contracts.py with frozen contract versions and deterministic golden fixture (make_golden_envelope, make_golden_fixture_json, compute_golden_hmac). Every TrueVow product must deserialize the same 18-field EventEnvelope and compute the same HMAC over the exact raw fixture. Tests at tests/test_golden_fixtures.py validate envelope serialization, roundtrip deserialization, HMAC determinism, evidence manifest completeness (9 refs), and jurisdiction separation (global vs tenant).
   _by Admin - 2026-07-31 - tags: -_
+- **[8][decision] PLG-SO-02B: 5 failing tests fixed — 677/677 PASS** - Fixed: auth-middleware (local UUID), scraping-orchestrator (firm_name threshold 3 chars), cold-outreach-workers (Supabase mock + error classes), hitl-approvals (createClient mock). Updated mock chains for Supabase integration tests. Full regression: 660 TS + 17 Python = 677 PASS, 0 failed.
+  _by Admin - 2026-08-05 - tags: -_
 - **[8][decision] PLG-SO-01: Restore STANDARD/SPECIAL_COHORT segmentation** - CTO directive resolved BLOCKER-3 ambiguity: removed sensitive-attribute INFERENCE, preserved SPECIAL_COHORT BUSINESS classification. Migration 179 creates segment_classification columns, special_cohort_pipeline table, campaign_eligibility. Score is now eligibility factor within segment context — not a routing decision. Score >= 70 as sole routing rule REMOVED.
   _by Admin - 2026-08-03 - tags: -_
 - **[8][decision] Transfer Re-engagement: contact_early not contact_info** - When caller says 'speak to attorney', the global _detect_transfer_request fires and routes to _build_transfer_response. This used contact_info_sequence (end-of-path) which jumped to intake_summary. Fixed to use contact_early_sequence (phone+name) which routes to route_to_ladder → identify_practice_area. contact_early guard added to skip when name+phone already captured. route_to_ladder changed from conflict_check_prior_rep to identify_practice_area. Story lock at IPA now routes to conflict_check_prior_rep instead of direct jurisdiction. Global transfer guard prevents re-trigger after contact captured.
@@ -366,6 +384,8 @@
   _by user - 2026-06-25 - tags: -_
 - **[8][dependency] D-001 Fix: enrichment_pending -> PROFILED** - enrichment_pending maps to canonical PROFILED per CTO frozen decision. Next valid transition: T004 (PROFILED -> CONTACT_ENRICHED). Reason code: legacy_state_migrated. Fixed in contracts.ts, migration 177, website-intake/manager.ts, and leads-repository.ts.
   _by Admin - 2026-08-03 - tags: -_
+- **[8][pattern] Track-A execution pattern** - All A1 items executed sequentially: SDK verification first, native API preference, bridge-only changes, zero FSM/contract/deployment mutations. Each item closed independently by reviewer before next authorized.
+  _by Admin - 2026-08-05 - tags: -_
 - **[8][pattern] SETTLE Authority Gate Pattern** - Every material action in SETTLE passes through a three-layer gate: (1) Authority class check - who can do what (CLIENT_AUTH for settlement decisions, ATTY_AUTH for demand/representation, STAFF_AUTH for disbursements). (2) State transition validation - is this move allowed from the current state (6 transition maps: demand_package, offer, lien, allocation, disbursement, consent). (3) Invariant validation - does this action violate any non-negotiable rule (INV-005 client settlement authority, INV-013 money reconciliation, INV-006 immutable document versions). Failure mode is always fail-closed (TV-CMP-002).
   _by Admin - 2026-07-31 - tags: -_
 - **[8][pattern] SaaS Admin: Migration Runner Pattern** - Migrations must be applied to live DB, not just written as SQL files. Pattern: node scripts/_migrate_NNN_description.js. Uses pg Client with connectionString + ssl: { rejectUnauthorized: false }. Always IF NOT EXISTS guards. Audit triggers use audit_trigger_func_v2() with actor_type='automated_job', event_category='configuration'. Never use psql \set commands with pg client.
@@ -391,8 +411,10 @@
 - **[8][todo] FIX gitignore source-leak: TrueVow-Tenant_Billing-Service** - ASSIGNED to the TrueVow-Tenant_Billing-Service agent. Real lib/ source is currently hidden from git (confirmed). Run the playbook: TrueVow_SaaS_Administration_Service/docs/01-main/ECOSYSTEM_ADVISORY_GITIGNORE_SOURCE_LEAK.md (fix .gitignore: anchor/remove stray lib/ + logs/; secrets-scan; commit recovered source in reviewed batches by explicit path; verify clean-clone build). REPORT RESULT via memory.py remember category=bug title='TrueVow-Tenant_Billing-Service gitignore RESULT' content='FIXED n files | CLEAN | BLOCKED + reason; secrets found?'. NOTE: reporting.py agent-checkin is broken — report via memory.
   _by user - 2026-06-25 - tags: gitignore, todo, assigned_
 
-## architecture (79)
+## architecture (83)
 
+- **[10] PLG-SA-01 through PLG-SA-04A — SaaS Admin frozen at 8c67516** - SaaS Admin coding stream is FROZEN. All four PLG phases closed: PLG-SA-01/01A (durable onboarding), PLG-SA-02R (commercial containment, Billing owns pricing, SaaS Admin has projection), PLG-SA-03/03A (commissioning authority, single lifecycle mutator, human-only decisions), PLG-SA-04/04A (INTAKE pro...
+  _by Admin - 2026-08-05_
 - **[10] Cross-Service Webhook Spine — All 3 Hops Live** - Hop 1 (INTAKE→RETAINER): 17/17 PASS. Hop 2 (RETAINER→SaaS Admin): DB verified, activation + duplicate guard. Hop 3 (SaaS Admin→TRACE): HMAC auth proven (401 without, passes with valid key). All hops verified against real Supabase. WebhookSignature v1.0 operational across entire spine. Per-service ke...
   _by Admin - 2026-07-31_
 - **[10] WebhookSignature v1.0 — Cross-Service Contract Complete** - Frozen WebhookSignature v1.0 deployed to INTAKE (14/14 fixtures), RETAINER (15/15 fixtures), TRACE (17/17 fixtures), SETTLE (conformance-aligned). Per-service key isolation: tv-intake-to-retainer-v1, tv-retainer-to-saas-admin-v1. Legacy auth cutoff 2026-09-01. RETAINER per-service key registry enfor...
@@ -449,6 +471,12 @@
   _by user - 2026-06-25_
 - **[10] LEVERAGE (ex-DRAFT) — 3-Tier Rules Engine, NO AI** - LEVERAGE is a 3-tier legal rule validation system: TIER 1: State/Jurisdiction rules (mandatory, cannot be disabled). TIER 2: Practice Area rules (customizable). TIER 3: Firm/Attorney/Client-specific rules. CORE PRINCIPLE: NO AI — no machine learning, no neural networks, no LLM. Uses peer benchmarkin...
   _by user - 2026-06-25_
+- **[9] PLG-SO-02C: IAM authorization — 5-gate requireInternalRole() + canonical permission codes** - requireInternalRole(): Supabase session → internal scope → active platform_staff_membership → SALES_OPS app grant → assigned role. requireHITLPermission() uses canonical codes (sales_applications.review/approve/reject/request_information). IAM_PERMISSION_ROLE_MAP is compatibility bridge pending SaaS...
+  _by Admin - 2026-08-05_
+- **[9] PLG-SO-02: Channel-neutral campaign model + regional batches of 250** - Extended existing 17-table campaign system (no parallel tables). Migration 181 adds program_code, primary_channel, geographic_partition_policy to campaigns. New tables: campaign_audience_batches (≤250), campaign_batch_members, campaign_delivery_chunks, campaign_channel_enablement, campaign_strategie...
+  _by Admin - 2026-08-05_
+- **[9] PLG-SO-01: Segmentation restored — STANDARD vs SPECIAL_COHORT** - Removed score-only routing (score>=70 → IN_CAMPAIGN). Segment is routing key, score is eligibility factor. Migration 179 adds segment_code, classification_status, special_cohort_pipeline table. SegmentClassifier, CampaignEligibilityEvaluator, SpecialCohortPipeline services created. 48 tests PASS.
+  _by Admin - 2026-08-05_
 - **[9] IAM permission check: requireHITLPermission() uses canonical codes, not hardcoded role lists** - requireInternalRole() checks: Supabase session, internal scope, ACTIVE platform_staff_membership, SALES_OPS app grant, assigned role. requireHITLPermission() accepts canonical IAM permission codes (sales_applications.review/approve/reject/request_information). IAM_PERMISSION_ROLE_MAP is a compatibil...
   _by Admin - 2026-08-03_
 - **[9] HITL authorization: 6-gate requireInternalRole() with explicit permissions** - requireInternalRole() now enforces: Supabase identity, email_confirmed_at (rejects service/machine credentials), scope==='internal' (rejects tenant/unknown/service), assigned internal role. requireHITLPermission() adds role-specific gate: sdr/bdr/ae/gtm can review; admin/revops/sales_manager can app...
@@ -552,10 +580,12 @@
 - **[6] LedgerPoster seam boundary: do not swap GL route CRUD** - journal_entry_routes.py posting/reversal/draft paths already use get_ledger_poster() (lines 59/185/259). The 6 remaining JournalEntryService(db) sites only use entry_repo/line_repo, bulk_upsert_lines, and _validate_required_dimensions, which the LedgerPoster Protocol intentionally excludes. Do NOT r...
   _by user - 2026-06-25_
 
-## pattern (9)
+## pattern (10)
 
 - **[10] Per-Service Key Isolation Pattern** - NEVER use one global webhook secret across all services. Each caller-receiver pair gets its own key: tv-intake-to-retainer-v1, tv-retainer-to-saas-admin-v1, tv-saas-admin-to-trace-v1. Key prefixes bound to allowed paths in CANONICAL_PATHS registry. Env vars: TRUEVOW_WEBHOOK_KEY_ID_{SERVICE} + TRUEVO...
   _by Admin - 2026-07-31_
+- **[8] Track-A execution pattern** - All A1 items executed sequentially: SDK verification first, native API preference, bridge-only changes, zero FSM/contract/deployment mutations. Each item closed independently by reviewer before next authorized.
+  _by Admin - 2026-08-05_
 - **[8] SETTLE Authority Gate Pattern** - Every material action in SETTLE passes through a three-layer gate: (1) Authority class check - who can do what (CLIENT_AUTH for settlement decisions, ATTY_AUTH for demand/representation, STAFF_AUTH for disbursements). (2) State transition validation - is this move allowed from the current state (6 t...
   _by Admin - 2026-07-31_
 - **[8] SaaS Admin: Migration Runner Pattern** - Migrations must be applied to live DB, not just written as SQL files. Pattern: node scripts/_migrate_NNN_description.js. Uses pg Client with connectionString + ssl: { rejectUnauthorized: false }. Always IF NOT EXISTS guards. Audit triggers use audit_trigger_func_v2() with actor_type='automated_job',...
@@ -573,7 +603,7 @@
 - **[6] xai_cloud bridge test suite** - Created tests/test_xai_cloud_bridge.py (34 tests) for XaiCloudBridge. Mirrors test_xai_bridge.py but adapts for cloud bridge: dual registration (xai_cloud + xai_cloud_voice_agent), default voice rex (male-only), end_session returns {bridge,session_id,status} without had_audio, double-start early-ret...
   _by Admin - 2026-07-08_
 
-## decision (51)
+## decision (54)
 
 - **[10] Billing-FM Architecture Separation — APPROVED** - Tenant Billing becomes a pure commercial subscription, metering and rating engine. Financial Management owns customer invoices, AR, payment execution, allocations, refunds, collections, treasury reconciliation and accounting. One contract connects them: CommercialStatementFinalized. Billing produces...
   _by Admin - 2026-08-04_
@@ -629,6 +659,10 @@
   _by user - 2026-06-25_
 - **[10] CONNECT Archived - DRAFT Renamed to LEVERAGE - INTAKE Updated** - CONNECT (attorney referral network) is decommissioned and archived from the ecosystem permanently - no longer on TrueVow agenda. DRAFT has been completely replaced by LEVERAGE everywhere (same service, renamed). INTAKE (Tenant Application Service) is no longer just FSM NLP - it is now FSM applied to...
   _by user - 2026-06-25_
+- **[9] PLG-SO-02A: Database invariants — 250-limit + ACTIVE immutability** - Migration 182 adds: trg_batch_member_limit (pg_advisory_xact_lock per batch, 250-max), trg_prevent_active_batch_mutation (12 immutable fields), trg_prevent_member_delete (membership freeze), governed_remove_batch_member() (soft-delete), v_batch_size_mismatches (expected 0 rows). Concurrent final-slo...
+  _by Admin - 2026-08-05_
+- **[9] PLG-SO-01A: REVIEW_REQUIRED default — never fallback STANDARD** - Corrected Phase 4 backfill: unresolved leads → REVIEW_REQUIRED, not STANDARD. Firm-name matching requires corroboration (state/website/email). Migration 180 idempotent safety correction. CampaignEligibilityEvaluator enforces classification_status ≠ CLASSIFIED → HELD. Evidence strength model: authori...
+  _by Admin - 2026-08-05_
 - **[9] Pre-handoff security: local auth guard + HITL authorization verified** - lib/auth.ts: local dev UUID blocked in production/staging (NODE_ENV guard). Added requireInternalRole() - rejects tenant users. HITL route now uses requireInternalRole() instead of bare requireAuth(). Audit records actual actor (not assignedTo). SUPABASE_SERVICE_ROLE_KEY server-side only - no NEXT_P...
   _by Admin - 2026-08-03_
 - **[9] PLG-SO-02B: All 5 failing tests fixed** - auth-middleware.test.ts (local mode UUID), scraping-orchestrator.test.ts (too-short firm names), cold-outreach-workers.test.ts (Supabase mocks), hitl-approvals.test.ts (createClient mock + assert fix). Full regression: 47 suites, 660 passed, 0 failed, 5 skipped. UI tests excluded from count (renderi...
@@ -661,6 +695,8 @@
   _by Admin - 2026-07-03_
 - **[9] CONNECT Service Deleted** - TrueVow_Tenant_CONNECT_Service directory deleted. Removed from config.yaml services block and .gitignore. Was archived June 2026 — attorney referral network, no longer on TrueVow's agenda.
   _by user - 2026-07-01_
+- **[8] PLG-SO-02B: 5 failing tests fixed — 677/677 PASS** - Fixed: auth-middleware (local UUID), scraping-orchestrator (firm_name threshold 3 chars), cold-outreach-workers (Supabase mock + error classes), hitl-approvals (createClient mock). Updated mock chains for Supabase integration tests. Full regression: 660 TS + 17 Python = 677 PASS, 0 failed.
+  _by Admin - 2026-08-05_
 - **[8] PLG-SO-01: Restore STANDARD/SPECIAL_COHORT segmentation** - CTO directive resolved BLOCKER-3 ambiguity: removed sensitive-attribute INFERENCE, preserved SPECIAL_COHORT BUSINESS classification. Migration 179 creates segment_classification columns, special_cohort_pipeline table, campaign_eligibility. Score is now eligibility factor within segment context — not...
   _by Admin - 2026-08-03_
 - **[8] Transfer Re-engagement: contact_early not contact_info** - When caller says 'speak to attorney', the global _detect_transfer_request fires and routes to _build_transfer_response. This used contact_info_sequence (end-of-path) which jumped to intake_summary. Fixed to use contact_early_sequence (phone+name) which routes to route_to_ladder → identify_practice_a...
@@ -689,10 +725,12 @@
 - **[8] D-001 Fix: enrichment_pending -> PROFILED** - enrichment_pending maps to canonical PROFILED per CTO frozen decision. Next valid transition: T004 (PROFILED -> CONTACT_ENRICHED). Reason code: legacy_state_migrated. Fixed in contracts.ts, migration 177, website-intake/manager.ts, and leads-repository.ts.
   _by Admin - 2026-08-03_
 
-## convention (6)
+## convention (7)
 
 - **[10] zero hardcoded tunable values** - RULE: This is a multi-tenant platform. Never hardcode ANY value that may need adjustment per-tenant, per-firm, or per-environment. All tunables must live in one of: (1) tenant_config, (2) workflow JSON config, or (3) named module-level constants with clear documentation. Bare numbers, strings, or ID...
   _by Admin - 2026-07-15_
+- **[8] Score, segment, lifecycle are separate dimensions** - Per PLG-SO-01: lead_score is quality/eligibility factor, segment_code is routing key (STANDARD/SPECIAL_COHORT), canonical_pipeline_stage is lifecycle state. None replaces the others. High-scoring special-cohort lead stays special — never auto-promoted to standard. Classification_status=REVIEW_REQUIR...
+  _by Admin - 2026-08-05_
 - **[8] Score, segment, lifecycle are separate dimensions** - Per PLG-SO-01: lead_score is quality factor, segment_code is routing key, canonical_pipeline_stage is lifecycle. None replaces the others. High-scoring special-cohort lead stays special — never auto-promoted to standard.
   _by Admin - 2026-08-03_
 - **[8] Cross-Service Contract Rollout** - INTAKE, RETAINER, TRACE compliant with WebhookSignature v1.0. SETTLE contract-aligned. SaaS Admin evidence pending. Live three-hop E2E test chain: INTAKE signs candidate-submitted -> RETAINER validates -> RETAINER signs ActivateMatterCommand -> SaaS Admin validates -> SaaS Admin signs matter.activat...
@@ -775,7 +813,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (180)
+## context (181)
 
 - **[10] FM Customer Finance Commissioning — what FM must build for Billing cutover** - FM must build Customer Finance module with: commercial statement ingestion endpoint (POST /api/v1/internal/customer-finance/commercial-statements), invoice posting, atomic invoice numbering, AR entries, revenue recognition schedules, journal posting. FM takes over Stripe/TELR payment execution, prov...
   _by Admin - 2026-08-04_
@@ -789,6 +827,8 @@
   _by Admin - 2026-07-27_
 - **[10] TRACE documentation and memory updated July 24 2026** - All documentation updated: AGENTS.md (250+ lines with full service reference), README.md (updated stack/status), TRACE-Agent-Coding-Instructions.md (300+ line Appendix A with architecture, API reference, data flow, troubleshooting). Platform map updated (TRACE: port 3036, active). DEVELOPERS.md upda...
   _by Admin - 2026-07-24_
+- **[8] PLG-SO-01 through SO-02C: complete session context** - All phases from CTO directive implemented. 92 files created/modified. 7 migrations (177-182). 8 new services. 4 channel adapters. 139 PLG tests. 47 suites, 660 TypeScript + 17 Python = 677/677 PASS. 22 docs in docs/plg/. Next: staging agent applies migrations 181/182, deploys c31c233, executes stagi...
+  _by Admin - 2026-08-05_
 - **[8] Git Scan: 2026-08-04T06:13:13** - { "summary": { "timestamp": "2026-08-04T06:13:13.599154+00:00", "total": 14, "clean": 2, "dirty": 10, "missing": 2, "errors": 0, "stale_services": 12, "active_services": 2, "status_breakdown": { "HEALTHY": 1, "ACTIVE": 1, "STALE": 3, "NEGLECTED": 9, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY"...
   _by Admin - 2026-08-04_
 - **[8] Git Scan: 2026-08-04T05:58:47** - { "summary": { "timestamp": "2026-08-04T05:58:47.741940+00:00", "total": 14, "clean": 1, "dirty": 11, "missing": 2, "errors": 0, "stale_services": 12, "active_services": 2, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 1, "STALE": 3, "NEGLECTED": 9, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY"...
