@@ -85,15 +85,19 @@ HMAC_NEGATIVE_CASES = [
     ("wrong_key_id", lambda h, b: {**h, "X-TrueVow-Key-Id": "unknown-key-v0"}),
     ("modified_body", lambda h, b: (h, b + b"modified")),
     ("wrong_path", lambda h, b: (h, b, "/api/v1/webhooks/wrong-path")),
+    ("deprecated_alias", lambda h, b: (h, b, "/webhooks/sales-ops/application-approved")),
     ("wrong_method", lambda h, b: ("PUT", h, b)),
     ("missing_timestamp", lambda h, b: {k: v for k, v in h.items() if k != "X-TrueVow-Timestamp"}),
     ("malformed_timestamp", lambda h, b: {**h, "X-TrueVow-Timestamp": "not-a-number"}),
     ("expired_timestamp", lambda h, b: {**h, "X-TrueVow-Timestamp": str(int(time.time()) - 3600)}),
     ("future_timestamp", lambda h, b: {**h, "X-TrueVow-Timestamp": str(int(time.time()) + 3600)}),
     ("malformed_signature", lambda h, b: {**h, "X-TrueVow-Signature": "zzz"}),
-    ("duplicate_signature_header", lambda h, b: None),  # needs header injection
+    ("duplicate_signature_header", lambda h, b: None),
+    ("duplicate_timestamp_header", lambda h, b: None),
     ("empty_body", lambda h, b: (h, b"")),
     ("invalid_schema_version", lambda h, b: (h, json.dumps({**json.loads(b), "schema_version": "99.0.0"}).encode())),
+    ("unsupported_algorithm", lambda h, b: {**h, "X-TrueVow-Signature": "sha1=abc123"}),
+    ("invalid_contract_version", lambda h, b: (h, json.dumps({**json.loads(b), "event_version": "99.0.0"}).encode())),
 ]
 
 
