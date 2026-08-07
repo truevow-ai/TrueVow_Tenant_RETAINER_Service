@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-06T17:29:33.338973+00:00
-- Total memories: 397
+- Generated: 2026-08-07T05:39:43.619841+00:00
+- Total memories: 400
 
-## High-importance decisions (8+, routine noise excluded) - 209
+## High-importance decisions (8+, routine noise excluded) - 211
 
 - **[10][architecture] Unified Contact Candidate Ingress** - Implemented generic TaskCandidateIngress processor for all three contact actions (CAPTURE_NAME/EMAIL/PHONE_RESULT). Keyed HMAC-SHA256 fingerprinting, tenant-scoped receipt repository with durable replay/conflict handling, FSM-owned state_version mutation (processor reads from FSM after transition, never calculates independently). 148 tests pass. Commit 891eec8 on review/tv-intake-engine-p1-02e-r1.
   _by Admin - 2026-08-06 - tags: -_
@@ -250,6 +250,10 @@
   _by Admin - 2026-07-31 - tags: -_
 - **[9][bug] contact_info_sequence dropped phone+email** - Root cause: routing INTO a sequence node used _execute_node, which returned the sequence's own intro prompt and left current_node=contact_info_sequence WITHOUT priming the first sub-node. Next turn the C10 terminal guard (workflow_engine.py:518) saw no next/branches/options and returned _build_complete_response — so name-only leads jumped to 'complete', losing phone+email. FIX: _execute_node now delegates type==sequence to _execute_sequence (primes contact_name, prepends intro to first question); terminal guards treat nodes/type==sequence as a valid exit. Verified: name->phone->email chain now runs.
   _by Admin - 2026-07-14 - tags: -_
+- **[9][decision] TV-PR-CONTROLLED-GTM-CANARY-01 — Defined and accepted** - Next commissioning gate after R2 closure. Controlled real-world GTM canary using yasha.afghan@gmail.com as prospect contact. Journey: controlled prospect ingestion -> enrichment -> qualification -> STANDARD/SPECIAL_COHORT/REVIEW_REQUIRED -> campaign eligibility -> playbook -> HITL approval -> REAL email to yasha.afghan@gmail.com -> reply correlation -> cadence transition -> demo booking -> post-demo follow-up -> application -> identity resolution (prospect->applicant) -> human approval -> signed Sales Ops->SaaS Admin handoff -> billing -> provisioning -> Customer Portal onboarding -> Benjamin test call -> activation -> full customer lifecycle. Real external unrelated prospect: NO. Production tenant: NO. Master execution ID to follow one correlated trace from source_record_id through tenant_id.
+  _by Admin - 2026-08-07 - tags: -_
+- **[9][decision] TV-PR-STAGING-E2E-COMMISSIONING-01R2 — PASS / CLOSED** - SaaS Admin staging E2E commissioning complete. Fresh handoff HTTP 201, idempotent replay 200, checksum conflict 409, concurrent same-name firms both 201 with collision-safe slugs, cleanup zero orphans. HMAC matrix 13/16 rejected with 0 valid-fail-open gaps. Corrective commits: bcb1420 (slug from handoff_id), 726c239 (mdmPayload to RPC propagation), 97b94dd (array fix for dependency_step_codes). Deployed HEAD: 97b94dd on review/tv-pr-staging-e2e-01r. Supabase project jahhqcypxjkxwrfzpyxd. Fly app truevow-saas-admin-staging.
+  _by Admin - 2026-08-07 - tags: -_
 - **[9][decision] PLG-SO-02A: Database invariants — 250-limit + ACTIVE immutability** - Migration 182 adds: trg_batch_member_limit (pg_advisory_xact_lock per batch, 250-max), trg_prevent_active_batch_mutation (12 immutable fields), trg_prevent_member_delete (membership freeze), governed_remove_batch_member() (soft-delete), v_batch_size_mismatches (expected 0 rows). Concurrent final-slot insertion: exactly one succeeds.
   _by Admin - 2026-08-05 - tags: -_
 - **[9][decision] PLG-SO-01A: REVIEW_REQUIRED default — never fallback STANDARD** - Corrected Phase 4 backfill: unresolved leads → REVIEW_REQUIRED, not STANDARD. Firm-name matching requires corroboration (state/website/email). Migration 180 idempotent safety correction. CampaignEligibilityEvaluator enforces classification_status ≠ CLASSIFIED → HELD. Evidence strength model: authoritative vs supporting vs insufficient.
@@ -627,7 +631,7 @@
 - **[6] xai_cloud bridge test suite** - Created tests/test_xai_cloud_bridge.py (34 tests) for XaiCloudBridge. Mirrors test_xai_bridge.py but adapts for cloud bridge: dual registration (xai_cloud + xai_cloud_voice_agent), default voice rex (male-only), end_session returns {bridge,session_id,status} without had_audio, double-start early-ret...
   _by Admin - 2026-07-08_
 
-## decision (56)
+## decision (58)
 
 - **[10] FSM Authority Boundary — state_version** - FSMEngine.transition() is the sole state mutation authority. The ingress processor reads state_version from FSM after transition, never calculates independently. Added FSMEngine.state_version property (derives from transition history). Direct state_version arithmetic in processor verified absent via...
   _by Admin - 2026-08-06_
@@ -685,6 +689,10 @@
   _by user - 2026-06-25_
 - **[10] CONNECT Archived - DRAFT Renamed to LEVERAGE - INTAKE Updated** - CONNECT (attorney referral network) is decommissioned and archived from the ecosystem permanently - no longer on TrueVow agenda. DRAFT has been completely replaced by LEVERAGE everywhere (same service, renamed). INTAKE (Tenant Application Service) is no longer just FSM NLP - it is now FSM applied to...
   _by user - 2026-06-25_
+- **[9] TV-PR-CONTROLLED-GTM-CANARY-01 — Defined and accepted** - Next commissioning gate after R2 closure. Controlled real-world GTM canary using yasha.afghan@gmail.com as prospect contact. Journey: controlled prospect ingestion -> enrichment -> qualification -> STANDARD/SPECIAL_COHORT/REVIEW_REQUIRED -> campaign eligibility -> playbook -> HITL approval -> REAL e...
+  _by Admin - 2026-08-07_
+- **[9] TV-PR-STAGING-E2E-COMMISSIONING-01R2 — PASS / CLOSED** - SaaS Admin staging E2E commissioning complete. Fresh handoff HTTP 201, idempotent replay 200, checksum conflict 409, concurrent same-name firms both 201 with collision-safe slugs, cleanup zero orphans. HMAC matrix 13/16 rejected with 0 valid-fail-open gaps. Corrective commits: bcb1420 (slug from han...
+  _by Admin - 2026-08-07_
 - **[9] PLG-SO-02A: Database invariants — 250-limit + ACTIVE immutability** - Migration 182 adds: trg_batch_member_limit (pg_advisory_xact_lock per batch, 250-max), trg_prevent_active_batch_mutation (12 immutable fields), trg_prevent_member_delete (membership freeze), governed_remove_batch_member() (soft-delete), v_batch_size_mismatches (expected 0 rows). Concurrent final-slo...
   _by Admin - 2026-08-05_
 - **[9] PLG-SO-01A: REVIEW_REQUIRED default — never fallback STANDARD** - Corrected Phase 4 backfill: unresolved leads → REVIEW_REQUIRED, not STANDARD. Firm-name matching requires corroboration (state/website/email). Migration 180 idempotent safety correction. CampaignEligibilityEvaluator enforces classification_status ≠ CLASSIFIED → HELD. Evidence strength model: authori...
@@ -843,7 +851,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (183)
+## context (184)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -879,6 +887,8 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: INTAKE: Completed TV-INTAKE-ENGINE-P1-02E-R1 — generic contact candidate ingress with FSM-owned stat** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: Completed TV-INTAKE-ENGINE-P1-02E-R1 \u2014 generic contact candidate ingress with FSM-owned state_version authority. 148 tests pass. Stream paused at 891eec8. Migration frozen at 4da6ae9 (SHA-256: ...
+  _by user - 2026-08-06_
 - **[7] [DONE] DONE: INTAKE: TV-INTAKE-BRIDGE-A1 — Track A items A1-01 through A1-04 delivered | outcome: 4/4 closed, 182** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: TV-INTAKE-BRIDGE-A1 \u2014 Track A items A1-01 through A1-04 delivered | outcome: 4/4 closed, 182 agent + 38 engine tests pass, zero regressions | learned: LiveKit native APIs (FallbackAdapter, trun...
   _by user - 2026-08-05_
 - **[7] [DONE] DONE: SaaS Admin: PLG-SA-04A RECONCILED — v27 attribution error resolved (actual commit 8c67516, not 92330** - {"agent_id": "TrueVow_SaaS_Administration_Service", "action": "done", "status": "DONE", "message": "SaaS Admin: PLG-SA-04A RECONCILED \u2014 v27 attribution error resolved (actual commit 8c67516, not 92330b5), v29 deployed from clean tree with all migrations 185/186/187 traceable, 1 canonical provis...
