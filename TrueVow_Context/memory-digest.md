@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-10T15:54:11.706031+00:00
-- Total memories: 423
+- Generated: 2026-08-10T19:26:53.798003+00:00
+- Total memories: 430
 
-## High-importance decisions (8+, routine noise excluded) - 225
+## High-importance decisions (8+, routine noise excluded) - 231
 
 - **[10][architecture] CSM Commissioning Authority Model Corrected** - SaaS Admin owns authoritative customer identity and commissioning decisions. CSM supplies readiness evidence and recommendations, does NOT create tenants. TV-PR-ONTOLOGY-CROSS-SERVICE-REALIGNMENT-01. Legacy POST /api/v1/tenants/internal rejected before commit. Correct flow: Sales Ops → SaaS Admin (handoff) → SaaS Admin commissions CSM → CSM supplies evidence → SaaS Admin executes lifecycle.
   _by Admin - 2026-08-10 - tags: -_
@@ -110,6 +110,10 @@
   _by Admin - 2026-08-10 - tags: -_
 - **[10][convention] zero hardcoded tunable values** - RULE: This is a multi-tenant platform. Never hardcode ANY value that may need adjustment per-tenant, per-firm, or per-environment. All tunables must live in one of: (1) tenant_config, (2) workflow JSON config, or (3) named module-level constants with clear documentation. Bare numbers, strings, or IDs in logic statements are FORBIDDEN. If you need a value that could change — threshold, timeout, limit, firm identifier, VAD setting, confidence score — expose it via config. Test by asking: 'Could a different law firm need this set differently?'
   _by Admin - 2026-07-15 - tags: -_
+- **[10][decision] Billing Trial Implementation — CONDITIONALLY APPROVED** - Commercial model APPROVED. 18 revisions required before implementation: 1) Keep TRIAL_ACTIVE after successor selection 2) Separate successor plan from current subscription status 3) Three timestamps: trial_expires_at/trial_ended_at/trial_end_reason 4) Versioned trial offer (INTAKE_TRIAL_90D_12_V1) 5) FK must point to immutable pricing catalogue 6) Freeze price at selection 7) Reuse canonical Billing usage ingestion 8) Register exact meterable INTAKE event 9) Idempotent intake counting 10) Immediate conversion on 12th intake not daily sweep 11) Atomic concurrency-safe transition 12) SaaS Admin triggers trial activation after readiness gate 13) SaaS Admin retains operational entitlement authority 14) Do not use renew_subscription for trial conversion 15) Explicit scheduled-plan command 16) Defer immediate_activation 17) Define no-successor TRIAL_EXPIRED behavior 18) Define billing-readiness before auto-conversion guarantee.
+  _by Admin - 2026-08-10 - tags: -_
+- **[10][decision] Trial-to-Paid Conversion Model** - Canonical commercial lifecycle: 90-day/12-intake trial auto-activates after onboarding. Firm may select paid plan at any time during trial but paid plan does NOT activate until trial exhaustion (12th intake OR day 90). Three distinct dates: plan_selected_at, trial_ends_at, paid_subscription_activated_at. No service interruption at conversion. Trial entitlement is THE authoritative entitlement until trial ends. Optional 'start now' for immediate activation but not the default path. Intake = completed Benjamin intake session, not raw inbound call.
+  _by Admin - 2026-08-10 - tags: -_
 - **[10][decision] Revised Canonical Flow** - Sales Ops -> SaaS Admin -> CSM is the ONLY authorized path. No Sales Ops -> CSM direct commissioning. No CSM -> tenant creation. SaaS Admin owns authoritative customer identity, onboarding state, and commissioning decisions. CSM supplies onboarding/readiness evidence.
   _by Admin - 2026-08-10 - tags: -_
 - **[10][decision] FSM Authority Boundary — state_version** - FSMEngine.transition() is the sole state mutation authority. The ingress processor reads state_version from FSM after transition, never calculates independently. Added FSMEngine.state_version property (derives from transition history). Direct state_version arithmetic in processor verified absent via AST inspection. Commit 891eec8.
@@ -176,6 +180,14 @@
   _by Admin - 2026-07-31 - tags: -_
 - **[10][todo] TX Phase 4 DB connectivity blocker** - db.bpzegquhxnygyxdzluyw.supabase.co only resolves to IPv6, Windows dev box has no IPv6. Supabase pooler not enabled for this project (tenant/user not found). Phase 4 scripts (verify_emails_phones, classify_phone_types, verify_attorney_emails) need psycopg2. Workaround: create REST API versions or enable IPv4 on Supabase.
   _by Admin - 2026-07-27 - tags: -_
+- **[9][architecture] Billing Trial Model — 18 Revisions for Implementation** - Trial lifecycle separated into 3 timestamps: trial_started_at, trial_expires_at (deterministic 90-day deadline), trial_ended_at (actual). TRIAL_ACTIVE persists after plan selection — successor_plan is a separate field, not a subscription status transition. Trial→paid must be atomic (no TRIAL_ENDED window, no gap). Usage counting must be idempotent by intake_session_id via existing INTAKE→Billing pipeline. Intake limit conversion must happen immediately on 12th event, not via daily sweeper. SaaS Admin triggers trial activation only after readiness gate (not after onboarding form). SaaS Admin retains operational entitlement authority — Billing owns commercial fact only. Defer immediate_activation. Defer upgrade overloading. Trial offer is versioned (INTAKE_TRIAL_90D_12_V1) with immutable terms.
+  _by Admin - 2026-08-10 - tags: -_
+- **[9][architecture] Canonical Trial Commercial Lifecycle** - Trial model: 90 days OR 12 completed intake sessions, whichever first. Three distinct phases: TRIAL_ACTIVE (authoritative entitlement), PAID_PLAN_SCHEDULED (customer committed but trial continues unchanged), PAID_PLAN_ACTIVE (trial exhausted/expired → paid activates atomically, no gap). Key distinction: plan_selected_at ≠ trial_ends_at ≠ paid_subscription_activated_at. 'Intake' defined as completed Benjamin session, not raw inbound call. Default path is scheduled conversion; immediate activation is optional with explicit confirmation (surrenders remaining trial). No payment on application page. Trial continues even after plan selection - customer is not punished for buying early.
+  _by Admin - 2026-08-10 - tags: -_
+- **[9][architecture] Trial States** - Lifecycle states: APPROVED -> ONBOARDING -> TEST_CALL -> TRIAL_ACTIVATED (12 intakes/90 days). Customer may select PAID_PLAN_SCHEDULED at any time during trial. Trial remains authoritative until TRIAL_ENDED (first of: 12th intake or day 90). Then atomic transition to PAID_PLAN_ACTIVE with monthly allowance. No gap, no interruption.
+  _by Admin - 2026-08-10 - tags: -_
+- **[9][architecture] Commercial Entity Definitions** - Trial intake = completed Benjamin intake session reaching defined completion point. NOT raw inbound calls, spam, or hang-ups. Trial meter consumes 1 per completed intake. Monthly call allowances (40/100/200) apply after paid activation. Billing and INTAKE must share exact canonical definition before commissioning trial meter.
+  _by Admin - 2026-08-10 - tags: -_
 - **[9][architecture] GTM Canary T020-T023 Handoff** - Implemented full Sales Ops to SaaS Admin handoff: T020 human approval, T022 auto-transition to HANDOFF_PENDING, durable sales_handoff_outbox, HMAC-signed webhook tv-sales-ops-to-saas-admin-v1, T023 HANDED_OFF on acknowledgement. Sales Ops does NOT commission CSM directly.
   _by Admin - 2026-08-10 - tags: -_
 - **[9][architecture] LiveKit Documentation Compliance Audit** - Completed full traceability audit: 20 doc topics, 54 installed APIs verified, 67 findings classified (22 NATIVE_AND_USED, 6 NATIVE_BUT_DUPLICATED, 18 NATIVE_BUT_PARTIALLY_USED, 3 IMPLEMENTATION_DEFECTS). ~1,650 lines of custom code overlap with native LiveKit features across name/email/phone extraction and sequence nodes. 8 deliverable documents committed at bf4a62a.
@@ -459,7 +471,7 @@
 - **[8][todo] FIX gitignore source-leak: TrueVow-Tenant_Billing-Service** - ASSIGNED to the TrueVow-Tenant_Billing-Service agent. Real lib/ source is currently hidden from git (confirmed). Run the playbook: TrueVow_SaaS_Administration_Service/docs/01-main/ECOSYSTEM_ADVISORY_GITIGNORE_SOURCE_LEAK.md (fix .gitignore: anchor/remove stray lib/ + logs/; secrets-scan; commit recovered source in reviewed batches by explicit path; verify clean-clone build). REPORT RESULT via memory.py remember category=bug title='TrueVow-Tenant_Billing-Service gitignore RESULT' content='FIXED n files | CLEAN | BLOCKED + reason; secrets found?'. NOTE: reporting.py agent-checkin is broken — report via memory.
   _by user - 2026-06-25 - tags: gitignore, todo, assigned_
 
-## architecture (90)
+## architecture (94)
 
 - **[10] CSM Commissioning Authority Model Corrected** - SaaS Admin owns authoritative customer identity and commissioning decisions. CSM supplies readiness evidence and recommendations, does NOT create tenants. TV-PR-ONTOLOGY-CROSS-SERVICE-REALIGNMENT-01. Legacy POST /api/v1/tenants/internal rejected before commit. Correct flow: Sales Ops → SaaS Admin (h...
   _by Admin - 2026-08-10_
@@ -525,6 +537,14 @@
   _by user - 2026-06-25_
 - **[10] LEVERAGE (ex-DRAFT) — 3-Tier Rules Engine, NO AI** - LEVERAGE is a 3-tier legal rule validation system: TIER 1: State/Jurisdiction rules (mandatory, cannot be disabled). TIER 2: Practice Area rules (customizable). TIER 3: Firm/Attorney/Client-specific rules. CORE PRINCIPLE: NO AI — no machine learning, no neural networks, no LLM. Uses peer benchmarkin...
   _by user - 2026-06-25_
+- **[9] Billing Trial Model — 18 Revisions for Implementation** - Trial lifecycle separated into 3 timestamps: trial_started_at, trial_expires_at (deterministic 90-day deadline), trial_ended_at (actual). TRIAL_ACTIVE persists after plan selection — successor_plan is a separate field, not a subscription status transition. Trial→paid must be atomic (no TRIAL_ENDED w...
+  _by Admin - 2026-08-10_
+- **[9] Canonical Trial Commercial Lifecycle** - Trial model: 90 days OR 12 completed intake sessions, whichever first. Three distinct phases: TRIAL_ACTIVE (authoritative entitlement), PAID_PLAN_SCHEDULED (customer committed but trial continues unchanged), PAID_PLAN_ACTIVE (trial exhausted/expired → paid activates atomically, no gap). Key distinct...
+  _by Admin - 2026-08-10_
+- **[9] Trial States** - Lifecycle states: APPROVED -> ONBOARDING -> TEST_CALL -> TRIAL_ACTIVATED (12 intakes/90 days). Customer may select PAID_PLAN_SCHEDULED at any time during trial. Trial remains authoritative until TRIAL_ENDED (first of: 12th intake or day 90). Then atomic transition to PAID_PLAN_ACTIVE with monthly al...
+  _by Admin - 2026-08-10_
+- **[9] Commercial Entity Definitions** - Trial intake = completed Benjamin intake session reaching defined completion point. NOT raw inbound calls, spam, or hang-ups. Trial meter consumes 1 per completed intake. Monthly call allowances (40/100/200) apply after paid activation. Billing and INTAKE must share exact canonical definition before...
+  _by Admin - 2026-08-10_
 - **[9] GTM Canary T020-T023 Handoff** - Implemented full Sales Ops to SaaS Admin handoff: T020 human approval, T022 auto-transition to HANDOFF_PENDING, durable sales_handoff_outbox, HMAC-signed webhook tv-sales-ops-to-saas-admin-v1, T023 HANDED_OFF on acknowledgement. Sales Ops does NOT commission CSM directly.
   _by Admin - 2026-08-10_
 - **[9] LiveKit Documentation Compliance Audit** - Completed full traceability audit: 20 doc topics, 54 installed APIs verified, 67 findings classified (22 NATIVE_AND_USED, 6 NATIVE_BUT_DUPLICATED, 18 NATIVE_BUT_PARTIALLY_USED, 3 IMPLEMENTATION_DEFECTS). ~1,650 lines of custom code overlap with native LiveKit features across name/email/phone extract...
@@ -667,8 +687,12 @@
 - **[6] xai_cloud bridge test suite** - Created tests/test_xai_cloud_bridge.py (34 tests) for XaiCloudBridge. Mirrors test_xai_bridge.py but adapts for cloud bridge: dual registration (xai_cloud + xai_cloud_voice_agent), default voice rex (male-only), end_session returns {bridge,session_id,status} without had_audio, double-start early-ret...
   _by Admin - 2026-07-08_
 
-## decision (63)
+## decision (66)
 
+- **[10] Billing Trial Implementation — CONDITIONALLY APPROVED** - Commercial model APPROVED. 18 revisions required before implementation: 1) Keep TRIAL_ACTIVE after successor selection 2) Separate successor plan from current subscription status 3) Three timestamps: trial_expires_at/trial_ended_at/trial_end_reason 4) Versioned trial offer (INTAKE_TRIAL_90D_12_V1) 5...
+  _by Admin - 2026-08-10_
+- **[10] Trial-to-Paid Conversion Model** - Canonical commercial lifecycle: 90-day/12-intake trial auto-activates after onboarding. Firm may select paid plan at any time during trial but paid plan does NOT activate until trial exhaustion (12th intake OR day 90). Three distinct dates: plan_selected_at, trial_ends_at, paid_subscription_activate...
+  _by Admin - 2026-08-10_
 - **[10] Revised Canonical Flow** - Sales Ops -> SaaS Admin -> CSM is the ONLY authorized path. No Sales Ops -> CSM direct commissioning. No CSM -> tenant creation. SaaS Admin owns authoritative customer identity, onboarding state, and commissioning decisions. CSM supplies onboarding/readiness evidence.
   _by Admin - 2026-08-10_
 - **[10] FSM Authority Boundary — state_version** - FSMEngine.transition() is the sole state mutation authority. The ingress processor reads state_version from FSM after transition, never calculates independently. Added FSMEngine.state_version property (derives from transition history). Direct state_version arithmetic in processor verified absent via...
@@ -793,6 +817,8 @@
   _by Admin - 2026-07-08_
 - **[8] FM RLS canonical GUC + migration 010 staged** - Canonical RLS GUC for FM is app.current_tenant_id (set by app/core/database.py get_db_session). Migration 008 + compliance/001_rls_policies.sql wrongly use app.current_legal_entity_id (app never sets it). Staged migration 010_missing_tables_and_rls_fix creates approval_policy, reconciliation_adjustm...
   _by user - 2026-06-25_
+- **[7] Website Copy - No Payment Before Trial** - FAQ clarification: No payment collected on application page. Trial activates automatically after onboarding. Customer chooses paid plan from Portal during trial. Remaining trial continues unchanged. Paid plan begins automatically when trial ends. Customer does not need to choose a paid plan before s...
+  _by Admin - 2026-08-10_
 - **[4] All 18 Active Services Wired to Ecosystem + 1 Archived** - 18 of 18 active TrueVow services wired with AGENTS.md + ecosystem integration. 1 archived: CONNECT (decommissioned June 2026, no longer on TrueVow agenda). Every agent opening any active service reads ecosystem preamble: check in with CTO orchestrator, dispatch tasks, remember decisions, report stat...
   _by user - 2026-06-25_
 
