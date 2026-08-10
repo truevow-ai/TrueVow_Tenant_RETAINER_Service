@@ -43,4 +43,16 @@ Unified across services. **Source:** architecture memory (importance 10).
 ### 9. Secrets Management — Infisical (Self-Hosted)
 Secrets are injected at runtime; `.env.local` does not exist in CI or production. Infisical (self-hosted on TrueVow infrastructure, MIT license) is the single source of truth for all keys, API tokens, and credentials across the platform. Rules: no duplicated secrets across services (one leaked `.env.local` = cross-service compromise); per-trust-domain scoping (App2 never holds App1/App3 secrets); every developer sees only secrets for their owned services (least privilege); a pre-commit hook catches committed secrets; rotation is logged. **Source:** `infisical/README.md`.
 
-_Curated 2026-07-10._
+_Curated 2026-07-10. Updated 2026-08-10._
+
+### 10. Cross-Service Authority Model (G10 Canary)
+The ONLY authorized commissioning path is: **Sales Ops → SaaS Admin → CSM**. No direct Sales Ops → CSM commissioning. No CSM → tenant creation. SaaS Admin owns authoritative customer identity, onboarding state, tenant lifecycle, and commissioning decisions. CSM supplies onboarding/readiness evidence only. **Source:** G10 canary execution, `TV-PR-ONTOLOGY-CROSS-SERVICE-REALIGNMENT-01`.
+
+### 11. SaaS Admin /tenants/internal — REJECTED
+`POST /api/v1/tenants/internal` was proposed by SaaS Admin agent but **rejected as canonical architecture**. CSM must not directly create tenants. The file was deleted before deployment. **Source:** CTO decision, session 2026-08-10.
+
+### 12. Service-to-Service Authentication Contract
+Cross-service webhooks must use: key ID + timestamp + HTTP method + canonical path + SHA-256(body) + HMAC + clock-skew guard + replay guard. Per-service key isolation (e.g., `tv-sales-ops-to-saas-admin-v1`). Do NOT use generic `X-API-Key` or `X-Service-Name` headers for canonical contracts. **Source:** Sales Ops → SaaS Admin HMAC implementation, CSM 02A hardening.
+
+### 13. Protected Characteristic Inference — FROZEN
+The Sales Ops architecture doc describes `special_cohort_leads`, `community_signals`, and ethnicity-based segmentation. Protected/sensitive characteristic inference MUST NOT automatically determine outreach eligibility, pricing, approval, product access, or customer treatment. Frozen for architecture/compliance review before real prospecting at scale. **Source:** CTO directive, session 2026-08-10.
