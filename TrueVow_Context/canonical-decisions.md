@@ -56,3 +56,9 @@ Cross-service webhooks must use: key ID + timestamp + HTTP method + canonical pa
 
 ### 13. Protected Characteristic Inference — FROZEN
 The Sales Ops architecture doc describes `special_cohort_leads`, `community_signals`, and ethnicity-based segmentation. Protected/sensitive characteristic inference MUST NOT automatically determine outreach eligibility, pricing, approval, product access, or customer treatment. Frozen for architecture/compliance review before real prospecting at scale. **Source:** CTO directive, session 2026-08-10.
+
+### 14. Trial-to-Paid Conversion — Canonical Commercial Lifecycle
+Trial activates automatically after onboarding: **90 days or 12 completed intake sessions, whichever comes first.** Firm may select a paid plan at any time during trial (`plan_selected_at`) but the paid plan does NOT activate until trial exhaustion (`trial_ends_at`). Paid subscription activates atomically (`paid_subscription_activated_at`) with no service interruption. Three distinct timestamps. Trial entitlement is authoritative until trial ends. Optional immediate activation allowed only with explicit customer confirmation (surrenders remaining trial). An "intake" = completed Benjamin intake session reaching defined completion point, not raw inbound call. **Source:** CTO product decision, session 2026-08-10.
+
+### 15. Trial Meter Definition
+The trial meter consumes 1 unit per completed Benjamin intake session. Inbound calls that are spam, hang-ups, or otherwise incomplete do NOT consume trial intakes. Monthly call allowances (40/100/200) apply only after paid activation. Billing and INTAKE must share an exact canonical definition of "completed intake session" before commissioning the trial meter. **Source:** CTO product decision, session 2026-08-10.
