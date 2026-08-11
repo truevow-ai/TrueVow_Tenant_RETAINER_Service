@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-11T04:30:26.577517+00:00
-- Total memories: 438
+- Generated: 2026-08-11T04:38:22.872140+00:00
+- Total memories: 439
 
-## High-importance decisions (8+, routine noise excluded) - 236
+## High-importance decisions (8+, routine noise excluded) - 237
 
 - **[10][architecture] CSM Commissioning Authority Model Corrected** - SaaS Admin owns authoritative customer identity and commissioning decisions. CSM supplies readiness evidence and recommendations, does NOT create tenants. TV-PR-ONTOLOGY-CROSS-SERVICE-REALIGNMENT-01. Legacy POST /api/v1/tenants/internal rejected before commit. Correct flow: Sales Ops → SaaS Admin (handoff) → SaaS Admin commissions CSM → CSM supplies evidence → SaaS Admin executes lifecycle.
   _by Admin - 2026-08-10 - tags: -_
@@ -182,6 +182,8 @@
   _by Admin - 2026-07-31 - tags: -_
 - **[10][todo] TX Phase 4 DB connectivity blocker** - db.bpzegquhxnygyxdzluyw.supabase.co only resolves to IPv6, Windows dev box has no IPv6. Supabase pooler not enabled for this project (tenant/user not found). Phase 4 scripts (verify_emails_phones, classify_phone_types, verify_attorney_emails) need psycopg2. Workaround: create REST API versions or enable IPv4 on Supabase.
   _by Admin - 2026-07-27 - tags: -_
+- **[9][architecture] INTAKE Provisioning Endpoint Found** - INTAKE already has canonical provisioning endpoint at POST /api/v1/internal/tenants/provision on truevow-tenant-public. Uses HMAC-SHA256 with timestamp replay guard. Also has /api/v1/internal/tenants/activate. SaaS Admin provision_tenant handler incorrectly targets /webhooks/saas-admin. Fix: update handler URL to /api/v1/internal/tenants/provision with correct HMAC signing format.
+  _by Admin - 2026-08-11 - tags: -_
 - **[9][architecture] Billing Trial Model — 18 Revisions for Implementation** - Trial lifecycle separated into 3 timestamps: trial_started_at, trial_expires_at (deterministic 90-day deadline), trial_ended_at (actual). TRIAL_ACTIVE persists after plan selection — successor_plan is a separate field, not a subscription status transition. Trial→paid must be atomic (no TRIAL_ENDED window, no gap). Usage counting must be idempotent by intake_session_id via existing INTAKE→Billing pipeline. Intake limit conversion must happen immediately on 12th event, not via daily sweeper. SaaS Admin triggers trial activation only after readiness gate (not after onboarding form). SaaS Admin retains operational entitlement authority — Billing owns commercial fact only. Defer immediate_activation. Defer upgrade overloading. Trial offer is versioned (INTAKE_TRIAL_90D_12_V1) with immutable terms.
   _by Admin - 2026-08-10 - tags: -_
 - **[9][architecture] Canonical Trial Commercial Lifecycle** - Trial model: 90 days OR 12 completed intake sessions, whichever first. Three distinct phases: TRIAL_ACTIVE (authoritative entitlement), PAID_PLAN_SCHEDULED (customer committed but trial continues unchanged), PAID_PLAN_ACTIVE (trial exhausted/expired → paid activates atomically, no gap). Key distinction: plan_selected_at ≠ trial_ends_at ≠ paid_subscription_activated_at. 'Intake' defined as completed Benjamin session, not raw inbound call. Default path is scheduled conversion; immediate activation is optional with explicit confirmation (surrenders remaining trial). No payment on application page. Trial continues even after plan selection - customer is not punished for buying early.
@@ -481,7 +483,7 @@
 - **[8][todo] FIX gitignore source-leak: TrueVow-Tenant_Billing-Service** - ASSIGNED to the TrueVow-Tenant_Billing-Service agent. Real lib/ source is currently hidden from git (confirmed). Run the playbook: TrueVow_SaaS_Administration_Service/docs/01-main/ECOSYSTEM_ADVISORY_GITIGNORE_SOURCE_LEAK.md (fix .gitignore: anchor/remove stray lib/ + logs/; secrets-scan; commit recovered source in reviewed batches by explicit path; verify clean-clone build). REPORT RESULT via memory.py remember category=bug title='TrueVow-Tenant_Billing-Service gitignore RESULT' content='FIXED n files | CLEAN | BLOCKED + reason; secrets found?'. NOTE: reporting.py agent-checkin is broken — report via memory.
   _by user - 2026-06-25 - tags: gitignore, todo, assigned_
 
-## architecture (95)
+## architecture (96)
 
 - **[10] CSM Commissioning Authority Model Corrected** - SaaS Admin owns authoritative customer identity and commissioning decisions. CSM supplies readiness evidence and recommendations, does NOT create tenants. TV-PR-ONTOLOGY-CROSS-SERVICE-REALIGNMENT-01. Legacy POST /api/v1/tenants/internal rejected before commit. Correct flow: Sales Ops → SaaS Admin (h...
   _by Admin - 2026-08-10_
@@ -547,6 +549,8 @@
   _by user - 2026-06-25_
 - **[10] LEVERAGE (ex-DRAFT) — 3-Tier Rules Engine, NO AI** - LEVERAGE is a 3-tier legal rule validation system: TIER 1: State/Jurisdiction rules (mandatory, cannot be disabled). TIER 2: Practice Area rules (customizable). TIER 3: Firm/Attorney/Client-specific rules. CORE PRINCIPLE: NO AI — no machine learning, no neural networks, no LLM. Uses peer benchmarkin...
   _by user - 2026-06-25_
+- **[9] INTAKE Provisioning Endpoint Found** - INTAKE already has canonical provisioning endpoint at POST /api/v1/internal/tenants/provision on truevow-tenant-public. Uses HMAC-SHA256 with timestamp replay guard. Also has /api/v1/internal/tenants/activate. SaaS Admin provision_tenant handler incorrectly targets /webhooks/saas-admin. Fix: update ...
+  _by Admin - 2026-08-11_
 - **[9] Billing Trial Model — 18 Revisions for Implementation** - Trial lifecycle separated into 3 timestamps: trial_started_at, trial_expires_at (deterministic 90-day deadline), trial_ended_at (actual). TRIAL_ACTIVE persists after plan selection — successor_plan is a separate field, not a subscription status transition. Trial→paid must be atomic (no TRIAL_ENDED w...
   _by Admin - 2026-08-10_
 - **[9] Canonical Trial Commercial Lifecycle** - Trial model: 90 days OR 12 completed intake sessions, whichever first. Three distinct phases: TRIAL_ACTIVE (authoritative entitlement), PAID_PLAN_SCHEDULED (customer committed but trial continues unchanged), PAID_PLAN_ACTIVE (trial exhausted/expired → paid activates atomically, no gap). Key distinct...
