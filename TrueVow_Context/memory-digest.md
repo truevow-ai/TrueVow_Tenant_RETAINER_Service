@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-11T01:25:17.476529+00:00
-- Total memories: 433
+- Generated: 2026-08-11T02:17:39.147495+00:00
+- Total memories: 437
 
-## High-importance decisions (8+, routine noise excluded) - 234
+## High-importance decisions (8+, routine noise excluded) - 236
 
 - **[10][architecture] CSM Commissioning Authority Model Corrected** - SaaS Admin owns authoritative customer identity and commissioning decisions. CSM supplies readiness evidence and recommendations, does NOT create tenants. TV-PR-ONTOLOGY-CROSS-SERVICE-REALIGNMENT-01. Legacy POST /api/v1/tenants/internal rejected before commit. Correct flow: Sales Ops → SaaS Admin (handoff) → SaaS Admin commissions CSM → CSM supplies evidence → SaaS Admin executes lifecycle.
   _by Admin - 2026-08-10 - tags: -_
@@ -340,6 +340,8 @@
   _by Admin - 2026-08-10 - tags: -_
 - **[9][todo] xai_cloud NEXT STEPS after C->B conversion** - DONE: C->B force_message conversion, VQM wiring, per-node VAD, missing test helpers (_VOICES/_DEFAULT_VOICE/_build_collected_data_text/_vad_for_node/_VAD_*), frontend rebuild w/ End Call+event log+report download. 40/40 tests pass. NOT YET DONE / NEXT: (1) USER LIVE TEST PENDING on http://127.0.0.1:3023/demo/xai_cloud_test.html — verify no more repetition loop, check transcripts/{sid}-report.json. (2) Add 3-retry-then-escalate guard in WorkflowEngine (industry doc HIGH priority; pushback loops forever currently). (3) 'You mean X?' repair pattern (Dialogflow §2). (4) Preamble/soft-timeout filler on slow LLM-routing nodes (1.5-3.2s classification nodes: conflict_check_prior_rep, opi_jurisdiction). (5) NOT committed yet — commit after successful live test. Ref: docs/VOICE_AI_INDUSTRY_ANALYSIS.md gap table, VOICE_AGENT_CHECKLIST.md §11.
   _by Admin - 2026-07-13 - tags: -_
+- **[8][architecture] pool.ts REST bridge replaces pg for IPv4 dev** - lib/db/pool.ts rewritten to use Supabase JS client (REST API) instead of direct pg Pool, enabling IPv4-only Windows development. Translates basic SQL (SELECT/UPDATE/INSERT/DELETE) to Supabase API calls. Converts camelCase responses back to snake_case. Handles COUNT(*), ILIKE, OR conditions, OFFSET/LIMIT pagination.
+  _by Admin - 2026-08-11 - tags: -_
 - **[8][architecture] Dual Access Layer** - Sales Ops has two data layers: pg Pool (direct PG via PG_DATABASE_URL) used by dashboard and API routes, and supabaseAdmin (Supabase JS client) used by repositories/transitions. These do NOT talk to each other. supabaseAdmin is IP-restricted. Migration for new columns needed on both paths.
   _by Admin - 2026-08-10 - tags: -_
 - **[8][architecture] PLG-SO-01: Segment classification services** - Created SegmentClassifier (governed classification with audit trail), CampaignEligibilityEvaluator (segment+lifecycle+suppression checks), SpecialCohortPipeline (8-status management pipeline), ApplicationRouter (segment-aware routing), HandoffGuard (6 negative proofs). All write to lead_segment_classifications audit table.
@@ -428,6 +430,8 @@
   _by Admin - 2026-07-31 - tags: -_
 - **[8][convention] Golden Fixture Cross-Repository Testing** - Created app/shared/contracts.py with frozen contract versions and deterministic golden fixture (make_golden_envelope, make_golden_fixture_json, compute_golden_hmac). Every TrueVow product must deserialize the same 18-field EventEnvelope and compute the same HMAC over the exact raw fixture. Tests at tests/test_golden_fixtures.py validate envelope serialization, roundtrip deserialization, HMAC determinism, evidence manifest completeness (9 refs), and jurisdiction separation (global vs tenant).
   _by Admin - 2026-07-31 - tags: -_
+- **[8][decision] DELIVERY_MODE disabled fix + per-command eligibility gate deployed** - Three files changed: cron route, worker script, durable-onboarding docs. disabled mode now truly skips without state mutation. New ONBOARDING_ELIGIBLE_COMMANDS env var enables per-command dispatch gating. For G11/G11A controlled release: set ONBOARDING_ELIGIBLE_COMMANDS=provision_tenant,register_commercial_intent and DELIVERY_MODE=sandbox. ASSIGN_CSM and SEND_WELCOME_COMMUNICATION remain held as PENDING. No new state enum added — pure dispatcher filtering.
+  _by Admin - 2026-08-11 - tags: -_
 - **[8][decision] Security Corrections A-F Applied** - Sales Ops: ErrorBoundary shows correlation ref only in staging/prod, Reset gate uses TRUEVOW_DEPLOYMENT_ENV, factory-runs POST authenticated with PIPELINE_SECRET, all webhook routes confirmed with provider auth. sajjad-saas-handoff already routes via SaaS Admin not CSM.
   _by Admin - 2026-08-10 - tags: -_
 - **[8][decision] TV-PR-SECRETS-02A-RA: Staging credential risk accepted** - Two active credentials (Sales Ops DB password, DeepSeek API key) remain in private git history but are removed from current tracked tree. Rotations deferred per platform owner authorization. Compensating controls: branches clean, repo private, secret scanning enabled, DB logs reviewed, DeepSeek usage monitored. Rotations required before production GO. Expiration: before PLATFORM-E2E-01 or final GO.
@@ -477,7 +481,7 @@
 - **[8][todo] FIX gitignore source-leak: TrueVow-Tenant_Billing-Service** - ASSIGNED to the TrueVow-Tenant_Billing-Service agent. Real lib/ source is currently hidden from git (confirmed). Run the playbook: TrueVow_SaaS_Administration_Service/docs/01-main/ECOSYSTEM_ADVISORY_GITIGNORE_SOURCE_LEAK.md (fix .gitignore: anchor/remove stray lib/ + logs/; secrets-scan; commit recovered source in reviewed batches by explicit path; verify clean-clone build). REPORT RESULT via memory.py remember category=bug title='TrueVow-Tenant_Billing-Service gitignore RESULT' content='FIXED n files | CLEAN | BLOCKED + reason; secrets found?'. NOTE: reporting.py agent-checkin is broken — report via memory.
   _by user - 2026-06-25 - tags: gitignore, todo, assigned_
 
-## architecture (94)
+## architecture (95)
 
 - **[10] CSM Commissioning Authority Model Corrected** - SaaS Admin owns authoritative customer identity and commissioning decisions. CSM supplies readiness evidence and recommendations, does NOT create tenants. TV-PR-ONTOLOGY-CROSS-SERVICE-REALIGNMENT-01. Legacy POST /api/v1/tenants/internal rejected before commit. Correct flow: Sales Ops → SaaS Admin (h...
   _by Admin - 2026-08-10_
@@ -615,6 +619,8 @@
   _by user - 2026-06-25_
 - **[9] FM Service Wired to Ecosystem** - TrueVow_Financial_Management_Service is registered in the agent ecosystem with 13 domain agents (orchestrator, code-agent, search-agent, gl-agent, ar-agent, ap-agent, payroll-agent, treasury-agent, intercompany-agent, reporting-agent, affiliates-agent, benjamin-agent, fintech-patterns). Auto-dispatc...
   _by user - 2026-06-25_
+- **[8] pool.ts REST bridge replaces pg for IPv4 dev** - lib/db/pool.ts rewritten to use Supabase JS client (REST API) instead of direct pg Pool, enabling IPv4-only Windows development. Translates basic SQL (SELECT/UPDATE/INSERT/DELETE) to Supabase API calls. Converts camelCase responses back to snake_case. Handles COUNT(*), ILIKE, OR conditions, OFFSET/L...
+  _by Admin - 2026-08-11_
 - **[8] Dual Access Layer** - Sales Ops has two data layers: pg Pool (direct PG via PG_DATABASE_URL) used by dashboard and API routes, and supabaseAdmin (Supabase JS client) used by repositories/transitions. These do NOT talk to each other. supabaseAdmin is IP-restricted. Migration for new columns needed on both paths.
   _by Admin - 2026-08-10_
 - **[8] PLG-SO-01: Segment classification services** - Created SegmentClassifier (governed classification with audit trail), CampaignEligibilityEvaluator (segment+lifecycle+suppression checks), SpecialCohortPipeline (8-status management pipeline), ApplicationRouter (segment-aware routing), HandoffGuard (6 negative proofs). All write to lead_segment_clas...
@@ -693,7 +699,7 @@
 - **[6] xai_cloud bridge test suite** - Created tests/test_xai_cloud_bridge.py (34 tests) for XaiCloudBridge. Mirrors test_xai_bridge.py but adapts for cloud bridge: dual registration (xai_cloud + xai_cloud_voice_agent), default voice rex (male-only), end_session returns {bridge,session_id,status} without had_audio, double-start early-ret...
   _by Admin - 2026-07-08_
 
-## decision (67)
+## decision (68)
 
 - **[10] G10 CLOSED — Sales Ops to SaaS Admin** - G10 canary PASS. Handoff 455be7f3-84fc-463d-a5ba-bde4c45455d9 to SaaS Admin. Tenant ec105c72-31ff-4030-9bc4-413ff4f58b5b (TrueVow Canary Law Firm PC). Onboarding run 8ddf780a. 6 commands PENDING. 0 false deliveries, 0 duplicates, 0 manual repair. Authority path verified.
   _by Admin - 2026-08-11_
@@ -805,6 +811,8 @@
   _by Admin - 2026-07-03_
 - **[9] CONNECT Service Deleted** - TrueVow_Tenant_CONNECT_Service directory deleted. Removed from config.yaml services block and .gitignore. Was archived June 2026 — attorney referral network, no longer on TrueVow's agenda.
   _by user - 2026-07-01_
+- **[8] DELIVERY_MODE disabled fix + per-command eligibility gate deployed** - Three files changed: cron route, worker script, durable-onboarding docs. disabled mode now truly skips without state mutation. New ONBOARDING_ELIGIBLE_COMMANDS env var enables per-command dispatch gating. For G11/G11A controlled release: set ONBOARDING_ELIGIBLE_COMMANDS=provision_tenant,register_com...
+  _by Admin - 2026-08-11_
 - **[8] Security Corrections A-F Applied** - Sales Ops: ErrorBoundary shows correlation ref only in staging/prod, Reset gate uses TRUEVOW_DEPLOYMENT_ENV, factory-runs POST authenticated with PIPELINE_SECRET, all webhook routes confirmed with provider auth. sajjad-saas-handoff already routes via SaaS Admin not CSM.
   _by Admin - 2026-08-10_
 - **[8] TV-PR-SECRETS-02A-RA: Staging credential risk accepted** - Two active credentials (Sales Ops DB password, DeepSeek API key) remain in private git history but are removed from current tracked tree. Rotations deferred per platform owner authorization. Compensating controls: branches clean, repo private, secret scanning enabled, DB logs reviewed, DeepSeek usag...
@@ -939,7 +947,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (193)
+## context (195)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -959,6 +967,8 @@
   _by Admin - 2026-08-11_
 - **[9] G10 Canary Status** - Lead 1763aee9-52ca-4418-abb8-a60e7f90d847 at HANDOFF_PENDING. T020 passed, T022 passed. Handoff to SaaS Admin deployed and ready for retry. SaaS Admin webhook at truevow-saas-admin-staging.fly.dev with HMAC key tv-sales-ops-to-saas-admin-v1. PIPELINE_SECRET and TRUEVOW_DEPLOYMENT_ENV=staging set.
   _by Admin - 2026-08-10_
+- **[8] Git Scan: 2026-08-11T01:58:37** - { "summary": { "timestamp": "2026-08-11T01:58:37.126903+00:00", "total": 14, "clean": 5, "dirty": 7, "missing": 2, "errors": 0, "stale_services": 13, "active_services": 1, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 1, "STALE": 7, "NEGLECTED": 6, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY":...
+  _by Admin - 2026-08-11_
 - **[8] Git Scan: 2026-08-10T15:52:58** - { "summary": { "timestamp": "2026-08-10T15:52:58.725429+00:00", "total": 14, "clean": 5, "dirty": 7, "missing": 2, "errors": 0, "stale_services": 13, "active_services": 1, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 7, "NEGLECTED": 6, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY":...
   _by Admin - 2026-08-10_
 - **[8] Git Scan: 2026-08-10T15:45:46** - { "summary": { "timestamp": "2026-08-10T15:45:46.000420+00:00", "total": 14, "clean": 5, "dirty": 7, "missing": 2, "errors": 0, "stale_services": 13, "active_services": 1, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 7, "NEGLECTED": 6, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY":...
@@ -987,6 +997,8 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: Sales Ops: G10 canary handoff end-to-end verified — replaced pg pool with Supabase REST bridge (IPv4** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "done", "status": "DONE", "message": "Sales Ops: G10 canary handoff end-to-end verified \u2014 replaced pg pool with Supabase REST bridge (IPv4), fixed HMAC key isolation, updated webhook payload to SaaS Admin schema, added Reject/Reset/Approve/Han...
+  _by user - 2026-08-11_
 - **[7] [DONE] DONE: SaaS Admin: CSM ontology realignment — rejected POST /api/v1/tenants/internal (wrong authority model** - {"agent_id": "TrueVow_Shared_Orchestration", "action": "done", "status": "DONE", "message": "SaaS Admin: CSM ontology realignment \u2014 rejected POST /api/v1/tenants/internal (wrong authority model), quarantined obsolete CSM build plan, corrected DELIVERY_MODE=disabled semantics finding (creates fa...
   _by user - 2026-08-10_
 - **[7] [DONE] DONE: CSM: TV-CSM-ONTOLOGY-REALIGNMENT-02A PASS/CLOSED — ontology-aligned CSM orchestrator built (Python/F** - {"agent_id": "TrueVow_Customer_Success_CORE_Service", "action": "done", "status": "DONE", "message": "CSM: TV-CSM-ONTOLOGY-REALIGNMENT-02A PASS/CLOSED \u2014 ontology-aligned CSM orchestrator built (Python/FastAPI, 152 tests, 6 DB tables, 5 workers, capability token model, dedicated secret hardening...
