@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-11T09:38:44.188611+00:00
-- Total memories: 440
+- Generated: 2026-08-11T10:28:48.050053+00:00
+- Total memories: 444
 
-## High-importance decisions (8+, routine noise excluded) - 238
+## High-importance decisions (8+, routine noise excluded) - 241
 
 - **[10][architecture] CSM Commissioning Authority Model Corrected** - SaaS Admin owns authoritative customer identity and commissioning decisions. CSM supplies readiness evidence and recommendations, does NOT create tenants. TV-PR-ONTOLOGY-CROSS-SERVICE-REALIGNMENT-01. Legacy POST /api/v1/tenants/internal rejected before commit. Correct flow: Sales Ops → SaaS Admin (handoff) → SaaS Admin commissions CSM → CSM supplies evidence → SaaS Admin executes lifecycle.
   _by Admin - 2026-08-10 - tags: -_
@@ -342,6 +342,8 @@
   _by Admin - 2026-08-10 - tags: -_
 - **[9][todo] xai_cloud NEXT STEPS after C->B conversion** - DONE: C->B force_message conversion, VQM wiring, per-node VAD, missing test helpers (_VOICES/_DEFAULT_VOICE/_build_collected_data_text/_vad_for_node/_VAD_*), frontend rebuild w/ End Call+event log+report download. 40/40 tests pass. NOT YET DONE / NEXT: (1) USER LIVE TEST PENDING on http://127.0.0.1:3023/demo/xai_cloud_test.html — verify no more repetition loop, check transcripts/{sid}-report.json. (2) Add 3-retry-then-escalate guard in WorkflowEngine (industry doc HIGH priority; pushback loops forever currently). (3) 'You mean X?' repair pattern (Dialogflow §2). (4) Preamble/soft-timeout filler on slow LLM-routing nodes (1.5-3.2s classification nodes: conflict_check_prior_rep, opi_jurisdiction). (5) NOT committed yet — commit after successful live test. Ref: docs/VOICE_AI_INDUSTRY_ANALYSIS.md gap table, VOICE_AGENT_CHECKLIST.md §11.
   _by Admin - 2026-07-13 - tags: -_
+- **[8][architecture] INTAKE Provisioning Contract** - The canonical SaaS Admin -> INTAKE provisioning contract is at POST /api/v1/internal/tenants/provision (PLG-INTAKE-01). HMAC signing: timestamp:POST:{path}:body_hash using SAAS_ADMIN_WEBHOOK_SECRET. Replay window 300s. The /webhooks/saas-admin endpoint is a LIFECYCLE webhook only (subscription events) — not provisioning. Application plane separation: provisioning is cold-path REST API, separate from voice/audio hot path.
+  _by Admin - 2026-08-11 - tags: -_
 - **[8][architecture] pool.ts REST bridge replaces pg for IPv4 dev** - lib/db/pool.ts rewritten to use Supabase JS client (REST API) instead of direct pg Pool, enabling IPv4-only Windows development. Translates basic SQL (SELECT/UPDATE/INSERT/DELETE) to Supabase API calls. Converts camelCase responses back to snake_case. Handles COUNT(*), ILIKE, OR conditions, OFFSET/LIMIT pagination.
   _by Admin - 2026-08-11 - tags: -_
 - **[8][architecture] Dual Access Layer** - Sales Ops has two data layers: pg Pool (direct PG via PG_DATABASE_URL) used by dashboard and API routes, and supabaseAdmin (Supabase JS client) used by repositories/transitions. These do NOT talk to each other. supabaseAdmin is IP-restricted. Migration for new columns needed on both paths.
@@ -394,6 +396,8 @@
   _by user - 2026-06-25 - tags: analytics, events, warehouse, dashboards, star-schema, platform_
 - **[8][architecture] Tenant Application Service (INTAKE) - Voice + NLP Pipeline** - Phase I intake services. Stack: Python/FastAPI backend, FSM-based deterministic NLP engine, voice pipeline. Purpose: Legal AI intake for personal injury attorneys - captures client information via voice/NLP. Separated from website code (Nov 2025). Technology: Finite State Machine, deterministic NLP (not LLM-based for compliance). Voice pipeline components integrated. Ports: API backend. Depends on: SaaS Admin (tenant management, auth). Related: Benjamin voice agent (STT/TTS), Dialogflow Intake (alternative intake path).
   _by user - 2026-06-25 - tags: intake, nlp, fsm, voice, fastapi, python, tenant-application_
+- **[8][bug] Cron auth gap: events/dispatch allowed unauthenticated access** - events/dispatch/route.ts used if(cronSecret && authHeader !== ...) which allowed unauthenticated access when CRON_SECRET was unset. Fixed to use if(!CRON_SECRET || token !== CRON_SECRET) pattern matching all other cron routes.
+  _by Admin - 2026-08-11 - tags: -_
 - **[8][bug] INTAKE 500 on provision endpoint** - INTAKE POST /api/v1/internal/tenants/provision returns 500 with empty body after HMAC auth passes. JSON validation works (400 on bad body). Template lookup or DB session fails internally — no middleware log entry for the request, suggesting exception before response handler. Tables exist, templates seeded, DB connected per health check. Likely: SQLAlchemy model-table schema mismatch, or get_db_session_context() async engine issue on Fly. Needs INTAKE agent to debug Fly logs.
   _by Admin - 2026-08-11 - tags: -_
 - **[8][bug] DELIVERY_MODE=disabled False Evidence** - ONBOARDING_EXTERNAL_DELIVERY_MODE=disabled does NOT hold commands. It marks them DELIVERED with http_status 200, advances steps to SUCCEEDED, triggers dependency release, and advances run lifecycle. Creates fabricated success evidence across 4 tables. Not safe as a pause/hold mechanism. SaaS Admin lib/services/durable-onboarding.ts:16 and cron route at app/api/cron/onboarding/process/route.ts:350-367.
@@ -434,6 +438,8 @@
   _by Admin - 2026-07-31 - tags: -_
 - **[8][convention] Golden Fixture Cross-Repository Testing** - Created app/shared/contracts.py with frozen contract versions and deterministic golden fixture (make_golden_envelope, make_golden_fixture_json, compute_golden_hmac). Every TrueVow product must deserialize the same 18-field EventEnvelope and compute the same HMAC over the exact raw fixture. Tests at tests/test_golden_fixtures.py validate envelope serialization, roundtrip deserialization, HMAC determinism, evidence manifest completeness (9 refs), and jurisdiction separation (global vs tenant).
   _by Admin - 2026-07-31 - tags: -_
+- **[8][decision] G11 Worker Fix: Removed .env.staging dependency** - SaaS Admin onboarding-command-worker.js now uses pg Pool with SAAS_ADMIN_DATABASE_SESSION_POOLER_URL || SAAS_ADMIN_DATABASE_URL || DATABASE_URL, matching durable-onboarding.ts pattern. Template literal SQL intervals replaced with parameterized queries. Pool connection verified on startup before polling loop.
+  _by Admin - 2026-08-11 - tags: -_
 - **[8][decision] DELIVERY_MODE disabled fix + per-command eligibility gate deployed** - Three files changed: cron route, worker script, durable-onboarding docs. disabled mode now truly skips without state mutation. New ONBOARDING_ELIGIBLE_COMMANDS env var enables per-command dispatch gating. For G11/G11A controlled release: set ONBOARDING_ELIGIBLE_COMMANDS=provision_tenant,register_commercial_intent and DELIVERY_MODE=sandbox. ASSIGN_CSM and SEND_WELCOME_COMMUNICATION remain held as PENDING. No new state enum added — pure dispatcher filtering.
   _by Admin - 2026-08-11 - tags: -_
 - **[8][decision] Security Corrections A-F Applied** - Sales Ops: ErrorBoundary shows correlation ref only in staging/prod, Reset gate uses TRUEVOW_DEPLOYMENT_ENV, factory-runs POST authenticated with PIPELINE_SECRET, all webhook routes confirmed with provider auth. sajjad-saas-handoff already routes via SaaS Admin not CSM.
@@ -485,7 +491,7 @@
 - **[8][todo] FIX gitignore source-leak: TrueVow-Tenant_Billing-Service** - ASSIGNED to the TrueVow-Tenant_Billing-Service agent. Real lib/ source is currently hidden from git (confirmed). Run the playbook: TrueVow_SaaS_Administration_Service/docs/01-main/ECOSYSTEM_ADVISORY_GITIGNORE_SOURCE_LEAK.md (fix .gitignore: anchor/remove stray lib/ + logs/; secrets-scan; commit recovered source in reviewed batches by explicit path; verify clean-clone build). REPORT RESULT via memory.py remember category=bug title='TrueVow-Tenant_Billing-Service gitignore RESULT' content='FIXED n files | CLEAN | BLOCKED + reason; secrets found?'. NOTE: reporting.py agent-checkin is broken — report via memory.
   _by user - 2026-06-25 - tags: gitignore, todo, assigned_
 
-## architecture (96)
+## architecture (97)
 
 - **[10] CSM Commissioning Authority Model Corrected** - SaaS Admin owns authoritative customer identity and commissioning decisions. CSM supplies readiness evidence and recommendations, does NOT create tenants. TV-PR-ONTOLOGY-CROSS-SERVICE-REALIGNMENT-01. Legacy POST /api/v1/tenants/internal rejected before commit. Correct flow: Sales Ops → SaaS Admin (h...
   _by Admin - 2026-08-10_
@@ -625,6 +631,8 @@
   _by user - 2026-06-25_
 - **[9] FM Service Wired to Ecosystem** - TrueVow_Financial_Management_Service is registered in the agent ecosystem with 13 domain agents (orchestrator, code-agent, search-agent, gl-agent, ar-agent, ap-agent, payroll-agent, treasury-agent, intercompany-agent, reporting-agent, affiliates-agent, benjamin-agent, fintech-patterns). Auto-dispatc...
   _by user - 2026-06-25_
+- **[8] INTAKE Provisioning Contract** - The canonical SaaS Admin -> INTAKE provisioning contract is at POST /api/v1/internal/tenants/provision (PLG-INTAKE-01). HMAC signing: timestamp:POST:{path}:body_hash using SAAS_ADMIN_WEBHOOK_SECRET. Replay window 300s. The /webhooks/saas-admin endpoint is a LIFECYCLE webhook only (subscription event...
+  _by Admin - 2026-08-11_
 - **[8] pool.ts REST bridge replaces pg for IPv4 dev** - lib/db/pool.ts rewritten to use Supabase JS client (REST API) instead of direct pg Pool, enabling IPv4-only Windows development. Translates basic SQL (SELECT/UPDATE/INSERT/DELETE) to Supabase API calls. Converts camelCase responses back to snake_case. Handles COUNT(*), ILIKE, OR conditions, OFFSET/L...
   _by Admin - 2026-08-11_
 - **[8] Dual Access Layer** - Sales Ops has two data layers: pg Pool (direct PG via PG_DATABASE_URL) used by dashboard and API routes, and supabaseAdmin (Supabase JS client) used by repositories/transitions. These do NOT talk to each other. supabaseAdmin is IP-restricted. Migration for new columns needed on both paths.
@@ -705,7 +713,7 @@
 - **[6] xai_cloud bridge test suite** - Created tests/test_xai_cloud_bridge.py (34 tests) for XaiCloudBridge. Mirrors test_xai_bridge.py but adapts for cloud bridge: dual registration (xai_cloud + xai_cloud_voice_agent), default voice rex (male-only), end_session returns {bridge,session_id,status} without had_audio, double-start early-ret...
   _by Admin - 2026-07-08_
 
-## decision (68)
+## decision (69)
 
 - **[10] G10 CLOSED — Sales Ops to SaaS Admin** - G10 canary PASS. Handoff 455be7f3-84fc-463d-a5ba-bde4c45455d9 to SaaS Admin. Tenant ec105c72-31ff-4030-9bc4-413ff4f58b5b (TrueVow Canary Law Firm PC). Onboarding run 8ddf780a. 6 commands PENDING. 0 false deliveries, 0 duplicates, 0 manual repair. Authority path verified.
   _by Admin - 2026-08-11_
@@ -817,6 +825,8 @@
   _by Admin - 2026-07-03_
 - **[9] CONNECT Service Deleted** - TrueVow_Tenant_CONNECT_Service directory deleted. Removed from config.yaml services block and .gitignore. Was archived June 2026 — attorney referral network, no longer on TrueVow's agenda.
   _by user - 2026-07-01_
+- **[8] G11 Worker Fix: Removed .env.staging dependency** - SaaS Admin onboarding-command-worker.js now uses pg Pool with SAAS_ADMIN_DATABASE_SESSION_POOLER_URL || SAAS_ADMIN_DATABASE_URL || DATABASE_URL, matching durable-onboarding.ts pattern. Template literal SQL intervals replaced with parameterized queries. Pool connection verified on startup before poll...
+  _by Admin - 2026-08-11_
 - **[8] DELIVERY_MODE disabled fix + per-command eligibility gate deployed** - Three files changed: cron route, worker script, durable-onboarding docs. disabled mode now truly skips without state mutation. New ONBOARDING_ELIGIBLE_COMMANDS env var enables per-command dispatch gating. For G11/G11A controlled release: set ONBOARDING_ELIGIBLE_COMMANDS=provision_tenant,register_com...
   _by Admin - 2026-08-11_
 - **[8] Security Corrections A-F Applied** - Sales Ops: ErrorBoundary shows correlation ref only in staging/prod, Reset gate uses TRUEVOW_DEPLOYMENT_ENV, factory-runs POST authenticated with PIPELINE_SECRET, all webhook routes confirmed with provider auth. sajjad-saas-handoff already routes via SaaS Admin not CSM.
@@ -876,7 +886,7 @@
 - **[8] Golden Fixture Cross-Repository Testing** - Created app/shared/contracts.py with frozen contract versions and deterministic golden fixture (make_golden_envelope, make_golden_fixture_json, compute_golden_hmac). Every TrueVow product must deserialize the same 18-field EventEnvelope and compute the same HMAC over the exact raw fixture. Tests at ...
   _by Admin - 2026-07-31_
 
-## bug (38)
+## bug (39)
 
 - **[10] Engine: ca_police/medical loop + email empty + jurisdiction hardcode** - Three critical bugs from Aug 1 call: (1) ca_police and ca_medical_treatment nodes cycle infinitely on 'no' answers — the ca workflow ladder has a next-pointer loop. (2) Email verify prompt shows empty '{contact_email}' — email extraction stores raw text instead of parsed email address. (3) conflict_...
   _by Admin - 2026-08-01_
@@ -918,6 +928,8 @@
   _by Admin - 2026-07-31_
 - **[9] contact_info_sequence dropped phone+email** - Root cause: routing INTO a sequence node used _execute_node, which returned the sequence's own intro prompt and left current_node=contact_info_sequence WITHOUT priming the first sub-node. Next turn the C10 terminal guard (workflow_engine.py:518) saw no next/branches/options and returned _build_compl...
   _by Admin - 2026-07-14_
+- **[8] Cron auth gap: events/dispatch allowed unauthenticated access** - events/dispatch/route.ts used if(cronSecret && authHeader !== ...) which allowed unauthenticated access when CRON_SECRET was unset. Fixed to use if(!CRON_SECRET || token !== CRON_SECRET) pattern matching all other cron routes.
+  _by Admin - 2026-08-11_
 - **[8] INTAKE 500 on provision endpoint** - INTAKE POST /api/v1/internal/tenants/provision returns 500 with empty body after HMAC auth passes. JSON validation works (400 on bad body). Template lookup or DB session fails internally — no middleware log entry for the request, suggesting exception before response handler. Tables exist, templates ...
   _by Admin - 2026-08-11_
 - **[8] DELIVERY_MODE=disabled False Evidence** - ONBOARDING_EXTERNAL_DELIVERY_MODE=disabled does NOT hold commands. It marks them DELIVERED with http_status 200, advances steps to SUCCEEDED, triggers dependency release, and advances run lifecycle. Creates fabricated success evidence across 4 tables. Not safe as a pause/hold mechanism. SaaS Admin l...
@@ -955,7 +967,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (196)
+## context (197)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1005,6 +1017,8 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: INTAKE: G11 provisioning recovery — INTAKE receiver verified, HMAC harmonized, SaaS Admin worker fix** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: G11 provisioning recovery \u2014 INTAKE receiver verified, HMAC harmonized, SaaS Admin worker fixed | outcome: INTAKE canonical provisioning endpoint confirmed at POST /api/v1/internal/tenants/provi...
+  _by user - 2026-08-11_
 - **[7] [DONE] DONE: Billing: trial lifecycle — scheduled conversion with HMAC activation | outcome: 30 files changed, 15** - {"agent_id": "TrueVow-Tenant_Billing-Service", "action": "done", "status": "DONE", "message": "Billing: trial lifecycle \u2014 scheduled conversion with HMAC activation | outcome: 30 files changed, 1515 insertions. Phases A-E of TV-BILL-COMMERCIAL-INTEGRITY-REMEDIATION complete. 0 browser activation...
   _by user - 2026-08-11_
 - **[7] [DONE] DONE: Sales Ops: G10 canary handoff end-to-end verified — replaced pg pool with Supabase REST bridge (IPv4** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "done", "status": "DONE", "message": "Sales Ops: G10 canary handoff end-to-end verified \u2014 replaced pg pool with Supabase REST bridge (IPv4), fixed HMAC key isolation, updated webhook payload to SaaS Admin schema, added Reject/Reset/Approve/Han...
