@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-10T19:26:53.798003+00:00
-- Total memories: 430
+- Generated: 2026-08-11T01:24:47.958404+00:00
+- Total memories: 431
 
-## High-importance decisions (8+, routine noise excluded) - 231
+## High-importance decisions (8+, routine noise excluded) - 232
 
 - **[10][architecture] CSM Commissioning Authority Model Corrected** - SaaS Admin owns authoritative customer identity and commissioning decisions. CSM supplies readiness evidence and recommendations, does NOT create tenants. TV-PR-ONTOLOGY-CROSS-SERVICE-REALIGNMENT-01. Legacy POST /api/v1/tenants/internal rejected before commit. Correct flow: Sales Ops → SaaS Admin (handoff) → SaaS Admin commissions CSM → CSM supplies evidence → SaaS Admin executes lifecycle.
   _by Admin - 2026-08-10 - tags: -_
@@ -272,6 +272,8 @@
   _by Admin - 2026-07-31 - tags: -_
 - **[9][bug] contact_info_sequence dropped phone+email** - Root cause: routing INTO a sequence node used _execute_node, which returned the sequence's own intro prompt and left current_node=contact_info_sequence WITHOUT priming the first sub-node. Next turn the C10 terminal guard (workflow_engine.py:518) saw no next/branches/options and returned _build_complete_response — so name-only leads jumped to 'complete', losing phone+email. FIX: _execute_node now delegates type==sequence to _execute_sequence (primes contact_name, prepends intro to first question); terminal guards treat nodes/type==sequence as a valid exit. Verified: name->phone->email chain now runs.
   _by Admin - 2026-07-14 - tags: -_
+- **[9][context] G10 Handoff Evidence** - Execution ID: f47ac10b-58cc-4372-a567-0e02b2c3d479. Lead ID: 1763aee9-52ca-4418-abb8-a60e7f90d847. Pre-state: HANDOFF_PENDING. Handoff package: 455be7f3-84fc-463d-a5ba-bde4c45455d9. SaaS Admin tenant: ec105c72-31ff-4030-9bc4-413ff4f58b5b. Status: ACCEPTED_NEW_CUSTOMER. T023: PASS. Final state: HANDED_OFF / converted. Duplicate tenants: 0. Direct CSM calls: 0. Manual DB repair: 0.
+  _by Admin - 2026-08-11 - tags: -_
 - **[9][context] G10 Canary Status** - Lead 1763aee9-52ca-4418-abb8-a60e7f90d847 at HANDOFF_PENDING. T020 passed, T022 passed. Handoff to SaaS Admin deployed and ready for retry. SaaS Admin webhook at truevow-saas-admin-staging.fly.dev with HMAC key tv-sales-ops-to-saas-admin-v1. PIPELINE_SECRET and TRUEVOW_DEPLOYMENT_ENV=staging set.
   _by Admin - 2026-08-10 - tags: -_
 - **[9][decision] G10 Canary Handoff Ready Awaiting Platform Operator** - Sales Ops → SaaS Admin canonical webhook POST /api/v1/webhooks/sales-ops/application-approved ready. HMAC key tv-sales-ops-to-saas-admin-v1. RPC fn_process_handoff migration 181. Blocked by: Sales Ops DB connection (db.bpzegquhxnygyxdzluyw.supabase.co deprecated - switch to pooler), Sales Ops HMAC key needs to match SaaS Admin TRUEVOW_WEBHOOK_SECRET_SALES_OPS. Before G10 click: pause Fly onboarding-worker + Vercel onboarding cron. G11-G15 downstream pipeline exists but runtime proof pending.
@@ -931,7 +933,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (192)
+## context (193)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -947,6 +949,8 @@
   _by Admin - 2026-07-27_
 - **[10] TRACE documentation and memory updated July 24 2026** - All documentation updated: AGENTS.md (250+ lines with full service reference), README.md (updated stack/status), TRACE-Agent-Coding-Instructions.md (300+ line Appendix A with architecture, API reference, data flow, troubleshooting). Platform map updated (TRACE: port 3036, active). DEVELOPERS.md upda...
   _by Admin - 2026-07-24_
+- **[9] G10 Handoff Evidence** - Execution ID: f47ac10b-58cc-4372-a567-0e02b2c3d479. Lead ID: 1763aee9-52ca-4418-abb8-a60e7f90d847. Pre-state: HANDOFF_PENDING. Handoff package: 455be7f3-84fc-463d-a5ba-bde4c45455d9. SaaS Admin tenant: ec105c72-31ff-4030-9bc4-413ff4f58b5b. Status: ACCEPTED_NEW_CUSTOMER. T023: PASS. Final state: HANDE...
+  _by Admin - 2026-08-11_
 - **[9] G10 Canary Status** - Lead 1763aee9-52ca-4418-abb8-a60e7f90d847 at HANDOFF_PENDING. T020 passed, T022 passed. Handoff to SaaS Admin deployed and ready for retry. SaaS Admin webhook at truevow-saas-admin-staging.fly.dev with HMAC key tv-sales-ops-to-saas-admin-v1. PIPELINE_SECRET and TRUEVOW_DEPLOYMENT_ENV=staging set.
   _by Admin - 2026-08-10_
 - **[8] Git Scan: 2026-08-10T15:52:58** - { "summary": { "timestamp": "2026-08-10T15:52:58.725429+00:00", "total": 14, "clean": 5, "dirty": 7, "missing": 2, "errors": 0, "stale_services": 13, "active_services": 1, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 7, "NEGLECTED": 6, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY":...
