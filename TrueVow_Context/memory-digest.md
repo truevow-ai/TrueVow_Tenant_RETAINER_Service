@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-11T01:24:47.958404+00:00
-- Total memories: 431
+- Generated: 2026-08-11T01:25:17.476529+00:00
+- Total memories: 433
 
-## High-importance decisions (8+, routine noise excluded) - 232
+## High-importance decisions (8+, routine noise excluded) - 234
 
 - **[10][architecture] CSM Commissioning Authority Model Corrected** - SaaS Admin owns authoritative customer identity and commissioning decisions. CSM supplies readiness evidence and recommendations, does NOT create tenants. TV-PR-ONTOLOGY-CROSS-SERVICE-REALIGNMENT-01. Legacy POST /api/v1/tenants/internal rejected before commit. Correct flow: Sales Ops → SaaS Admin (handoff) → SaaS Admin commissions CSM → CSM supplies evidence → SaaS Admin executes lifecycle.
   _by Admin - 2026-08-10 - tags: -_
@@ -110,6 +110,8 @@
   _by Admin - 2026-08-10 - tags: -_
 - **[10][convention] zero hardcoded tunable values** - RULE: This is a multi-tenant platform. Never hardcode ANY value that may need adjustment per-tenant, per-firm, or per-environment. All tunables must live in one of: (1) tenant_config, (2) workflow JSON config, or (3) named module-level constants with clear documentation. Bare numbers, strings, or IDs in logic statements are FORBIDDEN. If you need a value that could change — threshold, timeout, limit, firm identifier, VAD setting, confidence score — expose it via config. Test by asking: 'Could a different law firm need this set differently?'
   _by Admin - 2026-07-15 - tags: -_
+- **[10][decision] G10 CLOSED — Sales Ops to SaaS Admin** - G10 canary PASS. Handoff 455be7f3-84fc-463d-a5ba-bde4c45455d9 to SaaS Admin. Tenant ec105c72-31ff-4030-9bc4-413ff4f58b5b (TrueVow Canary Law Firm PC). Onboarding run 8ddf780a. 6 commands PENDING. 0 false deliveries, 0 duplicates, 0 manual repair. Authority path verified.
+  _by Admin - 2026-08-11 - tags: -_
 - **[10][decision] Billing Trial Implementation — CONDITIONALLY APPROVED** - Commercial model APPROVED. 18 revisions required before implementation: 1) Keep TRIAL_ACTIVE after successor selection 2) Separate successor plan from current subscription status 3) Three timestamps: trial_expires_at/trial_ended_at/trial_end_reason 4) Versioned trial offer (INTAKE_TRIAL_90D_12_V1) 5) FK must point to immutable pricing catalogue 6) Freeze price at selection 7) Reuse canonical Billing usage ingestion 8) Register exact meterable INTAKE event 9) Idempotent intake counting 10) Immediate conversion on 12th intake not daily sweep 11) Atomic concurrency-safe transition 12) SaaS Admin triggers trial activation after readiness gate 13) SaaS Admin retains operational entitlement authority 14) Do not use renew_subscription for trial conversion 15) Explicit scheduled-plan command 16) Defer immediate_activation 17) Define no-successor TRIAL_EXPIRED behavior 18) Define billing-readiness before auto-conversion guarantee.
   _by Admin - 2026-08-10 - tags: -_
 - **[10][decision] Trial-to-Paid Conversion Model** - Canonical commercial lifecycle: 90-day/12-intake trial auto-activates after onboarding. Firm may select paid plan at any time during trial but paid plan does NOT activate until trial exhaustion (12th intake OR day 90). Three distinct dates: plan_selected_at, trial_ends_at, paid_subscription_activated_at. No service interruption at conversion. Trial entitlement is THE authoritative entitlement until trial ends. Optional 'start now' for immediate activation but not the default path. Intake = completed Benjamin intake session, not raw inbound call.
@@ -332,6 +334,8 @@
   _by Admin - 2026-08-06 - tags: -_
 - **[9][relationship] Webhook Key Mapping** - INTAKE uses tv-intake-to-retainer-v1. RETAINER uses tv-retainer-to-saas-admin-v1. SaaS Admin uses tv-saas-admin-to-trace-v1. Each key is scoped to a single caller-receiver pair with specific allowed paths and methods. No service shares a key with another link.
   _by Admin - 2026-07-31 - tags: -_
+- **[9][todo] G11 — Provisioning** - G10 closed. Next: advance canary tenant ec105c72 into provisioning (G11), then commercial conversion/billing (G11A), Customer Portal onboarding (G12), Benjamin INTAKE (G13), controlled activation (G14), revenue assurance (G15). CSM enters later via SaaS Admin → CSM canonical contract (TV-PR-SAAS-CSM-ONTOLOGY-CONTRACT-01).
+  _by Admin - 2026-08-11 - tags: -_
 - **[9][todo] G10 Handoff Retry** - User needs to click Handoff to SaaS Admin button on canary lead 1763aee9 from the browser at truevow-sales-ops.fly.dev. Current state: HANDOFF_PENDING. Expected: reuse existing handoff_package_id, increment delivery attempt, sign webhook, SaaS Admin validates, fn_process_handoff, T023, HANDED_OFF.
   _by Admin - 2026-08-10 - tags: -_
 - **[9][todo] xai_cloud NEXT STEPS after C->B conversion** - DONE: C->B force_message conversion, VQM wiring, per-node VAD, missing test helpers (_VOICES/_DEFAULT_VOICE/_build_collected_data_text/_vad_for_node/_VAD_*), frontend rebuild w/ End Call+event log+report download. 40/40 tests pass. NOT YET DONE / NEXT: (1) USER LIVE TEST PENDING on http://127.0.0.1:3023/demo/xai_cloud_test.html — verify no more repetition loop, check transcripts/{sid}-report.json. (2) Add 3-retry-then-escalate guard in WorkflowEngine (industry doc HIGH priority; pushback loops forever currently). (3) 'You mean X?' repair pattern (Dialogflow §2). (4) Preamble/soft-timeout filler on slow LLM-routing nodes (1.5-3.2s classification nodes: conflict_check_prior_rep, opi_jurisdiction). (5) NOT committed yet — commit after successful live test. Ref: docs/VOICE_AI_INDUSTRY_ANALYSIS.md gap table, VOICE_AGENT_CHECKLIST.md §11.
@@ -689,8 +693,10 @@
 - **[6] xai_cloud bridge test suite** - Created tests/test_xai_cloud_bridge.py (34 tests) for XaiCloudBridge. Mirrors test_xai_bridge.py but adapts for cloud bridge: dual registration (xai_cloud + xai_cloud_voice_agent), default voice rex (male-only), end_session returns {bridge,session_id,status} without had_audio, double-start early-ret...
   _by Admin - 2026-07-08_
 
-## decision (66)
+## decision (67)
 
+- **[10] G10 CLOSED — Sales Ops to SaaS Admin** - G10 canary PASS. Handoff 455be7f3-84fc-463d-a5ba-bde4c45455d9 to SaaS Admin. Tenant ec105c72-31ff-4030-9bc4-413ff4f58b5b (TrueVow Canary Law Firm PC). Onboarding run 8ddf780a. 6 commands PENDING. 0 false deliveries, 0 duplicates, 0 manual repair. Authority path verified.
+  _by Admin - 2026-08-11_
 - **[10] Billing Trial Implementation — CONDITIONALLY APPROVED** - Commercial model APPROVED. 18 revisions required before implementation: 1) Keep TRIAL_ACTIVE after successor selection 2) Separate successor plan from current subscription status 3) Three timestamps: trial_expires_at/trial_ended_at/trial_end_reason 4) Versioned trial offer (INTAKE_TRIAL_90D_12_V1) 5...
   _by Admin - 2026-08-10_
 - **[10] Trial-to-Paid Conversion Model** - Canonical commercial lifecycle: 90-day/12-intake trial auto-activates after onboarding. Firm may select paid plan at any time during trial but paid plan does NOT activate until trial exhaustion (12th intake OR day 90). Three distinct dates: plan_selected_at, trial_ends_at, paid_subscription_activate...
@@ -1322,12 +1328,14 @@
 - **[4] [ACTIVE] START: Orchestrator CTO: monitoring all 19 services, building reporting dashboard** - {"agent_id": "orchestrator", "action": "start", "status": "ACTIVE", "message": "Orchestrator CTO: monitoring all 19 services, building reporting dashboard", "timestamp": "2026-06-25T02:06:16.484425+00:00", "working_dir": "C:\\Users\\yasha\\OneDrive\\Documents\\TrueVow\\Cursor"}
   _by user - 2026-06-25_
 
-## todo (16)
+## todo (17)
 
 - **[10] Release Candidate v3 freeze — required before pilot re-evaluation** - D1 (SaaS Admin exact-path verification, S2), D3 (RETAINER key isolation, S1), D4 (INTAKE contract test, S2) must all be fixed, independently reviewed, and committed. Then freeze v3 with SHAs + image digests. Then deploy staging, execute all 20 QA phases, CTO architecture review, final recommendation...
   _by Admin - 2026-07-31_
 - **[10] TX Phase 4 DB connectivity blocker** - db.bpzegquhxnygyxdzluyw.supabase.co only resolves to IPv6, Windows dev box has no IPv6. Supabase pooler not enabled for this project (tenant/user not found). Phase 4 scripts (verify_emails_phones, classify_phone_types, verify_attorney_emails) need psycopg2. Workaround: create REST API versions or en...
   _by Admin - 2026-07-27_
+- **[9] G11 — Provisioning** - G10 closed. Next: advance canary tenant ec105c72 into provisioning (G11), then commercial conversion/billing (G11A), Customer Portal onboarding (G12), Benjamin INTAKE (G13), controlled activation (G14), revenue assurance (G15). CSM enters later via SaaS Admin → CSM canonical contract (TV-PR-SAAS-CSM...
+  _by Admin - 2026-08-11_
 - **[9] G10 Handoff Retry** - User needs to click Handoff to SaaS Admin button on canary lead 1763aee9 from the browser at truevow-sales-ops.fly.dev. Current state: HANDOFF_PENDING. Expected: reuse existing handoff_package_id, increment delivery attempt, sign webhook, SaaS Admin validates, fn_process_handoff, T023, HANDED_OFF.
   _by Admin - 2026-08-10_
 - **[9] xai_cloud NEXT STEPS after C->B conversion** - DONE: C->B force_message conversion, VQM wiring, per-node VAD, missing test helpers (_VOICES/_DEFAULT_VOICE/_build_collected_data_text/_vad_for_node/_VAD_*), frontend rebuild w/ End Call+event log+report download. 40/40 tests pass. NOT YET DONE / NEXT: (1) USER LIVE TEST PENDING on http://127.0.0.1:...
