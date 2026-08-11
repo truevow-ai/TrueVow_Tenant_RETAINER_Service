@@ -3,8 +3,8 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-11T02:17:39.147495+00:00
-- Total memories: 437
+- Generated: 2026-08-11T02:38:22.512647+00:00
+- Total memories: 438
 
 ## High-importance decisions (8+, routine noise excluded) - 236
 
@@ -947,7 +947,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (195)
+## context (196)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -997,6 +997,8 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: Billing: trial lifecycle — scheduled conversion with HMAC activation | outcome: 30 files changed, 15** - {"agent_id": "TrueVow-Tenant_Billing-Service", "action": "done", "status": "DONE", "message": "Billing: trial lifecycle \u2014 scheduled conversion with HMAC activation | outcome: 30 files changed, 1515 insertions. Phases A-E of TV-BILL-COMMERCIAL-INTEGRITY-REMEDIATION complete. 0 browser activation...
+  _by user - 2026-08-11_
 - **[7] [DONE] DONE: Sales Ops: G10 canary handoff end-to-end verified — replaced pg pool with Supabase REST bridge (IPv4** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "done", "status": "DONE", "message": "Sales Ops: G10 canary handoff end-to-end verified \u2014 replaced pg pool with Supabase REST bridge (IPv4), fixed HMAC key isolation, updated webhook payload to SaaS Admin schema, added Reject/Reset/Approve/Han...
   _by user - 2026-08-11_
 - **[7] [DONE] DONE: SaaS Admin: CSM ontology realignment — rejected POST /api/v1/tenants/internal (wrong authority model** - {"agent_id": "TrueVow_Shared_Orchestration", "action": "done", "status": "DONE", "message": "SaaS Admin: CSM ontology realignment \u2014 rejected POST /api/v1/tenants/internal (wrong authority model), quarantined obsolete CSM build plan, corrected DELIVERY_MODE=disabled semantics finding (creates fa...
