@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-11T10:32:47.673992+00:00
-- Total memories: 444
+- Generated: 2026-08-11T10:33:24.708092+00:00
+- Total memories: 445
 
-## High-importance decisions (8+, routine noise excluded) - 241
+## High-importance decisions (8+, routine noise excluded) - 242
 
 - **[10][architecture] CSM Commissioning Authority Model Corrected** - SaaS Admin owns authoritative customer identity and commissioning decisions. CSM supplies readiness evidence and recommendations, does NOT create tenants. TV-PR-ONTOLOGY-CROSS-SERVICE-REALIGNMENT-01. Legacy POST /api/v1/tenants/internal rejected before commit. Correct flow: Sales Ops → SaaS Admin (handoff) → SaaS Admin commissions CSM → CSM supplies evidence → SaaS Admin executes lifecycle.
   _by Admin - 2026-08-10 - tags: -_
@@ -110,6 +110,8 @@
   _by Admin - 2026-08-10 - tags: -_
 - **[10][convention] zero hardcoded tunable values** - RULE: This is a multi-tenant platform. Never hardcode ANY value that may need adjustment per-tenant, per-firm, or per-environment. All tunables must live in one of: (1) tenant_config, (2) workflow JSON config, or (3) named module-level constants with clear documentation. Bare numbers, strings, or IDs in logic statements are FORBIDDEN. If you need a value that could change — threshold, timeout, limit, firm identifier, VAD setting, confidence score — expose it via config. Test by asking: 'Could a different law firm need this set differently?'
   _by Admin - 2026-07-15 - tags: -_
+- **[10][decision] G11 Preflight Complete** - G11 preflight PASS. INTAKE provisioning at /api/v1/internal/tenants/provision confirmed as canonical (not /webhooks/saas-admin). HMAC verifier unified across provision+activate. SaaS Admin worker, cron process, cron reconcile all use pg Pool. 0 dotenv dependencies. Claim recovery deterministic with 120s lease. Cron auth hardened across all 12 routes. Canary scope locked to run 8ddf780a-578a-4d3f-8980-ab602b26fd0e.
+  _by Admin - 2026-08-11 - tags: -_
 - **[10][decision] G10 CLOSED — Sales Ops to SaaS Admin** - G10 canary PASS. Handoff 455be7f3-84fc-463d-a5ba-bde4c45455d9 to SaaS Admin. Tenant ec105c72-31ff-4030-9bc4-413ff4f58b5b (TrueVow Canary Law Firm PC). Onboarding run 8ddf780a. 6 commands PENDING. 0 false deliveries, 0 duplicates, 0 manual repair. Authority path verified.
   _by Admin - 2026-08-11 - tags: -_
 - **[10][decision] Billing Trial Implementation — CONDITIONALLY APPROVED** - Commercial model APPROVED. 18 revisions required before implementation: 1) Keep TRIAL_ACTIVE after successor selection 2) Separate successor plan from current subscription status 3) Three timestamps: trial_expires_at/trial_ended_at/trial_end_reason 4) Versioned trial offer (INTAKE_TRIAL_90D_12_V1) 5) FK must point to immutable pricing catalogue 6) Freeze price at selection 7) Reuse canonical Billing usage ingestion 8) Register exact meterable INTAKE event 9) Idempotent intake counting 10) Immediate conversion on 12th intake not daily sweep 11) Atomic concurrency-safe transition 12) SaaS Admin triggers trial activation after readiness gate 13) SaaS Admin retains operational entitlement authority 14) Do not use renew_subscription for trial conversion 15) Explicit scheduled-plan command 16) Defer immediate_activation 17) Define no-successor TRIAL_EXPIRED behavior 18) Define billing-readiness before auto-conversion guarantee.
@@ -713,8 +715,10 @@
 - **[6] xai_cloud bridge test suite** - Created tests/test_xai_cloud_bridge.py (34 tests) for XaiCloudBridge. Mirrors test_xai_bridge.py but adapts for cloud bridge: dual registration (xai_cloud + xai_cloud_voice_agent), default voice rex (male-only), end_session returns {bridge,session_id,status} without had_audio, double-start early-ret...
   _by Admin - 2026-07-08_
 
-## decision (69)
+## decision (70)
 
+- **[10] G11 Preflight Complete** - G11 preflight PASS. INTAKE provisioning at /api/v1/internal/tenants/provision confirmed as canonical (not /webhooks/saas-admin). HMAC verifier unified across provision+activate. SaaS Admin worker, cron process, cron reconcile all use pg Pool. 0 dotenv dependencies. Claim recovery deterministic with ...
+  _by Admin - 2026-08-11_
 - **[10] G10 CLOSED — Sales Ops to SaaS Admin** - G10 canary PASS. Handoff 455be7f3-84fc-463d-a5ba-bde4c45455d9 to SaaS Admin. Tenant ec105c72-31ff-4030-9bc4-413ff4f58b5b (TrueVow Canary Law Firm PC). Onboarding run 8ddf780a. 6 commands PENDING. 0 false deliveries, 0 duplicates, 0 manual repair. Authority path verified.
   _by Admin - 2026-08-11_
 - **[10] Billing Trial Implementation — CONDITIONALLY APPROVED** - Commercial model APPROVED. 18 revisions required before implementation: 1) Keep TRIAL_ACTIVE after successor selection 2) Separate successor plan from current subscription status 3) Three timestamps: trial_expires_at/trial_ended_at/trial_end_reason 4) Versioned trial offer (INTAKE_TRIAL_90D_12_V1) 5...
