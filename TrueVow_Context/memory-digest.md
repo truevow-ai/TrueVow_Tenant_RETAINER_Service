@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-11T04:38:22.872140+00:00
-- Total memories: 439
+- Generated: 2026-08-11T09:38:44.188611+00:00
+- Total memories: 440
 
-## High-importance decisions (8+, routine noise excluded) - 237
+## High-importance decisions (8+, routine noise excluded) - 238
 
 - **[10][architecture] CSM Commissioning Authority Model Corrected** - SaaS Admin owns authoritative customer identity and commissioning decisions. CSM supplies readiness evidence and recommendations, does NOT create tenants. TV-PR-ONTOLOGY-CROSS-SERVICE-REALIGNMENT-01. Legacy POST /api/v1/tenants/internal rejected before commit. Correct flow: Sales Ops → SaaS Admin (handoff) → SaaS Admin commissions CSM → CSM supplies evidence → SaaS Admin executes lifecycle.
   _by Admin - 2026-08-10 - tags: -_
@@ -394,6 +394,8 @@
   _by user - 2026-06-25 - tags: analytics, events, warehouse, dashboards, star-schema, platform_
 - **[8][architecture] Tenant Application Service (INTAKE) - Voice + NLP Pipeline** - Phase I intake services. Stack: Python/FastAPI backend, FSM-based deterministic NLP engine, voice pipeline. Purpose: Legal AI intake for personal injury attorneys - captures client information via voice/NLP. Separated from website code (Nov 2025). Technology: Finite State Machine, deterministic NLP (not LLM-based for compliance). Voice pipeline components integrated. Ports: API backend. Depends on: SaaS Admin (tenant management, auth). Related: Benjamin voice agent (STT/TTS), Dialogflow Intake (alternative intake path).
   _by user - 2026-06-25 - tags: intake, nlp, fsm, voice, fastapi, python, tenant-application_
+- **[8][bug] INTAKE 500 on provision endpoint** - INTAKE POST /api/v1/internal/tenants/provision returns 500 with empty body after HMAC auth passes. JSON validation works (400 on bad body). Template lookup or DB session fails internally — no middleware log entry for the request, suggesting exception before response handler. Tables exist, templates seeded, DB connected per health check. Likely: SQLAlchemy model-table schema mismatch, or get_db_session_context() async engine issue on Fly. Needs INTAKE agent to debug Fly logs.
+  _by Admin - 2026-08-11 - tags: -_
 - **[8][bug] DELIVERY_MODE=disabled False Evidence** - ONBOARDING_EXTERNAL_DELIVERY_MODE=disabled does NOT hold commands. It marks them DELIVERED with http_status 200, advances steps to SUCCEEDED, triggers dependency release, and advances run lifecycle. Creates fabricated success evidence across 4 tables. Not safe as a pause/hold mechanism. SaaS Admin lib/services/durable-onboarding.ts:16 and cron route at app/api/cron/onboarding/process/route.ts:350-367.
   _by Admin - 2026-08-10 - tags: -_
 - **[8][bug] sales_handoff_outbox updated_at column** - The sales_handoff_outbox table has no updated_at column. All UPDATE queries on this table must not reference updated_at. Fixed in both handoff-to-saas-admin and approve routes.
@@ -874,7 +876,7 @@
 - **[8] Golden Fixture Cross-Repository Testing** - Created app/shared/contracts.py with frozen contract versions and deterministic golden fixture (make_golden_envelope, make_golden_fixture_json, compute_golden_hmac). Every TrueVow product must deserialize the same 18-field EventEnvelope and compute the same HMAC over the exact raw fixture. Tests at ...
   _by Admin - 2026-07-31_
 
-## bug (37)
+## bug (38)
 
 - **[10] Engine: ca_police/medical loop + email empty + jurisdiction hardcode** - Three critical bugs from Aug 1 call: (1) ca_police and ca_medical_treatment nodes cycle infinitely on 'no' answers — the ca workflow ladder has a next-pointer loop. (2) Email verify prompt shows empty '{contact_email}' — email extraction stores raw text instead of parsed email address. (3) conflict_...
   _by Admin - 2026-08-01_
@@ -916,6 +918,8 @@
   _by Admin - 2026-07-31_
 - **[9] contact_info_sequence dropped phone+email** - Root cause: routing INTO a sequence node used _execute_node, which returned the sequence's own intro prompt and left current_node=contact_info_sequence WITHOUT priming the first sub-node. Next turn the C10 terminal guard (workflow_engine.py:518) saw no next/branches/options and returned _build_compl...
   _by Admin - 2026-07-14_
+- **[8] INTAKE 500 on provision endpoint** - INTAKE POST /api/v1/internal/tenants/provision returns 500 with empty body after HMAC auth passes. JSON validation works (400 on bad body). Template lookup or DB session fails internally — no middleware log entry for the request, suggesting exception before response handler. Tables exist, templates ...
+  _by Admin - 2026-08-11_
 - **[8] DELIVERY_MODE=disabled False Evidence** - ONBOARDING_EXTERNAL_DELIVERY_MODE=disabled does NOT hold commands. It marks them DELIVERED with http_status 200, advances steps to SUCCEEDED, triggers dependency release, and advances run lifecycle. Creates fabricated success evidence across 4 tables. Not safe as a pause/hold mechanism. SaaS Admin l...
   _by Admin - 2026-08-10_
 - **[8] sales_handoff_outbox updated_at column** - The sales_handoff_outbox table has no updated_at column. All UPDATE queries on this table must not reference updated_at. Fixed in both handoff-to-saas-admin and approve routes.
