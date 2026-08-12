@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-12T15:36:41.955578+00:00
-- Total memories: 475
+- Generated: 2026-08-12T15:45:50.968806+00:00
+- Total memories: 479
 
-## High-importance decisions (8+, routine noise excluded) - 253
+## High-importance decisions (8+, routine noise excluded) - 257
 
 - **[10][architecture] SaaS Admin = Platform MDM Control Plane — INTAKE = Runtime Only** - SaaS Admin is the platform-wide MDM/control plane (tenant master data, INTAKE Builder, TRACE, SETTLE, Billing, Portal administration, Sales Ops, CRM governance, cross-platform governance). Never part of the real-time voice path. Intake Builder is one SaaS Admin capability among many, not the organizing principle. INTAKE repo houses three planes: Benjamin vNext Core (provider-neutral, Lifecycle FSM/QuestionRunner/Compiler), Bridge Plane (LiveKit/Pipecat adapters), Audio Plane (STT/TTS/VAD/media). Bridge Agent = INTAKE repo workstream, not a separate repo. Runtime path: PSTN/WebRTC → LiveKit → Bridge → Audio → Benjamin Core → Application Plane — all inside INTAKE. SaaS Admin participates out-of-band via MDM/configuration API.
   _by Admin - 2026-08-12 - tags: -_
@@ -114,6 +114,8 @@
   _by Admin - 2026-08-10 - tags: -_
 - **[10][convention] zero hardcoded tunable values** - RULE: This is a multi-tenant platform. Never hardcode ANY value that may need adjustment per-tenant, per-firm, or per-environment. All tunables must live in one of: (1) tenant_config, (2) workflow JSON config, or (3) named module-level constants with clear documentation. Bare numbers, strings, or IDs in logic statements are FORBIDDEN. If you need a value that could change — threshold, timeout, limit, firm identifier, VAD setting, confidence score — expose it via config. Test by asking: 'Could a different law firm need this set differently?'
   _by Admin - 2026-07-15 - tags: -_
+- **[10][decision] vNext Status Correction — Simulated vs Production** - CTO revises: 76/76 proved interfaces and simulated behavior only. DB config was fake-backed, effects fabricated success, LLM was deterministic stub. NOT PROVEN: real DB config, durable answer store, fact normalizer, candidate persistence, booking/callback effects, real LLM, language realizer, semantic guard, real LiveKit call. Status: SIMULATED E2E 97/102, PRODUCTION E2E NOT RUN, G13 HOLD, G14 HARD HOLD.
+  _by Admin - 2026-08-12 - tags: -_
 - **[10][decision] Benjamin vNext Capability Closure PASS** - 76/76 tests pass. R2 contract baseline frozen: EffectResult gains optional tenant_id. 22 lifecycle states, 0 question-as-FSM-state. Core PASS, Bridge PASS, Capability PASS. vNext production default remains NO. G13 OPEN, G14 HARD HOLD.
   _by Admin - 2026-08-12 - tags: -_
 - **[10][decision] G11 Preflight Complete** - G11 preflight PASS. INTAKE provisioning at /api/v1/internal/tenants/provision confirmed as canonical (not /webhooks/saas-admin). HMAC verifier unified across provision+activate. SaaS Admin worker, cron process, cron reconcile all use pg Pool. 0 dotenv dependencies. Claim recovery deterministic with 120s lease. Cron auth hardened across all 12 routes. Canary scope locked to run 8ddf780a-578a-4d3f-8980-ab602b26fd0e.
@@ -292,6 +294,10 @@
   _by Admin - 2026-08-11 - tags: -_
 - **[9][context] G10 Canary Status** - Lead 1763aee9-52ca-4418-abb8-a60e7f90d847 at HANDOFF_PENDING. T020 passed, T022 passed. Handoff to SaaS Admin deployed and ready for retry. SaaS Admin webhook at truevow-saas-admin-staging.fly.dev with HMAC key tv-sales-ops-to-saas-admin-v1. PIPELINE_SECRET and TRUEVOW_DEPLOYMENT_ENV=staging set.
   _by Admin - 2026-08-10 - tags: -_
+- **[9][decision] Verification Layers** - AUTHOR VERIFICATION = tests by implementation agent. FRESH-SESSION QA = separate agent session with no implementation context. CTO AUDIT = architectural evidence review. For G13 require fresh-session QA + CTO audit after production integrations exist. Same model writing code and acceptance tests is NOT independent verification.
+  _by Admin - 2026-08-12 - tags: -_
+- **[9][decision] vNext Defect Fix Prescriptions** - 3 core defects with specific fixes: D1 rear-ended — normalize punctuation/hyphens before classification (not spelling variants). D2 hired-a-lawyer — alias lawyer/attorney for retained/hired phrases. D3 ambiguity — semantic rules: explicit 'didn't retain/did not hire/consultation only' → consulted_only; indirect 'never signed' → clarify. Not just confidence threshold. 2 test defects: scanner exclusions (comments, own test file).
+  _by Admin - 2026-08-12 - tags: -_
 - **[9][decision] Pocock Skills Integrated** - 35 Matt Pocock agent skills integrated into TrueVow at agent-skills/skills/pocock/. 10 TrueVow platform skills rewritten to be terser (Pocock-style) and compose with Pocock primitives. New truevow-ask routing skill created. Dispatch table updated: fundamentals use Pocock, platform specifics use TrueVow. 14 overlapping TrueVow skills deprecated in favor of Pocock equivalents. Submodule needs TrueVow-owned remote (currently tracking addyosmani/agent-skills).
   _by Admin - 2026-08-12 - tags: -_
 - **[9][decision] G10 Canary Handoff Ready Awaiting Platform Operator** - Sales Ops → SaaS Admin canonical webhook POST /api/v1/webhooks/sales-ops/application-approved ready. HMAC key tv-sales-ops-to-saas-admin-v1. RPC fn_process_handoff migration 181. Blocked by: Sales Ops DB connection (db.bpzegquhxnygyxdzluyw.supabase.co deprecated - switch to pooler), Sales Ops HMAC key needs to match SaaS Admin TRUEVOW_WEBHOOK_SECRET_SALES_OPS. Before G10 click: pause Fly onboarding-worker + Vercel onboarding cron. G11-G15 downstream pipeline exists but runtime proof pending.
@@ -350,6 +356,8 @@
   _by Admin - 2026-08-06 - tags: -_
 - **[9][relationship] Webhook Key Mapping** - INTAKE uses tv-intake-to-retainer-v1. RETAINER uses tv-retainer-to-saas-admin-v1. SaaS Admin uses tv-saas-admin-to-trace-v1. Each key is scoped to a single caller-receiver pair with specific allowed paths and methods. No service shares a key with another link.
   _by Admin - 2026-07-31 - tags: -_
+- **[9][todo] vNext Production Integration Sequence** - After 102/102 simulated: 1) Supabase/DB ConfigResolver proof 2) persistent Answer Store 3) Fact Normalizer adapter 4) candidate persistence 5) real booking dispatcher 6) real callback dispatcher 7) real bounded LLM provider. Then staging integration tests, real LiveKit+STT+TTS call, fresh-context QA, CTO audit, G13 cutover review. Language realizer optional (deterministic canonical text OK initially).
+  _by Admin - 2026-08-12 - tags: -_
 - **[9][todo] G11 — Provisioning** - G10 closed. Next: advance canary tenant ec105c72 into provisioning (G11), then commercial conversion/billing (G11A), Customer Portal onboarding (G12), Benjamin INTAKE (G13), controlled activation (G14), revenue assurance (G15). CSM enters later via SaaS Admin → CSM canonical contract (TV-PR-SAAS-CSM-ONTOLOGY-CONTRACT-01).
   _by Admin - 2026-08-11 - tags: -_
 - **[9][todo] G10 Handoff Retry** - User needs to click Handoff to SaaS Admin button on canary lead 1763aee9 from the browser at truevow-sales-ops.fly.dev. Current state: HANDOFF_PENDING. Expected: reuse existing handoff_package_id, increment delivery attempt, sign webhook, SaaS Admin validates, fn_process_handoff, T023, HANDED_OFF.
@@ -745,8 +753,10 @@
 - **[6] xai_cloud bridge test suite** - Created tests/test_xai_cloud_bridge.py (34 tests) for XaiCloudBridge. Mirrors test_xai_bridge.py but adapts for cloud bridge: dual registration (xai_cloud + xai_cloud_voice_agent), default voice rex (male-only), end_session returns {bridge,session_id,status} without had_audio, double-start early-ret...
   _by Admin - 2026-07-08_
 
-## decision (73)
+## decision (76)
 
+- **[10] vNext Status Correction — Simulated vs Production** - CTO revises: 76/76 proved interfaces and simulated behavior only. DB config was fake-backed, effects fabricated success, LLM was deterministic stub. NOT PROVEN: real DB config, durable answer store, fact normalizer, candidate persistence, booking/callback effects, real LLM, language realizer, semant...
+  _by Admin - 2026-08-12_
 - **[10] Benjamin vNext Capability Closure PASS** - 76/76 tests pass. R2 contract baseline frozen: EffectResult gains optional tenant_id. 22 lifecycle states, 0 question-as-FSM-state. Core PASS, Bridge PASS, Capability PASS. vNext production default remains NO. G13 OPEN, G14 HARD HOLD.
   _by Admin - 2026-08-12_
 - **[10] G11 Preflight Complete** - G11 preflight PASS. INTAKE provisioning at /api/v1/internal/tenants/provision confirmed as canonical (not /webhooks/saas-admin). HMAC verifier unified across provision+activate. SaaS Admin worker, cron process, cron reconcile all use pg Pool. 0 dotenv dependencies. Claim recovery deterministic with ...
@@ -815,6 +825,10 @@
   _by user - 2026-06-25_
 - **[10] CONNECT Archived - DRAFT Renamed to LEVERAGE - INTAKE Updated** - CONNECT (attorney referral network) is decommissioned and archived from the ecosystem permanently - no longer on TrueVow agenda. DRAFT has been completely replaced by LEVERAGE everywhere (same service, renamed). INTAKE (Tenant Application Service) is no longer just FSM NLP - it is now FSM applied to...
   _by user - 2026-06-25_
+- **[9] Verification Layers** - AUTHOR VERIFICATION = tests by implementation agent. FRESH-SESSION QA = separate agent session with no implementation context. CTO AUDIT = architectural evidence review. For G13 require fresh-session QA + CTO audit after production integrations exist. Same model writing code and acceptance tests is ...
+  _by Admin - 2026-08-12_
+- **[9] vNext Defect Fix Prescriptions** - 3 core defects with specific fixes: D1 rear-ended — normalize punctuation/hyphens before classification (not spelling variants). D2 hired-a-lawyer — alias lawyer/attorney for retained/hired phrases. D3 ambiguity — semantic rules: explicit 'didn't retain/did not hire/consultation only' → consulted_on...
+  _by Admin - 2026-08-12_
 - **[9] Pocock Skills Integrated** - 35 Matt Pocock agent skills integrated into TrueVow at agent-skills/skills/pocock/. 10 TrueVow platform skills rewritten to be terser (Pocock-style) and compose with Pocock primitives. New truevow-ask routing skill created. Dispatch table updated: fundamentals use Pocock, platform specifics use True...
   _by Admin - 2026-08-12_
 - **[9] G10 Canary Handoff Ready Awaiting Platform Operator** - Sales Ops → SaaS Admin canonical webhook POST /api/v1/webhooks/sales-ops/application-approved ready. HMAC key tv-sales-ops-to-saas-admin-v1. RPC fn_process_handoff migration 181. Blocked by: Sales Ops DB connection (db.bpzegquhxnygyxdzluyw.supabase.co deprecated - switch to pooler), Sales Ops HMAC k...
@@ -1448,7 +1462,7 @@
 - **[4] [ACTIVE] START: Orchestrator CTO: monitoring all 19 services, building reporting dashboard** - {"agent_id": "orchestrator", "action": "start", "status": "ACTIVE", "message": "Orchestrator CTO: monitoring all 19 services, building reporting dashboard", "timestamp": "2026-06-25T02:06:16.484425+00:00", "working_dir": "C:\\Users\\yasha\\OneDrive\\Documents\\TrueVow\\Cursor"}
   _by user - 2026-06-25_
 
-## todo (18)
+## todo (19)
 
 - **[10] TV-INTAKE-BENJAMIN-VNEXT-E2E-QUALIFICATION-01** - Independent QA qualification work order for INTAKE. 28 sections covering: config resolution, two-tenant isolation, CA/OPI E2E journeys, conflict/represented, emergency, barge-in, LLM provider proof (real vs deterministic fallback), effects, success-language truth, session termination, legacy fallbac...
   _by Admin - 2026-08-12_
@@ -1456,6 +1470,8 @@
   _by Admin - 2026-07-31_
 - **[10] TX Phase 4 DB connectivity blocker** - db.bpzegquhxnygyxdzluyw.supabase.co only resolves to IPv6, Windows dev box has no IPv6. Supabase pooler not enabled for this project (tenant/user not found). Phase 4 scripts (verify_emails_phones, classify_phone_types, verify_attorney_emails) need psycopg2. Workaround: create REST API versions or en...
   _by Admin - 2026-07-27_
+- **[9] vNext Production Integration Sequence** - After 102/102 simulated: 1) Supabase/DB ConfigResolver proof 2) persistent Answer Store 3) Fact Normalizer adapter 4) candidate persistence 5) real booking dispatcher 6) real callback dispatcher 7) real bounded LLM provider. Then staging integration tests, real LiveKit+STT+TTS call, fresh-context QA...
+  _by Admin - 2026-08-12_
 - **[9] G11 — Provisioning** - G10 closed. Next: advance canary tenant ec105c72 into provisioning (G11), then commercial conversion/billing (G11A), Customer Portal onboarding (G12), Benjamin INTAKE (G13), controlled activation (G14), revenue assurance (G15). CSM enters later via SaaS Admin → CSM canonical contract (TV-PR-SAAS-CSM...
   _by Admin - 2026-08-11_
 - **[9] G10 Handoff Retry** - User needs to click Handoff to SaaS Admin button on canary lead 1763aee9 from the browser at truevow-sales-ops.fly.dev. Current state: HANDOFF_PENDING. Expected: reuse existing handoff_package_id, increment delivery attempt, sign webhook, SaaS Admin validates, fn_process_handoff, T023, HANDED_OFF.
