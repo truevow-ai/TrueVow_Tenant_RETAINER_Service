@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-12T17:52:07.019197+00:00
-- Total memories: 487
+- Generated: 2026-08-12T18:16:01.292385+00:00
+- Total memories: 489
 
-## High-importance decisions (8+, routine noise excluded) - 263
+## High-importance decisions (8+, routine noise excluded) - 264
 
 - **[10][architecture] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Lifecycle shrinks to ~6 states (BOOTSTRAP/SCREENING/INTAKE/RESOLUTION/AWAITING_EFFECT/COMPLETE + HANDOFF/TERMINATED). LLM = conversation conductor within code-determined agenda; code = agenda authority. LiveKit = voice runtime only, TrueVow Core consumes provider-neutral CoreTurn. First Call Readiness Certificate requires all policy branches have outcomes + effect fallbacks; external integrations NOT required for first call. Prototype-first: challenger (Car Accident + OPI) vs current 22-state FSM, measure task completion/false commits/repeats/turns. SaaS Admin Builder implication: NOT a flowchart editor — firm configures facts, routing policy, destinations; previews generated sample conversations.
   _by Admin - 2026-08-12 - tags: -_
@@ -464,6 +464,8 @@
   _by Admin - 2026-07-08 - tags: -_
 - **[8][bug] gitignore source-leak ECOSYSTEM AUDIT results (June 25) — which repos still affected** - Audited all sibling git repos for the gitignore source-leak (advisory 64bc43bf). NONE have run the fix yet (advisory just issued). CONFIRMED UNFIXED SOURCE LEAKS (real lib/ source hidden from git): TrueVow_Financial_Management_Service (frontend/lib + frontend/__tests__/lib), TrueVow_Tenant_Application_Service (app/portal/lib, dograh server ui/src/lib, scripts/lib), TrueVow-Tenant_Billing-Service (ui/lib; ALSO its .gitignore has an embedded NULL/control byte — corrupted). LATENT (dangerous unanchored lib/ rule present but no active source leak yet): TrueVow_Internal_Ops_Service, TrueVow_Tenant_SETTLE-Service, TrueVow_Tenant_LEVERAGE_Service. NOT GIT REPOS AT ALL (no version control — separate severe issue): TrueVow_Dialogflow_Intake_Service, TrueVow_Platform_Analytics_Service, TrueVow_Tenant_VERIFY_Service, TrueVow_TWIML_SoftPhone_App. CLEAN: Website, Customer_Success_CORE, First_Line_Support, Sales_Ops, Tenant_CONNECT, Customer_Portal, cartesia_test. SaaS_Admin already fixed. Each affected repo agent: run docs/01-main/ECOSYSTEM_ADVISORY_GITIGNORE_SOURCE_LEAK.md (in SaaS Admin).
   _by user - 2026-06-25 - tags: gitignore, audit, ecosystem, cross-service_
+- **[8][context] FL FindLaw attorney census + cohort segregation** - Scraped 2,405 FL attorneys from FindLaw directory (all 26 letters, plain HTTP). Uploaded to sales_leads as source=findlaw_directory. Ran Phase 7 REST tagging: 288 (12%) matched Jewish community signals, segregated to special_cohort_leads (total cohort now 1,171), 2,117 remain in standard list. Zero crossover via soft-delete. New script: scripts/cohort_rest_tag.py (REST-based Phase 7a/7b for IPv4 dev).
+  _by Admin - 2026-08-12 - tags: -_
 - **[8][context] PLG-SO-01 through SO-02C: complete session context** - All phases from CTO directive implemented. 92 files created/modified. 7 migrations (177-182). 8 new services. 4 channel adapters. 139 PLG tests. 47 suites, 660 TypeScript + 17 Python = 677/677 PASS. 22 docs in docs/plg/. Next: staging agent applies migrations 181/182, deploys c31c233, executes staging handoff runbook. Then PLG-SO-03: website attribution + Oakwood demo + canonical application matching + 90-day/12-intake trial.
   _by Admin - 2026-08-05 - tags: -_
 - **[8][convention] Score, segment, lifecycle are separate dimensions** - Per PLG-SO-01: lead_score is quality/eligibility factor, segment_code is routing key (STANDARD/SPECIAL_COHORT), canonical_pipeline_stage is lifecycle state. None replaces the others. High-scoring special-cohort lead stays special — never auto-promoted to standard. Classification_status=REVIEW_REQUIRED blocks all automated outreach regardless of score.
@@ -1053,7 +1055,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (217)
+## context (219)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1073,6 +1075,8 @@
   _by Admin - 2026-08-11_
 - **[9] G10 Canary Status** - Lead 1763aee9-52ca-4418-abb8-a60e7f90d847 at HANDOFF_PENDING. T020 passed, T022 passed. Handoff to SaaS Admin deployed and ready for retry. SaaS Admin webhook at truevow-saas-admin-staging.fly.dev with HMAC key tv-sales-ops-to-saas-admin-v1. PIPELINE_SECRET and TRUEVOW_DEPLOYMENT_ENV=staging set.
   _by Admin - 2026-08-10_
+- **[8] FL FindLaw attorney census + cohort segregation** - Scraped 2,405 FL attorneys from FindLaw directory (all 26 letters, plain HTTP). Uploaded to sales_leads as source=findlaw_directory. Ran Phase 7 REST tagging: 288 (12%) matched Jewish community signals, segregated to special_cohort_leads (total cohort now 1,171), 2,117 remain in standard list. Zero ...
+  _by Admin - 2026-08-12_
 - **[8] Git Scan: 2026-08-11T01:58:37** - { "summary": { "timestamp": "2026-08-11T01:58:37.126903+00:00", "total": 14, "clean": 5, "dirty": 7, "missing": 2, "errors": 0, "stale_services": 13, "active_services": 1, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 1, "STALE": 7, "NEGLECTED": 6, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY":...
   _by Admin - 2026-08-11_
 - **[8] Git Scan: 2026-08-10T15:52:58** - { "summary": { "timestamp": "2026-08-10T15:52:58.725429+00:00", "total": 14, "clean": 5, "dirty": 7, "missing": 2, "errors": 0, "stale_services": 13, "active_services": 1, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 7, "NEGLECTED": 6, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY":...
@@ -1103,6 +1107,8 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: INTAKE SCHEMA-GOAL CHALLENGER CORE — COMPLETE | New parallel core at app/services/benjamin_goal/: 8** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE SCHEMA-GOAL CHALLENGER CORE \u2014 COMPLETE | New parallel core at app/services/benjamin_goal/: 8 lifecycle phases, 26 fact definitions, 10 goal definitions. Multi-fact extraction proven: one turn yi...
+  _by user - 2026-08-12_
 - **[7] [DONE] DONE: INTAKE VNEXT PRODUCTION INTEGRATION — CONDITIONAL PASS | REAL DB: SqlAlchemyConfigResolver resolves** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE VNEXT PRODUCTION INTEGRATION \u2014 CONDITIONAL PASS | REAL DB: SqlAlchemyConfigResolver resolves canary tenant ec105c72... from actual Supabase (19 questions, checksum 6603c134...), missing/empty te...
   _by user - 2026-08-12_
 - **[7] [DONE] DONE: INTAKE E2E defect repair complete | 3 core defects fixed with CTO-corrected D3 semantics: explicit n** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE E2E defect repair complete | 3 core defects fixed with CTO-corrected D3 semantics: explicit non-retention phrases (didn't retain/didn't hire/never hired) -> consulted_only; consultation markers + unr...
