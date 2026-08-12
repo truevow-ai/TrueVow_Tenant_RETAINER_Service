@@ -72,19 +72,29 @@ The agent must then **follow the SKILL.md instructions exactly** — never parti
 ## 3. Dispatch Table (for quick reference)
 | User says... | Skill loaded | Persona activated |
 |-------------|-------------|-------------------|
-| "review this code" / "PR review" | code-review-and-quality | code-reviewer |
-| "write tests" / "test coverage" | test-driven-development | test-engineer |
-| "security audit" / "vulnerability" | security-and-hardening | security-auditor |
-| "performance / slow / optimize" | performance-optimization | web-performance-auditor |
-| "ship / launch / deploy" | shipping-and-launch | code-reviewer + security-auditor + test-engineer (parallel fan-out) |
-| "new feature / spec / define" | spec-driven-development | — |
-| "plan / breakdown / tasks" | planning-and-task-breakdown | — |
-| "implement / build / develop" | incremental-implementation | — |
-| "bug / broken / debug / fix" | debugging-and-error-recovery | — |
-| "simplify / refactor / messy" | code-simplification | — |
-| "api / endpoint / contract" | api-and-interface-design | — |
-| "ui / frontend / component" | frontend-ui-engineering | — |
-| "search web / research / twitter" | agent-reach | — |
+| "review this code" / "PR review" | code-review (Pocock) + security-and-hardening (TrueVow) | code-reviewer |
+| "write tests" / "test coverage" | tdd (Pocock) | test-engineer |
+| "security audit" / "vulnerability" | security-and-hardening (TrueVow) | security-auditor |
+| "performance / slow / optimize" | performance-optimization (TrueVow) | web-performance-auditor |
+| "ship / launch / deploy" | shipping-and-launch (TrueVow) | code-reviewer + security-auditor + test-engineer (parallel fan-out) |
+| "new feature / spec / define" | to-spec (Pocock) | — |
+| "plan / breakdown / tasks" | to-tickets (Pocock) | — |
+| "implement / build / develop" | implement (Pocock) → uses tdd internally | — |
+| "bug / broken / debug / fix" | diagnosing-bugs (Pocock) + observability-and-instrumentation (TrueVow) | — |
+| "simplify / refactor / messy" | improve-codebase-architecture (Pocock) | — |
+| "api / endpoint / contract" | api-and-interface-design (TrueVow) → uses to-spec | — |
+| "ui / frontend / component" | prototype (Pocock) | — |
+| "search web / research / twitter" | research (Pocock) | — |
+| "align on idea / grill me" | grill-me (Pocock) | — |
+| "handoff to another agent" | handoff (Pocock) | — |
+| "route / which skill" | truevow-ask (TrueVow) | — |
+| "read source / understand" | source-driven-development (TrueVow) | — |
+| "deprecate / migrate" | deprecation-and-migration (TrueVow) → uses to-tickets | — |
+| "browser test / devtools" | browser-testing-with-devtools (TrueVow) → uses diagnosing-bugs | — |
+| "ci/cd / deploy" | ci-cd-and-automation (TrueVow) | — |
+| "setup repo" | setup-matt-pocock-skills (Pocock) | — |
+
+> **Pocock skills** handle engineering fundamentals. **TrueVow skills** add platform-specific knowledge (SigNoz, Fly, Supabase, Clerk, ontology). Both live in `TrueVow_Shared_Agent_Tools/agent-skills/skills/`.
 
 ## 4. Remember Everything
 After important decisions, architecture changes, bug discoveries:
@@ -135,7 +145,9 @@ The `doctor` command now includes this automatically.
 
 ## All Registered Agents
 - **4 Personas:** code-reviewer, test-engineer, security-auditor, web-performance-auditor
-- **24 Lifecycle Skills:** DEFINE → PLAN → BUILD → VERIFY → REVIEW → SHIP
+- **24 Lifecycle Skills:** DEFINE → PLAN → BUILD → VERIFY → REVIEW → SHIP (Pocock fundamentals + TrueVow platform)
+- **10 TrueVow Platform Skills:** security-and-hardening, performance-optimization, shipping-and-launch, ci-cd-and-automation, api-and-interface-design, observability-and-instrumentation, source-driven-development, deprecation-and-migration, browser-testing-with-devtools, using-agent-skills
+- **25 Pocock Engineering Skills:** ask-matt, tdd, code-review, to-spec, to-tickets, implement, diagnosing-bugs, prototype, research, grill-me, grill-with-docs, handoff, teach, domain-modeling, codebase-design, improve-codebase-architecture, resolving-merge-conflicts, wizard, triage, wayfinder, writing-for-agents, grilling, wait-what, to-questionnaire, setup-matt-pocock-skills
 - **2 Tool Skills:** agent-reach (web), skillspector-guardrail (security)
 - **4 Developers:** yasha, sania, ghaus-fsd, ghous-isb
 - **Sub-repo agents:** agent-skills AGENTS.md, Agent-Reach CLAUDE.md, SkillSpector README
