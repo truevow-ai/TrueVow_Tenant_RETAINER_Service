@@ -3,11 +3,15 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-12T04:29:27.450127+00:00
-- Total memories: 457
+- Generated: 2026-08-12T15:22:23.032901+00:00
+- Total memories: 470
 
-## High-importance decisions (8+, routine noise excluded) - 245
+## High-importance decisions (8+, routine noise excluded) - 250
 
+- **[10][architecture] SaaS Admin = Platform MDM Control Plane — INTAKE = Runtime Only** - SaaS Admin is the platform-wide MDM/control plane (tenant master data, INTAKE Builder, TRACE, SETTLE, Billing, Portal administration, Sales Ops, CRM governance, cross-platform governance). Never part of the real-time voice path. Intake Builder is one SaaS Admin capability among many, not the organizing principle. INTAKE repo houses three planes: Benjamin vNext Core (provider-neutral, Lifecycle FSM/QuestionRunner/Compiler), Bridge Plane (LiveKit/Pipecat adapters), Audio Plane (STT/TTS/VAD/media). Bridge Agent = INTAKE repo workstream, not a separate repo. Runtime path: PSTN/WebRTC → LiveKit → Bridge → Audio → Benjamin Core → Application Plane — all inside INTAKE. SaaS Admin participates out-of-band via MDM/configuration API.
+  _by Admin - 2026-08-12 - tags: -_
+- **[10][architecture] Intake Builder Lives in SaaS Admin — IDE/Compiler Split** - SaaS Admin owns the Intake Builder (drag-and-drop canvas, draft editor, SAFE/ADVANCED/SYSTEM lock UX, version history, publish orchestration, CSM approval). INTAKE owns the compiler/runtime (schema validator, template compiler, compiled Benjamin runtime, lifecycle FSM, QuestionRunner). SaaS Admin is the IDE, INTAKE is the compiler. Lock levels (SYSTEM_LOCKED/TEMPLATE_LOCKED/TENANT_CONFIGURABLE) are defined authoritatively by INTAKE's catalogue, rendered by SaaS Admin UI. Publishing crosses the boundary: SaaS Admin edits → requests validation → INTAKE compiles → returns pass/fail + compiled checksum → SaaS Admin approves/publishes → INTAKE creates immutable configuration version. No per-firm containers in INTAKE — shared runtime with tenant_id isolation. Audit existing workflow builder before building new one.
+  _by Admin - 2026-08-12 - tags: -_
 - **[10][architecture] CSM Commissioning Authority Model Corrected** - SaaS Admin owns authoritative customer identity and commissioning decisions. CSM supplies readiness evidence and recommendations, does NOT create tenants. TV-PR-ONTOLOGY-CROSS-SERVICE-REALIGNMENT-01. Legacy POST /api/v1/tenants/internal rejected before commit. Correct flow: Sales Ops → SaaS Admin (handoff) → SaaS Admin commissions CSM → CSM supplies evidence → SaaS Admin executes lifecycle.
   _by Admin - 2026-08-10 - tags: -_
 - **[10][architecture] CSM Ontology Realignment Complete** - TV-CSM-ONTOLOGY-REALIGNMENT-02A PASS/CLOSED. Sajjad is now Customer Success Orchestrator (not AI Factory Manager). Authority spine: Sales Ops → SaaS Admin (commissioning) → CSM (orchestration). All dangerous authority paths removed: tenant creation 0, activation 0, billing 0, cancellation 0, /tenants/internal 0, autonomous threshold drift 0, cross-service DB 0. Sales Ops direct ingress deprecated (410). Onboarding secured with capability tokens (dedicated secret, fail-closed). Calendar routes operator-auth protected with OAuth CSRF state. Learning loop is analytics-only. 152 tests, 0 failures. Baseline: 90df85c. Next: TV-PR-SAAS-CSM-ONTOLOGY-CONTRACT-01 (awaiting CTO cross-service contract).
@@ -110,6 +114,8 @@
   _by Admin - 2026-08-10 - tags: -_
 - **[10][convention] zero hardcoded tunable values** - RULE: This is a multi-tenant platform. Never hardcode ANY value that may need adjustment per-tenant, per-firm, or per-environment. All tunables must live in one of: (1) tenant_config, (2) workflow JSON config, or (3) named module-level constants with clear documentation. Bare numbers, strings, or IDs in logic statements are FORBIDDEN. If you need a value that could change — threshold, timeout, limit, firm identifier, VAD setting, confidence score — expose it via config. Test by asking: 'Could a different law firm need this set differently?'
   _by Admin - 2026-07-15 - tags: -_
+- **[10][decision] Benjamin vNext Capability Closure PASS** - 76/76 tests pass. R2 contract baseline frozen: EffectResult gains optional tenant_id. 22 lifecycle states, 0 question-as-FSM-state. Core PASS, Bridge PASS, Capability PASS. vNext production default remains NO. G13 OPEN, G14 HARD HOLD.
+  _by Admin - 2026-08-12 - tags: -_
 - **[10][decision] G11 Preflight Complete** - G11 preflight PASS. INTAKE provisioning at /api/v1/internal/tenants/provision confirmed as canonical (not /webhooks/saas-admin). HMAC verifier unified across provision+activate. SaaS Admin worker, cron process, cron reconcile all use pg Pool. 0 dotenv dependencies. Claim recovery deterministic with 120s lease. Cron auth hardened across all 12 routes. Canary scope locked to run 8ddf780a-578a-4d3f-8980-ab602b26fd0e.
   _by Admin - 2026-08-11 - tags: -_
 - **[10][decision] G10 CLOSED — Sales Ops to SaaS Admin** - G10 canary PASS. Handoff 455be7f3-84fc-463d-a5ba-bde4c45455d9 to SaaS Admin. Tenant ec105c72-31ff-4030-9bc4-413ff4f58b5b (TrueVow Canary Law Firm PC). Onboarding run 8ddf780a. 6 commands PENDING. 0 false deliveries, 0 duplicates, 0 manual repair. Authority path verified.
@@ -180,10 +186,14 @@
   _by Admin - 2026-08-06 - tags: -_
 - **[10][pattern] Per-Service Key Isolation Pattern** - NEVER use one global webhook secret across all services. Each caller-receiver pair gets its own key: tv-intake-to-retainer-v1, tv-retainer-to-saas-admin-v1, tv-saas-admin-to-trace-v1. Key prefixes bound to allowed paths in CANONICAL_PATHS registry. Env vars: TRUEVOW_WEBHOOK_KEY_ID_{SERVICE} + TRUEVOW_WEBHOOK_SECRET_{SERVICE}. Secondary rotation keys per-relationship, not universal. Compromising one service must not allow impersonation of others.
   _by Admin - 2026-07-31 - tags: -_
+- **[10][todo] TV-INTAKE-BENJAMIN-VNEXT-E2E-QUALIFICATION-01** - Independent QA qualification work order for INTAKE. 28 sections covering: config resolution, two-tenant isolation, CA/OPI E2E journeys, conflict/represented, emergency, barge-in, LLM provider proof (real vs deterministic fallback), effects, success-language truth, session termination, legacy fallback audit, routing flags, observability, latency, concurrency, security, legacy retirement matrix. Mode: READ-ONLY FIRST — no repairs during discovery. Core and Bridge agents STAND DOWN. Acceptance gate requires all PASS + 0 legacy business engine invocations.
+  _by Admin - 2026-08-12 - tags: -_
 - **[10][todo] Release Candidate v3 freeze — required before pilot re-evaluation** - D1 (SaaS Admin exact-path verification, S2), D3 (RETAINER key isolation, S1), D4 (INTAKE contract test, S2) must all be fixed, independently reviewed, and committed. Then freeze v3 with SHAs + image digests. Then deploy staging, execute all 20 QA phases, CTO architecture review, final recommendation.
   _by Admin - 2026-07-31 - tags: -_
 - **[10][todo] TX Phase 4 DB connectivity blocker** - db.bpzegquhxnygyxdzluyw.supabase.co only resolves to IPv6, Windows dev box has no IPv6. Supabase pooler not enabled for this project (tenant/user not found). Phase 4 scripts (verify_emails_phones, classify_phone_types, verify_attorney_emails) need psycopg2. Workaround: create REST API versions or enable IPv4 on Supabase.
   _by Admin - 2026-07-27 - tags: -_
+- **[9][architecture] R2 Contract Baseline** - EffectResult now includes optional tenant_id — return path must prove result belongs to same tenant as request. Frozen during qualification. No contract modifications allowed.
+  _by Admin - 2026-08-12 - tags: -_
 - **[9][architecture] INTAKE Provisioning Endpoint Found** - INTAKE already has canonical provisioning endpoint at POST /api/v1/internal/tenants/provision on truevow-tenant-public. Uses HMAC-SHA256 with timestamp replay guard. Also has /api/v1/internal/tenants/activate. SaaS Admin provision_tenant handler incorrectly targets /webhooks/saas-admin. Fix: update handler URL to /api/v1/internal/tenants/provision with correct HMAC signing format.
   _by Admin - 2026-08-11 - tags: -_
 - **[9][architecture] Billing Trial Model — 18 Revisions for Implementation** - Trial lifecycle separated into 3 timestamps: trial_started_at, trial_expires_at (deterministic 90-day deadline), trial_ended_at (actual). TRIAL_ACTIVE persists after plan selection — successor_plan is a separate field, not a subscription status transition. Trial→paid must be atomic (no TRIAL_ENDED window, no gap). Usage counting must be idempotent by intake_session_id via existing INTAKE→Billing pipeline. Intake limit conversion must happen immediately on 12th event, not via daily sweeper. SaaS Admin triggers trial activation only after readiness gate (not after onboarding form). SaaS Admin retains operational entitlement authority — Billing owns commercial fact only. Defer immediate_activation. Defer upgrade overloading. Trial offer is versioned (INTAKE_TRIAL_90D_12_V1) with immutable terms.
@@ -499,8 +509,12 @@
 - **[8][todo] FIX gitignore source-leak: TrueVow-Tenant_Billing-Service** - ASSIGNED to the TrueVow-Tenant_Billing-Service agent. Real lib/ source is currently hidden from git (confirmed). Run the playbook: TrueVow_SaaS_Administration_Service/docs/01-main/ECOSYSTEM_ADVISORY_GITIGNORE_SOURCE_LEAK.md (fix .gitignore: anchor/remove stray lib/ + logs/; secrets-scan; commit recovered source in reviewed batches by explicit path; verify clean-clone build). REPORT RESULT via memory.py remember category=bug title='TrueVow-Tenant_Billing-Service gitignore RESULT' content='FIXED n files | CLEAN | BLOCKED + reason; secrets found?'. NOTE: reporting.py agent-checkin is broken — report via memory.
   _by user - 2026-06-25 - tags: gitignore, todo, assigned_
 
-## architecture (98)
+## architecture (101)
 
+- **[10] SaaS Admin = Platform MDM Control Plane — INTAKE = Runtime Only** - SaaS Admin is the platform-wide MDM/control plane (tenant master data, INTAKE Builder, TRACE, SETTLE, Billing, Portal administration, Sales Ops, CRM governance, cross-platform governance). Never part of the real-time voice path. Intake Builder is one SaaS Admin capability among many, not the organiz...
+  _by Admin - 2026-08-12_
+- **[10] Intake Builder Lives in SaaS Admin — IDE/Compiler Split** - SaaS Admin owns the Intake Builder (drag-and-drop canvas, draft editor, SAFE/ADVANCED/SYSTEM lock UX, version history, publish orchestration, CSM approval). INTAKE owns the compiler/runtime (schema validator, template compiler, compiled Benjamin runtime, lifecycle FSM, QuestionRunner). SaaS Admin is...
+  _by Admin - 2026-08-12_
 - **[10] CSM Commissioning Authority Model Corrected** - SaaS Admin owns authoritative customer identity and commissioning decisions. CSM supplies readiness evidence and recommendations, does NOT create tenants. TV-PR-ONTOLOGY-CROSS-SERVICE-REALIGNMENT-01. Legacy POST /api/v1/tenants/internal rejected before commit. Correct flow: Sales Ops → SaaS Admin (h...
   _by Admin - 2026-08-10_
 - **[10] CSM Ontology Realignment Complete** - TV-CSM-ONTOLOGY-REALIGNMENT-02A PASS/CLOSED. Sajjad is now Customer Success Orchestrator (not AI Factory Manager). Authority spine: Sales Ops → SaaS Admin (commissioning) → CSM (orchestration). All dangerous authority paths removed: tenant creation 0, activation 0, billing 0, cancellation 0, /tenant...
@@ -565,6 +579,8 @@
   _by user - 2026-06-25_
 - **[10] LEVERAGE (ex-DRAFT) — 3-Tier Rules Engine, NO AI** - LEVERAGE is a 3-tier legal rule validation system: TIER 1: State/Jurisdiction rules (mandatory, cannot be disabled). TIER 2: Practice Area rules (customizable). TIER 3: Firm/Attorney/Client-specific rules. CORE PRINCIPLE: NO AI — no machine learning, no neural networks, no LLM. Uses peer benchmarkin...
   _by user - 2026-06-25_
+- **[9] R2 Contract Baseline** - EffectResult now includes optional tenant_id — return path must prove result belongs to same tenant as request. Frozen during qualification. No contract modifications allowed.
+  _by Admin - 2026-08-12_
 - **[9] INTAKE Provisioning Endpoint Found** - INTAKE already has canonical provisioning endpoint at POST /api/v1/internal/tenants/provision on truevow-tenant-public. Uses HMAC-SHA256 with timestamp replay guard. Also has /api/v1/internal/tenants/activate. SaaS Admin provision_tenant handler incorrectly targets /webhooks/saas-admin. Fix: update ...
   _by Admin - 2026-08-11_
 - **[9] Billing Trial Model — 18 Revisions for Implementation** - Trial lifecycle separated into 3 timestamps: trial_started_at, trial_expires_at (deterministic 90-day deadline), trial_ended_at (actual). TRIAL_ACTIVE persists after plan selection — successor_plan is a separate field, not a subscription status transition. Trial→paid must be atomic (no TRIAL_ENDED w...
@@ -723,8 +739,10 @@
 - **[6] xai_cloud bridge test suite** - Created tests/test_xai_cloud_bridge.py (34 tests) for XaiCloudBridge. Mirrors test_xai_bridge.py but adapts for cloud bridge: dual registration (xai_cloud + xai_cloud_voice_agent), default voice rex (male-only), end_session returns {bridge,session_id,status} without had_audio, double-start early-ret...
   _by Admin - 2026-07-08_
 
-## decision (72)
+## decision (73)
 
+- **[10] Benjamin vNext Capability Closure PASS** - 76/76 tests pass. R2 contract baseline frozen: EffectResult gains optional tenant_id. 22 lifecycle states, 0 question-as-FSM-state. Core PASS, Bridge PASS, Capability PASS. vNext production default remains NO. G13 OPEN, G14 HARD HOLD.
+  _by Admin - 2026-08-12_
 - **[10] G11 Preflight Complete** - G11 preflight PASS. INTAKE provisioning at /api/v1/internal/tenants/provision confirmed as canonical (not /webhooks/saas-admin). HMAC verifier unified across provision+activate. SaaS Admin worker, cron process, cron reconcile all use pg Pool. 0 dotenv dependencies. Claim recovery deterministic with ...
   _by Admin - 2026-08-11_
 - **[10] G10 CLOSED — Sales Ops to SaaS Admin** - G10 canary PASS. Handoff 455be7f3-84fc-463d-a5ba-bde4c45455d9 to SaaS Admin. Tenant ec105c72-31ff-4030-9bc4-413ff4f58b5b (TrueVow Canary Law Firm PC). Onboarding run 8ddf780a. 6 commands PENDING. 0 false deliveries, 0 duplicates, 0 manual repair. Authority path verified.
@@ -983,7 +1001,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (206)
+## context (214)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1033,6 +1051,22 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: INTAKE VNEXT CORE CAPABILITY CLOSURE — COMPLETE | 3 bridge-discovered gaps closed: (1) DB-backed Con** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE VNEXT CORE CAPABILITY CLOSURE \u2014 COMPLETE | 3 bridge-discovered gaps closed: (1) DB-backed ConfigResolver with fail-closed tenant resolution + config pinning; (2) EffectDispatcher with idempotenc...
+  _by user - 2026-08-12_
+- **[7] [DONE] DONE: INTAKE REPOSITORY CANONICALIZATION — COMPLETE | Oakwood moved to config/demos/ (explicit demo only,** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE REPOSITORY CANONICALIZATION \u2014 COMPLETE | Oakwood moved to config/demos/ (explicit demo only, removed from default workflow resolution). Test fixtures moved to tests/fixtures/. Ad-hoc G11 scripts...
+  _by user - 2026-08-12_
+- **[7] [DONE] DONE: INTAKE v2.0.2 FINAL CORRECTION — COMPLETE | 123 top-level nodes, 123 reachable (100%), 0 orphans, 27** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE v2.0.2 FINAL CORRECTION \u2014 COMPLETE | 123 top-level nodes, 123 reachable (100%), 0 orphans, 275 top-level edges, 6 true terminals, 0 broken targets. 13 CTO defects fixed: (1) Represented-caller r...
+  _by user - 2026-08-12_
+- **[7] [DONE] DONE: INTAKE v2.0.1 WORKFLOW CORRECTION — COMPLETE | 133 nodes, 123 reachable, 6 true terminals (emergency** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE v2.0.1 WORKFLOW CORRECTION \u2014 COMPLETE | 133 nodes, 123 reachable, 6 true terminals (emergency_911, session_complete, non_pi_terminal, property_only_terminal, referred_terminal, represented_termi...
+  _by user - 2026-08-12_
+- **[7] [DONE] DONE: INTAKE v2.0.0 WORKFLOW REFACTOR — COMPLETE | 136 nodes (129 kept + 7 new terminals/router/consent -** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE v2.0.0 WORKFLOW REFACTOR \u2014 COMPLETE | 136 nodes (129 kept + 7 new terminals/router/consent - 2 engagement_letter removed). 121 reachable, 9 terminals, 0 broken targets, 0 unregistered transition...
+  _by user - 2026-08-12_
+- **[7] [DONE] DONE: INTAKE ONTOLOGY REGISTRIES RECONCILED | States: 19 (added JURISDICTION_DETERMINED, FINAL_CONTACT_CAP** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE ONTOLOGY REGISTRIES RECONCILED | States: 19 (added JURISDICTION_DETERMINED, FINAL_CONTACT_CAPTURED, VALUE_VALIDATED). Transitions: 20 (all state refs valid, DISCONNECT_INSURANCE\u2192DISCONNECT_INSUR...
+  _by user - 2026-08-12_
+- **[7] [DONE] DONE: INTAKE CANONICAL FSM BOUNDARY FREEZE — PASS | WorkflowRuntime.transition() called by FSMEngine ONLY** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE CANONICAL FSM BOUNDARY FREEZE \u2014 PASS | WorkflowRuntime.transition() called by FSMEngine ONLY (0 bypasses). FSMEngine.transition() called by WorkflowEngine._try_fsm_transition() + candidate_ingre...
+  _by user - 2026-08-12_
+- **[7] [DONE] DONE: INTAKE FORENSIC AUDIT COMPLETE | 10,184 files on disk, 2,439 tracked, 16 dirty (7 modified + 9 untra** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE FORENSIC AUDIT COMPLETE | 10,184 files on disk, 2,439 tracked, 16 dirty (7 modified + 9 untracked). Branch: review/tv-intake-engine-p1-02e-r1. Deployed Fly v157 on truevow-tenant-public. 128 API rout...
+  _by user - 2026-08-12_
 - **[7] [DONE] DONE: G13 BENJAMIN RUNTIME READINESS — PASS | 6 direct mutations now FSM-gated (rollback, first-turn, summ** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "G13 BENJAMIN RUNTIME READINESS \u2014 PASS | 6 direct mutations now FSM-gated (rollback, first-turn, summary, reset all fire FSM events before navigation). v1.0.2 created with [Firm Name] placeholder replac...
   _by user - 2026-08-12_
 - **[7] [DONE] DONE: G13 BENJAMIN RUNTIME READINESS — PASS | Dry-run conversation: greeting→practice_area→conflict→practi** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "G13 BENJAMIN RUNTIME READINESS \u2014 PASS | Dry-run conversation: greeting\u2192practice_area\u2192conflict\u2192practice_area under FSM authority. FSM rejected practice_area_identified, engine retried (pr...
@@ -1398,8 +1432,10 @@
 - **[4] [ACTIVE] START: Orchestrator CTO: monitoring all 19 services, building reporting dashboard** - {"agent_id": "orchestrator", "action": "start", "status": "ACTIVE", "message": "Orchestrator CTO: monitoring all 19 services, building reporting dashboard", "timestamp": "2026-06-25T02:06:16.484425+00:00", "working_dir": "C:\\Users\\yasha\\OneDrive\\Documents\\TrueVow\\Cursor"}
   _by user - 2026-06-25_
 
-## todo (17)
+## todo (18)
 
+- **[10] TV-INTAKE-BENJAMIN-VNEXT-E2E-QUALIFICATION-01** - Independent QA qualification work order for INTAKE. 28 sections covering: config resolution, two-tenant isolation, CA/OPI E2E journeys, conflict/represented, emergency, barge-in, LLM provider proof (real vs deterministic fallback), effects, success-language truth, session termination, legacy fallbac...
+  _by Admin - 2026-08-12_
 - **[10] Release Candidate v3 freeze — required before pilot re-evaluation** - D1 (SaaS Admin exact-path verification, S2), D3 (RETAINER key isolation, S1), D4 (INTAKE contract test, S2) must all be fixed, independently reviewed, and committed. Then freeze v3 with SHAs + image digests. Then deploy staging, execute all 20 QA phases, CTO architecture review, final recommendation...
   _by Admin - 2026-07-31_
 - **[10] TX Phase 4 DB connectivity blocker** - db.bpzegquhxnygyxdzluyw.supabase.co only resolves to IPv6, Windows dev box has no IPv6. Supabase pooler not enabled for this project (tenant/user not found). Phase 4 scripts (verify_emails_phones, classify_phone_types, verify_attorney_emails) need psycopg2. Workaround: create REST API versions or en...
