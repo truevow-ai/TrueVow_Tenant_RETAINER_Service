@@ -3,11 +3,15 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-12T15:45:50.968806+00:00
-- Total memories: 479
+- Generated: 2026-08-12T17:52:07.019197+00:00
+- Total memories: 487
 
-## High-importance decisions (8+, routine noise excluded) - 257
+## High-importance decisions (8+, routine noise excluded) - 263
 
+- **[10][architecture] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Lifecycle shrinks to ~6 states (BOOTSTRAP/SCREENING/INTAKE/RESOLUTION/AWAITING_EFFECT/COMPLETE + HANDOFF/TERMINATED). LLM = conversation conductor within code-determined agenda; code = agenda authority. LiveKit = voice runtime only, TrueVow Core consumes provider-neutral CoreTurn. First Call Readiness Certificate requires all policy branches have outcomes + effect fallbacks; external integrations NOT required for first call. Prototype-first: challenger (Car Accident + OPI) vs current 22-state FSM, measure task completion/false commits/repeats/turns. SaaS Admin Builder implication: NOT a flowchart editor — firm configures facts, routing policy, destinations; previews generated sample conversations.
+  _by Admin - 2026-08-12 - tags: -_
+- **[10][architecture] Schema-Gated Intake Engine — North Star** - Benjamin final architecture direction: schema-guided, goal-based, mixed-initiative legal intake with deterministic policy and execution gates. Talk naturally, collect against a schema, decide against deterministic policy, execute only through validated effects. Lifecycle shrinks to ~8 states (BOOTSTRAP, SCREENING, INTAKE, RESOLUTION, AWAITING_EFFECT, COMPLETE + HANDOFF, TERMINATED). Facts+goals replace questions+states. LLM chooses how to converse within permitted agenda; code determines agenda. LiveKit becomes voice runtime only, not second orchestration framework. One caller sentence can satisfy multiple fact requirements — never re-ask.
+  _by Admin - 2026-08-12 - tags: -_
 - **[10][architecture] SaaS Admin = Platform MDM Control Plane — INTAKE = Runtime Only** - SaaS Admin is the platform-wide MDM/control plane (tenant master data, INTAKE Builder, TRACE, SETTLE, Billing, Portal administration, Sales Ops, CRM governance, cross-platform governance). Never part of the real-time voice path. Intake Builder is one SaaS Admin capability among many, not the organizing principle. INTAKE repo houses three planes: Benjamin vNext Core (provider-neutral, Lifecycle FSM/QuestionRunner/Compiler), Bridge Plane (LiveKit/Pipecat adapters), Audio Plane (STT/TTS/VAD/media). Bridge Agent = INTAKE repo workstream, not a separate repo. Runtime path: PSTN/WebRTC → LiveKit → Bridge → Audio → Benjamin Core → Application Plane — all inside INTAKE. SaaS Admin participates out-of-band via MDM/configuration API.
   _by Admin - 2026-08-12 - tags: -_
 - **[10][architecture] Intake Builder Lives in SaaS Admin — IDE/Compiler Split** - SaaS Admin owns the Intake Builder (drag-and-drop canvas, draft editor, SAFE/ADVANCED/SYSTEM lock UX, version history, publish orchestration, CSM approval). INTAKE owns the compiler/runtime (schema validator, template compiler, compiled Benjamin runtime, lifecycle FSM, QuestionRunner). SaaS Admin is the IDE, INTAKE is the compiler. Lock levels (SYSTEM_LOCKED/TEMPLATE_LOCKED/TENANT_CONFIGURABLE) are defined authoritatively by INTAKE's catalogue, rendered by SaaS Admin UI. Publishing crosses the boundary: SaaS Admin edits → requests validation → INTAKE compiles → returns pass/fail + compiled checksum → SaaS Admin approves/publishes → INTAKE creates immutable configuration version. No per-firm containers in INTAKE — shared runtime with tenant_id isolation. Audit existing workflow builder before building new one.
@@ -194,6 +198,8 @@
   _by Admin - 2026-07-31 - tags: -_
 - **[10][todo] TX Phase 4 DB connectivity blocker** - db.bpzegquhxnygyxdzluyw.supabase.co only resolves to IPv6, Windows dev box has no IPv6. Supabase pooler not enabled for this project (tenant/user not found). Phase 4 scripts (verify_emails_phones, classify_phone_types, verify_attorney_emails) need psycopg2. Workaround: create REST API versions or enable IPv4 on Supabase.
   _by Admin - 2026-07-27 - tags: -_
+- **[9][architecture] vNext Component Disposition** - KEEP: compiler/checksum/versioning, tenant/config resolution, provider-neutral contracts, CandidateValidator, EffectRequest/EffectResult, effect idempotency, provider factories, fact schemas/catalogue. SHRINK: 22-state LifecycleFSM → ~8 states; custom Bridge orchestration substantially. EVOLVE: QuestionRunner → Goal/Agenda Engine; prompts → conversation hints. RETIRE: 133-node engine after proof. Not a rewrite — evolution from FSM-controls-conversation to Schema+Policy control obligations, Goal Engine controls agenda, LLM controls conversational realization.
+  _by Admin - 2026-08-12 - tags: -_
 - **[9][architecture] R2 Contract Baseline** - EffectResult now includes optional tenant_id — return path must prove result belongs to same tenant as request. Frozen during qualification. No contract modifications allowed.
   _by Admin - 2026-08-12 - tags: -_
 - **[9][architecture] INTAKE Provisioning Endpoint Found** - INTAKE already has canonical provisioning endpoint at POST /api/v1/internal/tenants/provision on truevow-tenant-public. Uses HMAC-SHA256 with timestamp replay guard. Also has /api/v1/internal/tenants/activate. SaaS Admin provision_tenant handler incorrectly targets /webhooks/saas-admin. Fix: update handler URL to /api/v1/internal/tenants/provision with correct HMAC signing format.
@@ -294,6 +300,8 @@
   _by Admin - 2026-08-11 - tags: -_
 - **[9][context] G10 Canary Status** - Lead 1763aee9-52ca-4418-abb8-a60e7f90d847 at HANDOFF_PENDING. T020 passed, T022 passed. Handoff to SaaS Admin deployed and ready for retry. SaaS Admin webhook at truevow-saas-admin-staging.fly.dev with HMAC key tv-sales-ops-to-saas-admin-v1. PIPELINE_SECRET and TRUEVOW_DEPLOYMENT_ENV=staging set.
   _by Admin - 2026-08-10 - tags: -_
+- **[9][decision] Bounded Challenger Prototype Authorized** - Build bounded parallel prototype: Car Accident + OPI only. Run same scenarios: CURRENT (22-state FSM+QuestionRunner) vs CHALLENGER (small lifecycle + Fact Schema + Goal Engine). Metrics: task completion, false fact commits, irrelevant questions, repeated questions, turns to completion, caller corrections, out-of-order info reuse, digressions, outcome/effect correctness, provider dependence, practice expansion cost. If challenger cannot materially outperform on conversation quality while keeping deterministic safety boundary → DO NOT migrate. Evidence over enthusiasm.
+  _by Admin - 2026-08-12 - tags: -_
 - **[9][decision] Verification Layers** - AUTHOR VERIFICATION = tests by implementation agent. FRESH-SESSION QA = separate agent session with no implementation context. CTO AUDIT = architectural evidence review. For G13 require fresh-session QA + CTO audit after production integrations exist. Same model writing code and acceptance tests is NOT independent verification.
   _by Admin - 2026-08-12 - tags: -_
 - **[9][decision] vNext Defect Fix Prescriptions** - 3 core defects with specific fixes: D1 rear-ended — normalize punctuation/hyphens before classification (not spelling variants). D2 hired-a-lawyer — alias lawyer/attorney for retained/hired phrases. D3 ambiguity — semantic rules: explicit 'didn't retain/did not hire/consultation only' → consulted_only; indirect 'never signed' → clarify. Not just confidence threshold. 2 test defects: scanner exclusions (comments, own test file).
@@ -364,6 +372,8 @@
   _by Admin - 2026-08-10 - tags: -_
 - **[9][todo] xai_cloud NEXT STEPS after C->B conversion** - DONE: C->B force_message conversion, VQM wiring, per-node VAD, missing test helpers (_VOICES/_DEFAULT_VOICE/_build_collected_data_text/_vad_for_node/_VAD_*), frontend rebuild w/ End Call+event log+report download. 40/40 tests pass. NOT YET DONE / NEXT: (1) USER LIVE TEST PENDING on http://127.0.0.1:3023/demo/xai_cloud_test.html — verify no more repetition loop, check transcripts/{sid}-report.json. (2) Add 3-retry-then-escalate guard in WorkflowEngine (industry doc HIGH priority; pushback loops forever currently). (3) 'You mean X?' repair pattern (Dialogflow §2). (4) Preamble/soft-timeout filler on slow LLM-routing nodes (1.5-3.2s classification nodes: conflict_check_prior_rep, opi_jurisdiction). (5) NOT committed yet — commit after successful live test. Ref: docs/VOICE_AI_INDUSTRY_ANALYSIS.md gap table, VOICE_AGENT_CHECKLIST.md §11.
   _by Admin - 2026-07-13 - tags: -_
+- **[8][architecture] First Call Readiness Certificate** - Tenant publishable only when proven: firm identity valid, tenant active, published intake version valid, practice schema valid, phone/LiveKit routing valid, STT/TTS healthy, answer persistence writable, emergency policy present, conflict-screen strategy present, every policy branch has outcome, effect fallback present. External calendar NOT required — booking unavailable → auto offer callback or internal scheduling. LLM down → deterministic extraction or clarification. CRM down → persist internally + outbox retry. Every dependency has a safe outcome.
+  _by Admin - 2026-08-12 - tags: -_
 - **[8][architecture] One-config enrichment model for tenant provisioning** - PROVISION_INTAKE creates base config; PROVISION_INTAKE_TENANT_CONFIGURATION enriches the SAME config (matched by tenant_id + template_code). No competing configurations. Merge logic: {**existing_payload, **new_payload}. Idempotent: unchanged payload returns 'unchanged'. PI_CORE_INTAKE is an internal template baseline, not a competing tenant configuration. Enrichment proof: POST with PI_STANDARD_INTAKE returned status=enriched, same configuration_id.
   _by Admin - 2026-08-12 - tags: -_
 - **[8][architecture] INTAKE Provisioning Contract** - The canonical SaaS Admin -> INTAKE provisioning contract is at POST /api/v1/internal/tenants/provision (PLG-INTAKE-01). HMAC signing: timestamp:POST:{path}:body_hash using SAAS_ADMIN_WEBHOOK_SECRET. Replay window 300s. The /webhooks/saas-admin endpoint is a LIFECYCLE webhook only (subscription events) — not provisioning. Application plane separation: provisioning is cold-path REST API, separate from voice/audio hot path.
@@ -468,6 +478,8 @@
   _by Admin - 2026-07-31 - tags: -_
 - **[8][convention] Golden Fixture Cross-Repository Testing** - Created app/shared/contracts.py with frozen contract versions and deterministic golden fixture (make_golden_envelope, make_golden_fixture_json, compute_golden_hmac). Every TrueVow product must deserialize the same 18-field EventEnvelope and compute the same HMAC over the exact raw fixture. Tests at tests/test_golden_fixtures.py validate envelope serialization, roundtrip deserialization, HMAC determinism, evidence manifest completeness (9 refs), and jurisdiction separation (global vs tenant).
   _by Admin - 2026-07-31 - tags: -_
+- **[8][decision] Firm Configures Facts+Goals Not Questions** - INTAKE Builder (SaaS Admin) exposes: firm setup, practice selection from standard template, fact schema editing (enable optional/custom facts), qualification+ routing policy in business terms (IF/THEN advanced mode), destination connections (calendar/CRM/phone default internal), behavior preview with generated sample conversations, automated scenario tests + one real test call, publish immutable version. Never a flowchart editor. ABA Rule 1.18: avoid unrestricted case narrative before screening/conflict info.
+  _by Admin - 2026-08-12 - tags: -_
 - **[8][decision] G11 Conditional/Open — Final Evidence Reconciliation Required** - G11: CONDITIONAL/OPEN, not FAIL. Five closure items: (1) reconcile INTAKE 500→200 chronology, (2) make schema repair reproducible via migration, (3) resolve dual tenant configuration authority (PI_STANDARD_INTAKE vs PI_CORE_INTAKE both created for canary), (4) prove automatic ACK→SUCCEEDED processor path, (5) tenant-neutral template namespace. SaaS Admin immediate task: processor integration tests proving 200→SUCCEEDED, non-2xx→RETRY, timeout→retryable, crash→lease recovery, duplicate→idempotent. Do not move to G11A until G11 closes.
   _by Admin - 2026-08-11 - tags: -_
 - **[8][decision] G11 Worker Fix: Removed .env.staging dependency** - SaaS Admin onboarding-command-worker.js now uses pg Pool with SAAS_ADMIN_DATABASE_SESSION_POOLER_URL || SAAS_ADMIN_DATABASE_URL || DATABASE_URL, matching durable-onboarding.ts pattern. Template literal SQL intervals replaced with parameterized queries. Pool connection verified on startup before polling loop.
@@ -523,8 +535,12 @@
 - **[8][todo] FIX gitignore source-leak: TrueVow-Tenant_Billing-Service** - ASSIGNED to the TrueVow-Tenant_Billing-Service agent. Real lib/ source is currently hidden from git (confirmed). Run the playbook: TrueVow_SaaS_Administration_Service/docs/01-main/ECOSYSTEM_ADVISORY_GITIGNORE_SOURCE_LEAK.md (fix .gitignore: anchor/remove stray lib/ + logs/; secrets-scan; commit recovered source in reviewed batches by explicit path; verify clean-clone build). REPORT RESULT via memory.py remember category=bug title='TrueVow-Tenant_Billing-Service gitignore RESULT' content='FIXED n files | CLEAN | BLOCKED + reason; secrets found?'. NOTE: reporting.py agent-checkin is broken — report via memory.
   _by user - 2026-06-25 - tags: gitignore, todo, assigned_
 
-## architecture (101)
+## architecture (105)
 
+- **[10] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Li...
+  _by Admin - 2026-08-12_
+- **[10] Schema-Gated Intake Engine — North Star** - Benjamin final architecture direction: schema-guided, goal-based, mixed-initiative legal intake with deterministic policy and execution gates. Talk naturally, collect against a schema, decide against deterministic policy, execute only through validated effects. Lifecycle shrinks to ~8 states (BOOTST...
+  _by Admin - 2026-08-12_
 - **[10] SaaS Admin = Platform MDM Control Plane — INTAKE = Runtime Only** - SaaS Admin is the platform-wide MDM/control plane (tenant master data, INTAKE Builder, TRACE, SETTLE, Billing, Portal administration, Sales Ops, CRM governance, cross-platform governance). Never part of the real-time voice path. Intake Builder is one SaaS Admin capability among many, not the organiz...
   _by Admin - 2026-08-12_
 - **[10] Intake Builder Lives in SaaS Admin — IDE/Compiler Split** - SaaS Admin owns the Intake Builder (drag-and-drop canvas, draft editor, SAFE/ADVANCED/SYSTEM lock UX, version history, publish orchestration, CSM approval). INTAKE owns the compiler/runtime (schema validator, template compiler, compiled Benjamin runtime, lifecycle FSM, QuestionRunner). SaaS Admin is...
@@ -593,6 +609,8 @@
   _by user - 2026-06-25_
 - **[10] LEVERAGE (ex-DRAFT) — 3-Tier Rules Engine, NO AI** - LEVERAGE is a 3-tier legal rule validation system: TIER 1: State/Jurisdiction rules (mandatory, cannot be disabled). TIER 2: Practice Area rules (customizable). TIER 3: Firm/Attorney/Client-specific rules. CORE PRINCIPLE: NO AI — no machine learning, no neural networks, no LLM. Uses peer benchmarkin...
   _by user - 2026-06-25_
+- **[9] vNext Component Disposition** - KEEP: compiler/checksum/versioning, tenant/config resolution, provider-neutral contracts, CandidateValidator, EffectRequest/EffectResult, effect idempotency, provider factories, fact schemas/catalogue. SHRINK: 22-state LifecycleFSM → ~8 states; custom Bridge orchestration substantially. EVOLVE: Ques...
+  _by Admin - 2026-08-12_
 - **[9] R2 Contract Baseline** - EffectResult now includes optional tenant_id — return path must prove result belongs to same tenant as request. Frozen during qualification. No contract modifications allowed.
   _by Admin - 2026-08-12_
 - **[9] INTAKE Provisioning Endpoint Found** - INTAKE already has canonical provisioning endpoint at POST /api/v1/internal/tenants/provision on truevow-tenant-public. Uses HMAC-SHA256 with timestamp replay guard. Also has /api/v1/internal/tenants/activate. SaaS Admin provision_tenant handler incorrectly targets /webhooks/saas-admin. Fix: update ...
@@ -669,6 +687,8 @@
   _by user - 2026-06-25_
 - **[9] FM Service Wired to Ecosystem** - TrueVow_Financial_Management_Service is registered in the agent ecosystem with 13 domain agents (orchestrator, code-agent, search-agent, gl-agent, ar-agent, ap-agent, payroll-agent, treasury-agent, intercompany-agent, reporting-agent, affiliates-agent, benjamin-agent, fintech-patterns). Auto-dispatc...
   _by user - 2026-06-25_
+- **[8] First Call Readiness Certificate** - Tenant publishable only when proven: firm identity valid, tenant active, published intake version valid, practice schema valid, phone/LiveKit routing valid, STT/TTS healthy, answer persistence writable, emergency policy present, conflict-screen strategy present, every policy branch has outcome, effe...
+  _by Admin - 2026-08-12_
 - **[8] One-config enrichment model for tenant provisioning** - PROVISION_INTAKE creates base config; PROVISION_INTAKE_TENANT_CONFIGURATION enriches the SAME config (matched by tenant_id + template_code). No competing configurations. Merge logic: {**existing_payload, **new_payload}. Idempotent: unchanged payload returns 'unchanged'. PI_CORE_INTAKE is an internal...
   _by Admin - 2026-08-12_
 - **[8] INTAKE Provisioning Contract** - The canonical SaaS Admin -> INTAKE provisioning contract is at POST /api/v1/internal/tenants/provision (PLG-INTAKE-01). HMAC signing: timestamp:POST:{path}:body_hash using SAAS_ADMIN_WEBHOOK_SECRET. Replay window 300s. The /webhooks/saas-admin endpoint is a LIFECYCLE webhook only (subscription event...
@@ -753,7 +773,7 @@
 - **[6] xai_cloud bridge test suite** - Created tests/test_xai_cloud_bridge.py (34 tests) for XaiCloudBridge. Mirrors test_xai_bridge.py but adapts for cloud bridge: dual registration (xai_cloud + xai_cloud_voice_agent), default voice rex (male-only), end_session returns {bridge,session_id,status} without had_audio, double-start early-ret...
   _by Admin - 2026-07-08_
 
-## decision (76)
+## decision (78)
 
 - **[10] vNext Status Correction — Simulated vs Production** - CTO revises: 76/76 proved interfaces and simulated behavior only. DB config was fake-backed, effects fabricated success, LLM was deterministic stub. NOT PROVEN: real DB config, durable answer store, fact normalizer, candidate persistence, booking/callback effects, real LLM, language realizer, semant...
   _by Admin - 2026-08-12_
@@ -825,6 +845,8 @@
   _by user - 2026-06-25_
 - **[10] CONNECT Archived - DRAFT Renamed to LEVERAGE - INTAKE Updated** - CONNECT (attorney referral network) is decommissioned and archived from the ecosystem permanently - no longer on TrueVow agenda. DRAFT has been completely replaced by LEVERAGE everywhere (same service, renamed). INTAKE (Tenant Application Service) is no longer just FSM NLP - it is now FSM applied to...
   _by user - 2026-06-25_
+- **[9] Bounded Challenger Prototype Authorized** - Build bounded parallel prototype: Car Accident + OPI only. Run same scenarios: CURRENT (22-state FSM+QuestionRunner) vs CHALLENGER (small lifecycle + Fact Schema + Goal Engine). Metrics: task completion, false fact commits, irrelevant questions, repeated questions, turns to completion, caller correc...
+  _by Admin - 2026-08-12_
 - **[9] Verification Layers** - AUTHOR VERIFICATION = tests by implementation agent. FRESH-SESSION QA = separate agent session with no implementation context. CTO AUDIT = architectural evidence review. For G13 require fresh-session QA + CTO audit after production integrations exist. Same model writing code and acceptance tests is ...
   _by Admin - 2026-08-12_
 - **[9] vNext Defect Fix Prescriptions** - 3 core defects with specific fixes: D1 rear-ended — normalize punctuation/hyphens before classification (not spelling variants). D2 hired-a-lawyer — alias lawyer/attorney for retained/hired phrases. D3 ambiguity — semantic rules: explicit 'didn't retain/did not hire/consultation only' → consulted_on...
@@ -877,6 +899,8 @@
   _by Admin - 2026-07-03_
 - **[9] CONNECT Service Deleted** - TrueVow_Tenant_CONNECT_Service directory deleted. Removed from config.yaml services block and .gitignore. Was archived June 2026 — attorney referral network, no longer on TrueVow's agenda.
   _by user - 2026-07-01_
+- **[8] Firm Configures Facts+Goals Not Questions** - INTAKE Builder (SaaS Admin) exposes: firm setup, practice selection from standard template, fact schema editing (enable optional/custom facts), qualification+ routing policy in business terms (IF/THEN advanced mode), destination connections (calendar/CRM/phone default internal), behavior preview wit...
+  _by Admin - 2026-08-12_
 - **[8] G11 Conditional/Open — Final Evidence Reconciliation Required** - G11: CONDITIONAL/OPEN, not FAIL. Five closure items: (1) reconcile INTAKE 500→200 chronology, (2) make schema repair reproducible via migration, (3) resolve dual tenant configuration authority (PI_STANDARD_INTAKE vs PI_CORE_INTAKE both created for canary), (4) prove automatic ACK→SUCCEEDED processor...
   _by Admin - 2026-08-11_
 - **[8] G11 Worker Fix: Removed .env.staging dependency** - SaaS Admin onboarding-command-worker.js now uses pg Pool with SAAS_ADMIN_DATABASE_SESSION_POOLER_URL || SAAS_ADMIN_DATABASE_URL || DATABASE_URL, matching durable-onboarding.ts pattern. Template literal SQL intervals replaced with parameterized queries. Pool connection verified on startup before poll...
@@ -1029,7 +1053,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (215)
+## context (217)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1079,6 +1103,10 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: INTAKE VNEXT PRODUCTION INTEGRATION — CONDITIONAL PASS | REAL DB: SqlAlchemyConfigResolver resolves** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE VNEXT PRODUCTION INTEGRATION \u2014 CONDITIONAL PASS | REAL DB: SqlAlchemyConfigResolver resolves canary tenant ec105c72... from actual Supabase (19 questions, checksum 6603c134...), missing/empty te...
+  _by user - 2026-08-12_
+- **[7] [DONE] DONE: INTAKE E2E defect repair complete | 3 core defects fixed with CTO-corrected D3 semantics: explicit n** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE E2E defect repair complete | 3 core defects fixed with CTO-corrected D3 semantics: explicit non-retention phrases (didn't retain/didn't hire/never hired) -> consulted_only; consultation markers + unr...
+  _by user - 2026-08-12_
 - **[7] [DONE] DONE: INTAKE VNEXT CORE CAPABILITY CLOSURE — COMPLETE | 3 bridge-discovered gaps closed: (1) DB-backed Con** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE VNEXT CORE CAPABILITY CLOSURE \u2014 COMPLETE | 3 bridge-discovered gaps closed: (1) DB-backed ConfigResolver with fail-closed tenant resolution + config pinning; (2) EffectDispatcher with idempotenc...
   _by user - 2026-08-12_
 - **[7] [DONE] DONE: INTAKE REPOSITORY CANONICALIZATION — COMPLETE | Oakwood moved to config/demos/ (explicit demo only,** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE REPOSITORY CANONICALIZATION \u2014 COMPLETE | Oakwood moved to config/demos/ (explicit demo only, removed from default workflow resolution). Test fixtures moved to tests/fixtures/. Ad-hoc G11 scripts...
