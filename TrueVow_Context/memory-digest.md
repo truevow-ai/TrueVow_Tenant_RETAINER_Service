@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-11T10:33:24.708092+00:00
-- Total memories: 445
+- Generated: 2026-08-12T04:29:27.450127+00:00
+- Total memories: 457
 
-## High-importance decisions (8+, routine noise excluded) - 242
+## High-importance decisions (8+, routine noise excluded) - 245
 
 - **[10][architecture] CSM Commissioning Authority Model Corrected** - SaaS Admin owns authoritative customer identity and commissioning decisions. CSM supplies readiness evidence and recommendations, does NOT create tenants. TV-PR-ONTOLOGY-CROSS-SERVICE-REALIGNMENT-01. Legacy POST /api/v1/tenants/internal rejected before commit. Correct flow: Sales Ops → SaaS Admin (handoff) → SaaS Admin commissions CSM → CSM supplies evidence → SaaS Admin executes lifecycle.
   _by Admin - 2026-08-10 - tags: -_
@@ -282,6 +282,8 @@
   _by Admin - 2026-08-11 - tags: -_
 - **[9][context] G10 Canary Status** - Lead 1763aee9-52ca-4418-abb8-a60e7f90d847 at HANDOFF_PENDING. T020 passed, T022 passed. Handoff to SaaS Admin deployed and ready for retry. SaaS Admin webhook at truevow-saas-admin-staging.fly.dev with HMAC key tv-sales-ops-to-saas-admin-v1. PIPELINE_SECRET and TRUEVOW_DEPLOYMENT_ENV=staging set.
   _by Admin - 2026-08-10 - tags: -_
+- **[9][decision] Pocock Skills Integrated** - 35 Matt Pocock agent skills integrated into TrueVow at agent-skills/skills/pocock/. 10 TrueVow platform skills rewritten to be terser (Pocock-style) and compose with Pocock primitives. New truevow-ask routing skill created. Dispatch table updated: fundamentals use Pocock, platform specifics use TrueVow. 14 overlapping TrueVow skills deprecated in favor of Pocock equivalents. Submodule needs TrueVow-owned remote (currently tracking addyosmani/agent-skills).
+  _by Admin - 2026-08-12 - tags: -_
 - **[9][decision] G10 Canary Handoff Ready Awaiting Platform Operator** - Sales Ops → SaaS Admin canonical webhook POST /api/v1/webhooks/sales-ops/application-approved ready. HMAC key tv-sales-ops-to-saas-admin-v1. RPC fn_process_handoff migration 181. Blocked by: Sales Ops DB connection (db.bpzegquhxnygyxdzluyw.supabase.co deprecated - switch to pooler), Sales Ops HMAC key needs to match SaaS Admin TRUEVOW_WEBHOOK_SECRET_SALES_OPS. Before G10 click: pause Fly onboarding-worker + Vercel onboarding cron. G11-G15 downstream pipeline exists but runtime proof pending.
   _by Admin - 2026-08-10 - tags: -_
 - **[9][decision] CSM Ontology Realignment 02A PASS** - CSM local authority model hardened: zero tenant creation, zero activation, zero billing, zero cancellation authority. Negative authority tests pass. Deployment on HOLD pending cross-service contract integration. SaaS Admin -> CSM canonical onboarding contract commissioned as TV-PR-SAAS-CSM-ONTOLOGY-CONTRACT-01.
@@ -344,6 +346,8 @@
   _by Admin - 2026-08-10 - tags: -_
 - **[9][todo] xai_cloud NEXT STEPS after C->B conversion** - DONE: C->B force_message conversion, VQM wiring, per-node VAD, missing test helpers (_VOICES/_DEFAULT_VOICE/_build_collected_data_text/_vad_for_node/_VAD_*), frontend rebuild w/ End Call+event log+report download. 40/40 tests pass. NOT YET DONE / NEXT: (1) USER LIVE TEST PENDING on http://127.0.0.1:3023/demo/xai_cloud_test.html — verify no more repetition loop, check transcripts/{sid}-report.json. (2) Add 3-retry-then-escalate guard in WorkflowEngine (industry doc HIGH priority; pushback loops forever currently). (3) 'You mean X?' repair pattern (Dialogflow §2). (4) Preamble/soft-timeout filler on slow LLM-routing nodes (1.5-3.2s classification nodes: conflict_check_prior_rep, opi_jurisdiction). (5) NOT committed yet — commit after successful live test. Ref: docs/VOICE_AI_INDUSTRY_ANALYSIS.md gap table, VOICE_AGENT_CHECKLIST.md §11.
   _by Admin - 2026-07-13 - tags: -_
+- **[8][architecture] One-config enrichment model for tenant provisioning** - PROVISION_INTAKE creates base config; PROVISION_INTAKE_TENANT_CONFIGURATION enriches the SAME config (matched by tenant_id + template_code). No competing configurations. Merge logic: {**existing_payload, **new_payload}. Idempotent: unchanged payload returns 'unchanged'. PI_CORE_INTAKE is an internal template baseline, not a competing tenant configuration. Enrichment proof: POST with PI_STANDARD_INTAKE returned status=enriched, same configuration_id.
+  _by Admin - 2026-08-12 - tags: -_
 - **[8][architecture] INTAKE Provisioning Contract** - The canonical SaaS Admin -> INTAKE provisioning contract is at POST /api/v1/internal/tenants/provision (PLG-INTAKE-01). HMAC signing: timestamp:POST:{path}:body_hash using SAAS_ADMIN_WEBHOOK_SECRET. Replay window 300s. The /webhooks/saas-admin endpoint is a LIFECYCLE webhook only (subscription events) — not provisioning. Application plane separation: provisioning is cold-path REST API, separate from voice/audio hot path.
   _by Admin - 2026-08-11 - tags: -_
 - **[8][architecture] pool.ts REST bridge replaces pg for IPv4 dev** - lib/db/pool.ts rewritten to use Supabase JS client (REST API) instead of direct pg Pool, enabling IPv4-only Windows development. Translates basic SQL (SELECT/UPDATE/INSERT/DELETE) to Supabase API calls. Converts camelCase responses back to snake_case. Handles COUNT(*), ILIKE, OR conditions, OFFSET/LIMIT pagination.
@@ -440,6 +444,8 @@
   _by Admin - 2026-07-31 - tags: -_
 - **[8][convention] Golden Fixture Cross-Repository Testing** - Created app/shared/contracts.py with frozen contract versions and deterministic golden fixture (make_golden_envelope, make_golden_fixture_json, compute_golden_hmac). Every TrueVow product must deserialize the same 18-field EventEnvelope and compute the same HMAC over the exact raw fixture. Tests at tests/test_golden_fixtures.py validate envelope serialization, roundtrip deserialization, HMAC determinism, evidence manifest completeness (9 refs), and jurisdiction separation (global vs tenant).
   _by Admin - 2026-07-31 - tags: -_
+- **[8][decision] G11 Conditional/Open — Final Evidence Reconciliation Required** - G11: CONDITIONAL/OPEN, not FAIL. Five closure items: (1) reconcile INTAKE 500→200 chronology, (2) make schema repair reproducible via migration, (3) resolve dual tenant configuration authority (PI_STANDARD_INTAKE vs PI_CORE_INTAKE both created for canary), (4) prove automatic ACK→SUCCEEDED processor path, (5) tenant-neutral template namespace. SaaS Admin immediate task: processor integration tests proving 200→SUCCEEDED, non-2xx→RETRY, timeout→retryable, crash→lease recovery, duplicate→idempotent. Do not move to G11A until G11 closes.
+  _by Admin - 2026-08-11 - tags: -_
 - **[8][decision] G11 Worker Fix: Removed .env.staging dependency** - SaaS Admin onboarding-command-worker.js now uses pg Pool with SAAS_ADMIN_DATABASE_SESSION_POOLER_URL || SAAS_ADMIN_DATABASE_URL || DATABASE_URL, matching durable-onboarding.ts pattern. Template literal SQL intervals replaced with parameterized queries. Pool connection verified on startup before polling loop.
   _by Admin - 2026-08-11 - tags: -_
 - **[8][decision] DELIVERY_MODE disabled fix + per-command eligibility gate deployed** - Three files changed: cron route, worker script, durable-onboarding docs. disabled mode now truly skips without state mutation. New ONBOARDING_ELIGIBLE_COMMANDS env var enables per-command dispatch gating. For G11/G11A controlled release: set ONBOARDING_ELIGIBLE_COMMANDS=provision_tenant,register_commercial_intent and DELIVERY_MODE=sandbox. ASSIGN_CSM and SEND_WELCOME_COMMUNICATION remain held as PENDING. No new state enum added — pure dispatcher filtering.
@@ -493,7 +499,7 @@
 - **[8][todo] FIX gitignore source-leak: TrueVow-Tenant_Billing-Service** - ASSIGNED to the TrueVow-Tenant_Billing-Service agent. Real lib/ source is currently hidden from git (confirmed). Run the playbook: TrueVow_SaaS_Administration_Service/docs/01-main/ECOSYSTEM_ADVISORY_GITIGNORE_SOURCE_LEAK.md (fix .gitignore: anchor/remove stray lib/ + logs/; secrets-scan; commit recovered source in reviewed batches by explicit path; verify clean-clone build). REPORT RESULT via memory.py remember category=bug title='TrueVow-Tenant_Billing-Service gitignore RESULT' content='FIXED n files | CLEAN | BLOCKED + reason; secrets found?'. NOTE: reporting.py agent-checkin is broken — report via memory.
   _by user - 2026-06-25 - tags: gitignore, todo, assigned_
 
-## architecture (97)
+## architecture (98)
 
 - **[10] CSM Commissioning Authority Model Corrected** - SaaS Admin owns authoritative customer identity and commissioning decisions. CSM supplies readiness evidence and recommendations, does NOT create tenants. TV-PR-ONTOLOGY-CROSS-SERVICE-REALIGNMENT-01. Legacy POST /api/v1/tenants/internal rejected before commit. Correct flow: Sales Ops → SaaS Admin (h...
   _by Admin - 2026-08-10_
@@ -633,6 +639,8 @@
   _by user - 2026-06-25_
 - **[9] FM Service Wired to Ecosystem** - TrueVow_Financial_Management_Service is registered in the agent ecosystem with 13 domain agents (orchestrator, code-agent, search-agent, gl-agent, ar-agent, ap-agent, payroll-agent, treasury-agent, intercompany-agent, reporting-agent, affiliates-agent, benjamin-agent, fintech-patterns). Auto-dispatc...
   _by user - 2026-06-25_
+- **[8] One-config enrichment model for tenant provisioning** - PROVISION_INTAKE creates base config; PROVISION_INTAKE_TENANT_CONFIGURATION enriches the SAME config (matched by tenant_id + template_code). No competing configurations. Merge logic: {**existing_payload, **new_payload}. Idempotent: unchanged payload returns 'unchanged'. PI_CORE_INTAKE is an internal...
+  _by Admin - 2026-08-12_
 - **[8] INTAKE Provisioning Contract** - The canonical SaaS Admin -> INTAKE provisioning contract is at POST /api/v1/internal/tenants/provision (PLG-INTAKE-01). HMAC signing: timestamp:POST:{path}:body_hash using SAAS_ADMIN_WEBHOOK_SECRET. Replay window 300s. The /webhooks/saas-admin endpoint is a LIFECYCLE webhook only (subscription event...
   _by Admin - 2026-08-11_
 - **[8] pool.ts REST bridge replaces pg for IPv4 dev** - lib/db/pool.ts rewritten to use Supabase JS client (REST API) instead of direct pg Pool, enabling IPv4-only Windows development. Translates basic SQL (SELECT/UPDATE/INSERT/DELETE) to Supabase API calls. Converts camelCase responses back to snake_case. Handles COUNT(*), ILIKE, OR conditions, OFFSET/L...
@@ -715,7 +723,7 @@
 - **[6] xai_cloud bridge test suite** - Created tests/test_xai_cloud_bridge.py (34 tests) for XaiCloudBridge. Mirrors test_xai_bridge.py but adapts for cloud bridge: dual registration (xai_cloud + xai_cloud_voice_agent), default voice rex (male-only), end_session returns {bridge,session_id,status} without had_audio, double-start early-ret...
   _by Admin - 2026-07-08_
 
-## decision (70)
+## decision (72)
 
 - **[10] G11 Preflight Complete** - G11 preflight PASS. INTAKE provisioning at /api/v1/internal/tenants/provision confirmed as canonical (not /webhooks/saas-admin). HMAC verifier unified across provision+activate. SaaS Admin worker, cron process, cron reconcile all use pg Pool. 0 dotenv dependencies. Claim recovery deterministic with ...
   _by Admin - 2026-08-11_
@@ -783,6 +791,8 @@
   _by user - 2026-06-25_
 - **[10] CONNECT Archived - DRAFT Renamed to LEVERAGE - INTAKE Updated** - CONNECT (attorney referral network) is decommissioned and archived from the ecosystem permanently - no longer on TrueVow agenda. DRAFT has been completely replaced by LEVERAGE everywhere (same service, renamed). INTAKE (Tenant Application Service) is no longer just FSM NLP - it is now FSM applied to...
   _by user - 2026-06-25_
+- **[9] Pocock Skills Integrated** - 35 Matt Pocock agent skills integrated into TrueVow at agent-skills/skills/pocock/. 10 TrueVow platform skills rewritten to be terser (Pocock-style) and compose with Pocock primitives. New truevow-ask routing skill created. Dispatch table updated: fundamentals use Pocock, platform specifics use True...
+  _by Admin - 2026-08-12_
 - **[9] G10 Canary Handoff Ready Awaiting Platform Operator** - Sales Ops → SaaS Admin canonical webhook POST /api/v1/webhooks/sales-ops/application-approved ready. HMAC key tv-sales-ops-to-saas-admin-v1. RPC fn_process_handoff migration 181. Blocked by: Sales Ops DB connection (db.bpzegquhxnygyxdzluyw.supabase.co deprecated - switch to pooler), Sales Ops HMAC k...
   _by Admin - 2026-08-10_
 - **[9] CSM Ontology Realignment 02A PASS** - CSM local authority model hardened: zero tenant creation, zero activation, zero billing, zero cancellation authority. Negative authority tests pass. Deployment on HOLD pending cross-service contract integration. SaaS Admin -> CSM canonical onboarding contract commissioned as TV-PR-SAAS-CSM-ONTOLOGY-...
@@ -829,6 +839,8 @@
   _by Admin - 2026-07-03_
 - **[9] CONNECT Service Deleted** - TrueVow_Tenant_CONNECT_Service directory deleted. Removed from config.yaml services block and .gitignore. Was archived June 2026 — attorney referral network, no longer on TrueVow's agenda.
   _by user - 2026-07-01_
+- **[8] G11 Conditional/Open — Final Evidence Reconciliation Required** - G11: CONDITIONAL/OPEN, not FAIL. Five closure items: (1) reconcile INTAKE 500→200 chronology, (2) make schema repair reproducible via migration, (3) resolve dual tenant configuration authority (PI_STANDARD_INTAKE vs PI_CORE_INTAKE both created for canary), (4) prove automatic ACK→SUCCEEDED processor...
+  _by Admin - 2026-08-11_
 - **[8] G11 Worker Fix: Removed .env.staging dependency** - SaaS Admin onboarding-command-worker.js now uses pg Pool with SAAS_ADMIN_DATABASE_SESSION_POOLER_URL || SAAS_ADMIN_DATABASE_URL || DATABASE_URL, matching durable-onboarding.ts pattern. Template literal SQL intervals replaced with parameterized queries. Pool connection verified on startup before poll...
   _by Admin - 2026-08-11_
 - **[8] DELIVERY_MODE disabled fix + per-command eligibility gate deployed** - Three files changed: cron route, worker script, durable-onboarding docs. disabled mode now truly skips without state mutation. New ONBOARDING_ELIGIBLE_COMMANDS env var enables per-command dispatch gating. For G11/G11A controlled release: set ONBOARDING_ELIGIBLE_COMMANDS=provision_tenant,register_com...
@@ -971,7 +983,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (197)
+## context (206)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1021,6 +1033,24 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: G13 BENJAMIN RUNTIME READINESS — PASS | 6 direct mutations now FSM-gated (rollback, first-turn, summ** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "G13 BENJAMIN RUNTIME READINESS \u2014 PASS | 6 direct mutations now FSM-gated (rollback, first-turn, summary, reset all fire FSM events before navigation). v1.0.2 created with [Firm Name] placeholder replac...
+  _by user - 2026-08-12_
+- **[7] [DONE] DONE: G13 BENJAMIN RUNTIME READINESS — PASS | Dry-run conversation: greeting→practice_area→conflict→practi** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "G13 BENJAMIN RUNTIME READINESS \u2014 PASS | Dry-run conversation: greeting\u2192practice_area\u2192conflict\u2192practice_area under FSM authority. FSM rejected practice_area_identified, engine retried (pr...
+  _by user - 2026-08-12_
+- **[7] [DONE] DONE: G13 BENJAMIN RUNTIME READINESS — PASS | FSM authority corrected: _try_fsm_transition returns bool (n** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "G13 BENJAMIN RUNTIME READINESS \u2014 PASS | FSM authority corrected: _try_fsm_transition returns bool (not fire-and-forget), lifecycle transitions gated on FSM acceptance. FSM test: greeting accepted, dupl...
+  _by user - 2026-08-12_
+- **[7] [DONE] DONE: G13 BENJAMIN RUNTIME READINESS — PASS | Configuration ad560f54 loaded: 129 nodes, checksum verified,** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "G13 BENJAMIN RUNTIME READINESS \u2014 PASS | Configuration ad560f54 loaded: 129 nodes, checksum verified, FSM tenant_id=ec105c72... (not oakwood). Oakwood hardcodes fixed in WorkflowEngine (FSM, candidate e...
+  _by user - 2026-08-12_
+- **[7] [DONE] DONE: SaaS Admin: TV-SAAS-ADMIN-DOWNSTREAM-COMMISSIONING-01 — built Portal operational projection (GET /co** - {"agent_id": "TrueVow_Shared_Orchestration", "action": "done", "status": "DONE", "message": "SaaS Admin: TV-SAAS-ADMIN-DOWNSTREAM-COMMISSIONING-01 \u2014 built Portal operational projection (GET /commissioning-status), G14 readiness aggregate with precondition enforcement (GET /commissioning/readine...
+  _by user - 2026-08-12_
+- **[7] [DONE] DONE: INTAKE: G11 CLOSED + catalogue normalization complete | G11 transport/HMAC/runtime acceptance PASS.** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: G11 CLOSED + catalogue normalization complete | G11 transport/HMAC/runtime acceptance PASS. One-config enrichment model deployed (PROVISION_INTAKE creates, PROVISION_INTAKE_TENANT_CONFIGURATION enri...
+  _by user - 2026-08-12_
+- **[7] [DONE] DONE: INTAKE: G11 FINAL EVIDENCE RECONCILIATION | Chronology: v148 (8h48m ago) had truevow_auth crash + OR** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: G11 FINAL EVIDENCE RECONCILIATION | Chronology: v148 (8h48m ago) had truevow_auth crash + ORM coupling + autoflush=False + missing columns \u2192 500s at 10:39Z. Fixes deployed across v149-v156. Fir...
+  _by user - 2026-08-11_
+- **[7] [DONE] DONE: SaaS Admin: G11 provisioning — contract C-002 aligned (PI_STANDARD_INTAKE, HMAC format fixed), DELIV** - {"agent_id": "TrueVow_Shared_Orchestration", "action": "done", "status": "DONE", "message": "SaaS Admin: G11 provisioning \u2014 contract C-002 aligned (PI_STANDARD_INTAKE, HMAC format fixed), DELIVERY_MODE=disabled bug fixed (no false evidence), per-command + per-run eligibility gates added, worker...
+  _by user - 2026-08-11_
+- **[7] [DONE] DONE: INTAKE: G11 PROVISIONING — PASS | INTAKE 500 root cause: (1) startup_event crashed on truevow_auth I** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: G11 PROVISIONING \u2014 PASS | INTAKE 500 root cause: (1) startup_event crashed on truevow_auth ImportError, blocking ORM init; (2) session autoflush=False caused FK violation on provisioning_comman...
+  _by user - 2026-08-11_
 - **[7] [DONE] DONE: INTAKE: G11 provisioning recovery — INTAKE receiver verified, HMAC harmonized, SaaS Admin worker fix** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: G11 provisioning recovery \u2014 INTAKE receiver verified, HMAC harmonized, SaaS Admin worker fixed | outcome: INTAKE canonical provisioning endpoint confirmed at POST /api/v1/internal/tenants/provi...
   _by user - 2026-08-11_
 - **[7] [DONE] DONE: Billing: trial lifecycle — scheduled conversion with HMAC activation | outcome: 30 files changed, 15** - {"agent_id": "TrueVow-Tenant_Billing-Service", "action": "done", "status": "DONE", "message": "Billing: trial lifecycle \u2014 scheduled conversion with HMAC activation | outcome: 30 files changed, 1515 insertions. Phases A-E of TV-BILL-COMMERCIAL-INTEGRITY-REMEDIATION complete. 0 browser activation...
