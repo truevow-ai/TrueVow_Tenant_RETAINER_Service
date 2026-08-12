@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-12T15:22:23.032901+00:00
-- Total memories: 470
+- Generated: 2026-08-12T15:36:41.955578+00:00
+- Total memories: 475
 
-## High-importance decisions (8+, routine noise excluded) - 250
+## High-importance decisions (8+, routine noise excluded) - 253
 
 - **[10][architecture] SaaS Admin = Platform MDM Control Plane — INTAKE = Runtime Only** - SaaS Admin is the platform-wide MDM/control plane (tenant master data, INTAKE Builder, TRACE, SETTLE, Billing, Portal administration, Sales Ops, CRM governance, cross-platform governance). Never part of the real-time voice path. Intake Builder is one SaaS Admin capability among many, not the organizing principle. INTAKE repo houses three planes: Benjamin vNext Core (provider-neutral, Lifecycle FSM/QuestionRunner/Compiler), Bridge Plane (LiveKit/Pipecat adapters), Audio Plane (STT/TTS/VAD/media). Bridge Agent = INTAKE repo workstream, not a separate repo. Runtime path: PSTN/WebRTC → LiveKit → Bridge → Audio → Benjamin Core → Application Plane — all inside INTAKE. SaaS Admin participates out-of-band via MDM/configuration API.
   _by Admin - 2026-08-12 - tags: -_
@@ -412,6 +412,12 @@
   _by user - 2026-06-25 - tags: analytics, events, warehouse, dashboards, star-schema, platform_
 - **[8][architecture] Tenant Application Service (INTAKE) - Voice + NLP Pipeline** - Phase I intake services. Stack: Python/FastAPI backend, FSM-based deterministic NLP engine, voice pipeline. Purpose: Legal AI intake for personal injury attorneys - captures client information via voice/NLP. Separated from website code (Nov 2025). Technology: Finite State Machine, deterministic NLP (not LLM-based for compliance). Voice pipeline components integrated. Ports: API backend. Depends on: SaaS Admin (tenant management, auth). Related: Benjamin voice agent (STT/TTS), Dialogflow Intake (alternative intake path).
   _by user - 2026-06-25 - tags: intake, nlp, fsm, voice, fastapi, python, tenant-application_
+- **[8][bug] vNext E2E QA - CORE DEFECT: mixed signal ambiguity** - DeterministicFallbackInterpreter mixed-signal check requires 'never' keyword but common ambiguity is 'spoke...but didn't retain'. CandidateValidator has no confidence threshold — 0.5-confidence llm_stub candidates pass validation. Ambiguous input gets authoritative answer.
+  _by Admin - 2026-08-12 - tags: -_
+- **[8][bug] vNext E2E QA - CORE DEFECT: represented conflict rule** - Deterministic rule list for hired_retained=yes lacks 'hired a lawyer' phrase (has 'hired an attorney'). 'I already hired a lawyer' stays at CONFLICT_CHECK instead of REPRESENTED. File: app/services/benjamin_vnext/interpretation/interpreter.py
+  _by Admin - 2026-08-12 - tags: -_
+- **[8][bug] vNext E2E QA - CORE DEFECT: car accident classification** - classify_practice_area keyword list has 'rear ended' (space) but misses 'rear-ended' (hyphen). Common spoken form falls through to default other_personal_injury. File: app/services/benjamin_vnext/lifecycle/lifecycle_fsm.py
+  _by Admin - 2026-08-12 - tags: -_
 - **[8][bug] Cron auth gap: events/dispatch allowed unauthenticated access** - events/dispatch/route.ts used if(cronSecret && authHeader !== ...) which allowed unauthenticated access when CRON_SECRET was unset. Fixed to use if(!CRON_SECRET || token !== CRON_SECRET) pattern matching all other cron routes.
   _by Admin - 2026-08-11 - tags: -_
 - **[8][bug] INTAKE 500 on provision endpoint** - INTAKE POST /api/v1/internal/tenants/provision returns 500 with empty body after HMAC auth passes. JSON validation works (400 on bad body). Template lookup or DB session fails internally — no middleware log entry for the request, suggesting exception before response handler. Tables exist, templates seeded, DB connected per health check. Likely: SQLAlchemy model-table schema mismatch, or get_db_session_context() async engine issue on Fly. Needs INTAKE agent to debug Fly logs.
@@ -920,7 +926,7 @@
 - **[8] Golden Fixture Cross-Repository Testing** - Created app/shared/contracts.py with frozen contract versions and deterministic golden fixture (make_golden_envelope, make_golden_fixture_json, compute_golden_hmac). Every TrueVow product must deserialize the same 18-field EventEnvelope and compute the same HMAC over the exact raw fixture. Tests at ...
   _by Admin - 2026-07-31_
 
-## bug (39)
+## bug (43)
 
 - **[10] Engine: ca_police/medical loop + email empty + jurisdiction hardcode** - Three critical bugs from Aug 1 call: (1) ca_police and ca_medical_treatment nodes cycle infinitely on 'no' answers — the ca workflow ladder has a next-pointer loop. (2) Email verify prompt shows empty '{contact_email}' — email extraction stores raw text instead of parsed email address. (3) conflict_...
   _by Admin - 2026-08-01_
@@ -962,6 +968,12 @@
   _by Admin - 2026-07-31_
 - **[9] contact_info_sequence dropped phone+email** - Root cause: routing INTO a sequence node used _execute_node, which returned the sequence's own intro prompt and left current_node=contact_info_sequence WITHOUT priming the first sub-node. Next turn the C10 terminal guard (workflow_engine.py:518) saw no next/branches/options and returned _build_compl...
   _by Admin - 2026-07-14_
+- **[8] vNext E2E QA - CORE DEFECT: mixed signal ambiguity** - DeterministicFallbackInterpreter mixed-signal check requires 'never' keyword but common ambiguity is 'spoke...but didn't retain'. CandidateValidator has no confidence threshold — 0.5-confidence llm_stub candidates pass validation. Ambiguous input gets authoritative answer.
+  _by Admin - 2026-08-12_
+- **[8] vNext E2E QA - CORE DEFECT: represented conflict rule** - Deterministic rule list for hired_retained=yes lacks 'hired a lawyer' phrase (has 'hired an attorney'). 'I already hired a lawyer' stays at CONFLICT_CHECK instead of REPRESENTED. File: app/services/benjamin_vnext/interpretation/interpreter.py
+  _by Admin - 2026-08-12_
+- **[8] vNext E2E QA - CORE DEFECT: car accident classification** - classify_practice_area keyword list has 'rear ended' (space) but misses 'rear-ended' (hyphen). Common spoken form falls through to default other_personal_injury. File: app/services/benjamin_vnext/lifecycle/lifecycle_fsm.py
+  _by Admin - 2026-08-12_
 - **[8] Cron auth gap: events/dispatch allowed unauthenticated access** - events/dispatch/route.ts used if(cronSecret && authHeader !== ...) which allowed unauthenticated access when CRON_SECRET was unset. Fixed to use if(!CRON_SECRET || token !== CRON_SECRET) pattern matching all other cron routes.
   _by Admin - 2026-08-11_
 - **[8] INTAKE 500 on provision endpoint** - INTAKE POST /api/v1/internal/tenants/provision returns 500 with empty body after HMAC auth passes. JSON validation works (400 on bad body). Template lookup or DB session fails internally — no middleware log entry for the request, suggesting exception before response handler. Tables exist, templates ...
@@ -998,10 +1010,12 @@
   _by Admin - 2026-07-09_
 - **[7] Fixed obsidian-bridge.py Windows-filename crash (orchestration tooling)** - obsidian-bridge.py built Obsidian filenames from memory/session titles but only stripped / and \ — any title containing a Windows-illegal char (: ? * " < > |) threw OSError [Errno 22] and crashed the ENTIRE ecosystem knowledge-sync on Windows (e.g. a title ending "active: me"). Fix: added safe_filen...
   _by user - 2026-06-25_
+- **[6] vNext E2E QA - TEST DEFECTS x2** - 1) Oakwood scanner flags comment in config_resolver.py (not code). 2) Legacy-import scanner includes its own test file which contains 'intake_engine'/'workflow_engine' assertion strings. Both scanners need exclusions.
+  _by Admin - 2026-08-12_
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (214)
+## context (215)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1295,6 +1309,8 @@
   _by user - 2026-06-25_
 - **[6] Documentation Status: TrueVow_Documentation is Stale** - TrueVow_Documentation/ contains older documentation (Word docs, markdown exports) including TrueVow_PRD.md, Complete System Technical Documentation, Financial Management guides, and Billing Service updates. These are outdated - they reflect the old architecture with DRAFT naming, CONNECT active, and...
   _by user - 2026-06-25_
+- **[5] Dispatch: qualify Benjamin vNext end to end** - Dispatched to skill='benjamin-agent' phase='build' personas=[] tool=
+  _by Admin - 2026-08-12_
 - **[5] Dispatch: begin the controlled GTM canary: prospect ingestion, enrichment, segmentation, c** - Dispatched to skill='using-agent-skills' phase='' personas=[] tool=
   _by Admin - 2026-08-07_
 - **[5] Dispatch: Resume SETTLE nationwide scraping expansion session 999bfecf — continue with Mor** - Dispatched to skill='' phase='build' personas=[] tool=
