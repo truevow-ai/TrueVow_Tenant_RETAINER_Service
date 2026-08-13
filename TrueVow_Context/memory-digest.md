@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-12T18:16:01.292385+00:00
-- Total memories: 489
+- Generated: 2026-08-13T02:01:18.280768+00:00
+- Total memories: 504
 
-## High-importance decisions (8+, routine noise excluded) - 264
+## High-importance decisions (8+, routine noise excluded) - 265
 
 - **[10][architecture] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Lifecycle shrinks to ~6 states (BOOTSTRAP/SCREENING/INTAKE/RESOLUTION/AWAITING_EFFECT/COMPLETE + HANDOFF/TERMINATED). LLM = conversation conductor within code-determined agenda; code = agenda authority. LiveKit = voice runtime only, TrueVow Core consumes provider-neutral CoreTurn. First Call Readiness Certificate requires all policy branches have outcomes + effect fallbacks; external integrations NOT required for first call. Prototype-first: challenger (Car Accident + OPI) vs current 22-state FSM, measure task completion/false commits/repeats/turns. SaaS Admin Builder implication: NOT a flowchart editor — firm configures facts, routing policy, destinations; previews generated sample conversations.
   _by Admin - 2026-08-12 - tags: -_
@@ -118,6 +118,8 @@
   _by Admin - 2026-08-10 - tags: -_
 - **[10][convention] zero hardcoded tunable values** - RULE: This is a multi-tenant platform. Never hardcode ANY value that may need adjustment per-tenant, per-firm, or per-environment. All tunables must live in one of: (1) tenant_config, (2) workflow JSON config, or (3) named module-level constants with clear documentation. Bare numbers, strings, or IDs in logic statements are FORBIDDEN. If you need a value that could change — threshold, timeout, limit, firm identifier, VAD setting, confidence score — expose it via config. Test by asking: 'Could a different law firm need this set differently?'
   _by Admin - 2026-07-15 - tags: -_
+- **[10][decision] CTO Orchestrator QA Mandate Permanent** - Permanent CTO Orchestrator QA instruction set saved at TrueVow_CTO_Knowledge_Orchestrator/CTO-ORCHESTRATOR-QA-MANDATE.md. 57 sections: verify/challenge/reconcile/classify/gate. Hard invariants (LLM zero authority, bridge zero business authority), evidence classification (STATIC..PRODUCTION), never equate test count with capability, read code not markdown, diff audit, runtime reachability, fresh-context QA, read-only auditing, PASS semantics strict. Current task: verify 04A staging enablement (D1-D4), then fresh-context qualification for P1-P5.
+  _by Admin - 2026-08-13 - tags: -_
 - **[10][decision] vNext Status Correction — Simulated vs Production** - CTO revises: 76/76 proved interfaces and simulated behavior only. DB config was fake-backed, effects fabricated success, LLM was deterministic stub. NOT PROVEN: real DB config, durable answer store, fact normalizer, candidate persistence, booking/callback effects, real LLM, language realizer, semantic guard, real LiveKit call. Status: SIMULATED E2E 97/102, PRODUCTION E2E NOT RUN, G13 HOLD, G14 HARD HOLD.
   _by Admin - 2026-08-12 - tags: -_
 - **[10][decision] Benjamin vNext Capability Closure PASS** - 76/76 tests pass. R2 contract baseline frozen: EffectResult gains optional tenant_id. 22 lifecycle states, 0 question-as-FSM-state. Core PASS, Bridge PASS, Capability PASS. vNext production default remains NO. G13 OPEN, G14 HARD HOLD.
@@ -775,8 +777,10 @@
 - **[6] xai_cloud bridge test suite** - Created tests/test_xai_cloud_bridge.py (34 tests) for XaiCloudBridge. Mirrors test_xai_bridge.py but adapts for cloud bridge: dual registration (xai_cloud + xai_cloud_voice_agent), default voice rex (male-only), end_session returns {bridge,session_id,status} without had_audio, double-start early-ret...
   _by Admin - 2026-07-08_
 
-## decision (78)
+## decision (79)
 
+- **[10] CTO Orchestrator QA Mandate Permanent** - Permanent CTO Orchestrator QA instruction set saved at TrueVow_CTO_Knowledge_Orchestrator/CTO-ORCHESTRATOR-QA-MANDATE.md. 57 sections: verify/challenge/reconcile/classify/gate. Hard invariants (LLM zero authority, bridge zero business authority), evidence classification (STATIC..PRODUCTION), never e...
+  _by Admin - 2026-08-13_
 - **[10] vNext Status Correction — Simulated vs Production** - CTO revises: 76/76 proved interfaces and simulated behavior only. DB config was fake-backed, effects fabricated success, LLM was deterministic stub. NOT PROVEN: real DB config, durable answer store, fact normalizer, candidate persistence, booking/callback effects, real LLM, language realizer, semant...
   _by Admin - 2026-08-12_
 - **[10] Benjamin vNext Capability Closure PASS** - 76/76 tests pass. R2 contract baseline frozen: EffectResult gains optional tenant_id. 22 lifecycle states, 0 question-as-FSM-state. Core PASS, Bridge PASS, Capability PASS. vNext production default remains NO. G13 OPEN, G14 HARD HOLD.
@@ -1055,7 +1059,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (219)
+## context (233)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1107,6 +1111,34 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: INTAKE: CTO red-team verdict recorded — v3 frozen canonical (84.8), v3.1 backlog documented (92.4 ta** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: CTO red-team verdict recorded \u2014 v3 frozen canonical (84.8), v3.1 backlog documented (92.4 target). 7 hardenings H1-H7 + rejected-list frozen in docs/benjamin_goal/V31_HARDENING_BACKLOG.md. Sequ...
+  _by user - 2026-08-13_
+- **[7] [ACTIVE] START: INTAKE: CTO red-team verdict received | recording v3.1 hardening backlog as canonical direction | NO** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "start", "status": "ACTIVE", "message": "INTAKE: CTO red-team verdict received | recording v3.1 hardening backlog as canonical direction | NO code changes this session \u2014 real voice qualification remains the next gate | goal: freeze v3 as c...
+  _by user - 2026-08-13_
+- **[7] [DONE] DONE: INTAKE STAGING-ENABLEMENT-04A COMPLETE — CONDITIONAL_PASS | D1: transport!=core selector deployed (r** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE STAGING-ENABLEMENT-04A COMPLETE \u2014 CONDITIONAL_PASS | D1: transport!=core selector deployed (resolve_bridge_for_core; schema_goal registered; agent redeployed kMaSLrRSZixW with CONVERSATION_CORE ...
+  _by user - 2026-08-13_
+- **[7] [ACTIVE] START: INTAKE: STAGING-ENABLEMENT-04A continuation | closing D1-D4 | transport!=core selector, no architect** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "start", "status": "ACTIVE", "message": "INTAKE: STAGING-ENABLEMENT-04A continuation | closing D1-D4 | transport!=core selector, no architecture changes, no qualification | goal: deployed staging ready to receive a Schema/Goal call", "timestamp...
+  _by user - 2026-08-13_
+- **[7] [DONE] DONE: INTAKE 04A TEST CLASSIFICATION COMPLETE | Deterministic gate separated from REAL_* suites via pytest** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE 04A TEST CLASSIFICATION COMPLETE | Deterministic gate separated from REAL_* suites via pytest.ini markers+addopts. Discovered actual counts (no fabricated example numbers): VNEXT = 99 deterministic +...
+  _by user - 2026-08-13_
+- **[7] [ACTIVE] START: INTAKE: STAGING-QUALIFICATION-04A — test suite classification (deterministic vs REAL_*) | read-only** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "start", "status": "ACTIVE", "message": "INTAKE: STAGING-QUALIFICATION-04A \u2014 test suite classification (deterministic vs REAL_*) | read-only classification + marker registration only, zero business-behavior changes | goal: deterministic ga...
+  _by user - 2026-08-12_
+- **[7] [DONE] DONE: INTAKE STAGING-QUALIFICATION-04 PRE-FLIGHT | ENVIRONMENT_BLOCKED with exact evidence. Read-only veri** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE STAGING-QUALIFICATION-04 PRE-FLIGHT | ENVIRONMENT_BLOCKED with exact evidence. Read-only verification: LiveKit project EXISTS (truevow-legal-intake, agent CA_UxWtcHqLEUTp deployed 2026-08-03, SIP URI...
+  _by user - 2026-08-12_
+- **[7] [ACTIVE] START: INTAKE: TV-INTAKE-BENJAMIN-SCHEMA-GOAL-STAGING-QUALIFICATION-04 | pre-flight only | goal: prove real** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "start", "status": "ACTIVE", "message": "INTAKE: TV-INTAKE-BENJAMIN-SCHEMA-GOAL-STAGING-QUALIFICATION-04 | pre-flight only | goal: prove real environment availability or return ENVIRONMENT_BLOCKED with exact missing capability | read-only, no c...
+  _by user - 2026-08-12_
+- **[7] [DONE] DONE: INTAKE SCHEMA-GOAL LIVEKIT INTEGRATION-03 — CONDITIONAL_PASS | Phase A REAL staging proofs: REAL_FAC** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE SCHEMA-GOAL LIVEKIT INTEGRATION-03 \u2014 CONDITIONAL_PASS | Phase A REAL staging proofs: REAL_FACTSTORE (7 facts persisted+read back w/ provenance), REAL fact correction (history preserved), Fact No...
+  _by user - 2026-08-12_
+- **[7] [ACTIVE] START: INTAKE: TV-INTAKE-BENJAMIN-SCHEMA-GOAL-LIVEKIT-INTEGRATION-03 | Application Plane closure + thin Liv** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "start", "status": "ACTIVE", "message": "INTAKE: TV-INTAKE-BENJAMIN-SCHEMA-GOAL-LIVEKIT-INTEGRATION-03 | Application Plane closure + thin LiveKit adapter | resuming from ADOPTION-02 (schema/goal canonical, 21/21 goal tests, 113/113 vNext) | goa...
+  _by user - 2026-08-12_
+- **[7] [DONE] DONE: INTAKE ADOPTION HARDENING | Wired SignalEngine adapter against real GuardrailEngine.process(utteranc** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE ADOPTION HARDENING | Wired SignalEngine adapter against real GuardrailEngine.process(utterance, practice_area) \u2014 fixed silent no-op (was passing facts dict to a text API, ContextTag.tag\u2192ris...
+  _by user - 2026-08-12_
+- **[7] [DONE] DONE: INTAKE SCHEMA/GOAL ADOPTION EXECUTED — CANONICAL | Schema/Goal promoted to canonical Benjamin Core.** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE SCHEMA/GOAL ADOPTION EXECUTED \u2014 CANONICAL | Schema/Goal promoted to canonical Benjamin Core. vNext = migration reference/fallback (113/113 green, 0 files modified). 133-node FSM = historical ora...
+  _by user - 2026-08-12_
+- **[7] [DONE] DONE: INTAKE SCHEMA-GOAL R2 — ARCHITECTURE SELECTION COMPLETE | Full 20-scenario comparison (real LLM extr** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE SCHEMA-GOAL R2 \u2014 ARCHITECTURE SELECTION COMPLETE | Full 20-scenario comparison (real LLM extractor + real LLM conductor): task completion 0.80 vs vNext 0.45; avg facts captured 8.9 vs 2.3; out-o...
+  _by user - 2026-08-12_
+- **[7] [DONE] DONE: INTAKE SCHEMA-GOAL CHALLENGER R1 — DECISIVE EXPERIMENT COMPLETE | Real LLM multi-fact extractor: 7 f** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE SCHEMA-GOAL CHALLENGER R1 \u2014 DECISIVE EXPERIMENT COMPLETE | Real LLM multi-fact extractor: 7 facts from one caller sentence (rear-ended narrative -> collision.type, location, date, treatment.rece...
+  _by user - 2026-08-12_
 - **[7] [DONE] DONE: INTAKE SCHEMA-GOAL CHALLENGER CORE — COMPLETE | New parallel core at app/services/benjamin_goal/: 8** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE SCHEMA-GOAL CHALLENGER CORE \u2014 COMPLETE | New parallel core at app/services/benjamin_goal/: 8 lifecycle phases, 26 fact definitions, 10 goal definitions. Multi-fact extraction proven: one turn yi...
   _by user - 2026-08-12_
 - **[7] [DONE] DONE: INTAKE VNEXT PRODUCTION INTEGRATION — CONDITIONAL PASS | REAL DB: SqlAlchemyConfigResolver resolves** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE VNEXT PRODUCTION INTEGRATION \u2014 CONDITIONAL PASS | REAL DB: SqlAlchemyConfigResolver resolves canary tenant ec105c72... from actual Supabase (19 questions, checksum 6603c134...), missing/empty te...
