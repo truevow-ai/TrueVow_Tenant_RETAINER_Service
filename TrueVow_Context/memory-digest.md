@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-13T02:01:18.280768+00:00
-- Total memories: 504
+- Generated: 2026-08-13T02:39:48.009185+00:00
+- Total memories: 511
 
-## High-importance decisions (8+, routine noise excluded) - 265
+## High-importance decisions (8+, routine noise excluded) - 266
 
 - **[10][architecture] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Lifecycle shrinks to ~6 states (BOOTSTRAP/SCREENING/INTAKE/RESOLUTION/AWAITING_EFFECT/COMPLETE + HANDOFF/TERMINATED). LLM = conversation conductor within code-determined agenda; code = agenda authority. LiveKit = voice runtime only, TrueVow Core consumes provider-neutral CoreTurn. First Call Readiness Certificate requires all policy branches have outcomes + effect fallbacks; external integrations NOT required for first call. Prototype-first: challenger (Car Accident + OPI) vs current 22-state FSM, measure task completion/false commits/repeats/turns. SaaS Admin Builder implication: NOT a flowchart editor — firm configures facts, routing policy, destinations; previews generated sample conversations.
   _by Admin - 2026-08-12 - tags: -_
@@ -298,6 +298,8 @@
   _by Admin - 2026-07-31 - tags: -_
 - **[9][bug] contact_info_sequence dropped phone+email** - Root cause: routing INTO a sequence node used _execute_node, which returned the sequence's own intro prompt and left current_node=contact_info_sequence WITHOUT priming the first sub-node. Next turn the C10 terminal guard (workflow_engine.py:518) saw no next/branches/options and returned _build_complete_response — so name-only leads jumped to 'complete', losing phone+email. FIX: _execute_node now delegates type==sequence to _execute_sequence (primes contact_name, prepends intro to first question); terminal guards treat nodes/type==sequence as a valid exit. Verified: name->phone->email chain now runs.
   _by Admin - 2026-07-14 - tags: -_
+- **[9][context] 04B Safety Clearance Findings** - INTAKE truevow-tenant-public: fly-tenant.toml ENVIRONMENT=production, Fly owner=personal, DB is production Supabase flhnyyreaxkmwmexchla. 2 active sessions both explicitly synthetic smoke tests (smoke-sg-2 Schema/Goal, smoke-vnext-1 vNext). Schema/Goal canary tenant 4f797776 has firm_name Oakwood Law Firm (payload contains oakwood) — demo identity reused, not hardcoded code routing, created via canonical command 0ca3b6ba. Live SENDGRID+TWILIO credentials deployed — email/SMS side effects POSSIBLE. Calendar NOT connected — booking BLOCKED.
+  _by Admin - 2026-08-13 - tags: -_
 - **[9][context] G10 Handoff Evidence** - Execution ID: f47ac10b-58cc-4372-a567-0e02b2c3d479. Lead ID: 1763aee9-52ca-4418-abb8-a60e7f90d847. Pre-state: HANDOFF_PENDING. Handoff package: 455be7f3-84fc-463d-a5ba-bde4c45455d9. SaaS Admin tenant: ec105c72-31ff-4030-9bc4-413ff4f58b5b. Status: ACCEPTED_NEW_CUSTOMER. T023: PASS. Final state: HANDED_OFF / converted. Duplicate tenants: 0. Direct CSM calls: 0. Manual DB repair: 0.
   _by Admin - 2026-08-11 - tags: -_
 - **[9][context] G10 Canary Status** - Lead 1763aee9-52ca-4418-abb8-a60e7f90d847 at HANDOFF_PENDING. T020 passed, T022 passed. Handoff to SaaS Admin deployed and ready for retry. SaaS Admin webhook at truevow-saas-admin-staging.fly.dev with HMAC key tv-sales-ops-to-saas-admin-v1. PIPELINE_SECRET and TRUEVOW_DEPLOYMENT_ENV=staging set.
@@ -1059,7 +1061,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (233)
+## context (240)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1075,6 +1077,8 @@
   _by Admin - 2026-07-27_
 - **[10] TRACE documentation and memory updated July 24 2026** - All documentation updated: AGENTS.md (250+ lines with full service reference), README.md (updated stack/status), TRACE-Agent-Coding-Instructions.md (300+ line Appendix A with architecture, API reference, data flow, troubleshooting). Platform map updated (TRACE: port 3036, active). DEVELOPERS.md upda...
   _by Admin - 2026-07-24_
+- **[9] 04B Safety Clearance Findings** - INTAKE truevow-tenant-public: fly-tenant.toml ENVIRONMENT=production, Fly owner=personal, DB is production Supabase flhnyyreaxkmwmexchla. 2 active sessions both explicitly synthetic smoke tests (smoke-sg-2 Schema/Goal, smoke-vnext-1 vNext). Schema/Goal canary tenant 4f797776 has firm_name Oakwood La...
+  _by Admin - 2026-08-13_
 - **[9] G10 Handoff Evidence** - Execution ID: f47ac10b-58cc-4372-a567-0e02b2c3d479. Lead ID: 1763aee9-52ca-4418-abb8-a60e7f90d847. Pre-state: HANDOFF_PENDING. Handoff package: 455be7f3-84fc-463d-a5ba-bde4c45455d9. SaaS Admin tenant: ec105c72-31ff-4030-9bc4-413ff4f58b5b. Status: ACCEPTED_NEW_CUSTOMER. T023: PASS. Final state: HANDE...
   _by Admin - 2026-08-11_
 - **[9] G10 Canary Status** - Lead 1763aee9-52ca-4418-abb8-a60e7f90d847 at HANDOFF_PENDING. T020 passed, T022 passed. Handoff to SaaS Admin deployed and ready for retry. SaaS Admin webhook at truevow-saas-admin-staging.fly.dev with HMAC key tv-sales-ops-to-saas-admin-v1. PIPELINE_SECRET and TRUEVOW_DEPLOYMENT_ENV=staging set.
@@ -1111,6 +1115,12 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [ACTIVE] START: INTAKE: 04B re-verification with corrected domains (truevow.ai / truevow.law — truthline.ai deprecat** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "start", "status": "ACTIVE", "message": "INTAKE: 04B re-verification with corrected domains (truevow.ai / truevow.law \u2014 truthline.ai deprecated) | READ-ONLY | re-confirm staging identity + session classification + production routing separa...
+  _by user - 2026-08-13_
+- **[7] [DONE] DONE: INTAKE STAGING-SAFETY-CLEARANCE-04B — READ-ONLY PASS | ENVIRONMENT IDENTITY: CONFIRMED_STAGING. Prod** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE STAGING-SAFETY-CLEARANCE-04B \u2014 READ-ONLY PASS | ENVIRONMENT IDENTITY: CONFIRMED_STAGING. Production = GKE truthline.ai (CI/CD), NOT Fly. truevow-tenant-public = manual staging deploy (not in any...
+  _by user - 2026-08-13_
+- **[7] [ACTIVE] START: INTAKE: STAGING-SAFETY-CLEARANCE-04B | READ-ONLY | resolving truevow-tenant-public identity + 2 acti** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "start", "status": "ACTIVE", "message": "INTAKE: STAGING-SAFETY-CLEARANCE-04B | READ-ONLY | resolving truevow-tenant-public identity + 2 active sessions + canary legitimacy | goal: prove staging-safe or recommend isolated environment | zero cod...
+  _by user - 2026-08-13_
 - **[7] [DONE] DONE: INTAKE: CTO red-team verdict recorded — v3 frozen canonical (84.8), v3.1 backlog documented (92.4 ta** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: CTO red-team verdict recorded \u2014 v3 frozen canonical (84.8), v3.1 backlog documented (92.4 target). 7 hardenings H1-H7 + rejected-list frozen in docs/benjamin_goal/V31_HARDENING_BACKLOG.md. Sequ...
   _by user - 2026-08-13_
 - **[7] [ACTIVE] START: INTAKE: CTO red-team verdict received | recording v3.1 hardening backlog as canonical direction | NO** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "start", "status": "ACTIVE", "message": "INTAKE: CTO red-team verdict received | recording v3.1 hardening backlog as canonical direction | NO code changes this session \u2014 real voice qualification remains the next gate | goal: freeze v3 as c...
@@ -1389,6 +1399,12 @@
   _by user - 2026-06-25_
 - **[6] Documentation Status: TrueVow_Documentation is Stale** - TrueVow_Documentation/ contains older documentation (Word docs, markdown exports) including TrueVow_PRD.md, Complete System Technical Documentation, Financial Management guides, and Billing Service updates. These are outdated - they reflect the old architecture with DRAFT naming, CONNECT active, and...
   _by user - 2026-06-25_
+- **[5] Dispatch: review this code** - Dispatched to skill='code-review' phase='review' personas=['code-reviewer'] tool=
+  _by Admin - 2026-08-13_
+- **[5] Dispatch: write tests for this feature** - Dispatched to skill='tdd' phase='verify' personas=['test-engineer'] tool=
+  _by Admin - 2026-08-13_
+- **[5] Dispatch: write tests for this feature** - Dispatched to skill='tdd' phase='verify' personas=['test-engineer'] tool=
+  _by Admin - 2026-08-13_
 - **[5] Dispatch: qualify Benjamin vNext end to end** - Dispatched to skill='benjamin-agent' phase='build' personas=[] tool=
   _by Admin - 2026-08-12_
 - **[5] Dispatch: begin the controlled GTM canary: prospect ingestion, enrichment, segmentation, c** - Dispatched to skill='using-agent-skills' phase='' personas=[] tool=
