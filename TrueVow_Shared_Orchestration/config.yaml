@@ -19,38 +19,38 @@ dispatch:
 
   # ── DEFINE: Understanding what to build ──
   - intent: [spec, specification, requirements, prd, define, what to build, feature request, new feature, new project]
-    skill: spec-driven-development
+    skill: to-spec
     phase: define
   - intent: [interview, stakeholder, questions, clarify, gather requirements, discovery]
-    skill: interview-me
+    skill: grill-me
     phase: define
   - intent: [brainstorm, ideas, refine idea, explore options, should i, alternatives, concept]
-    skill: idea-refine
+    skill: grill-me
     phase: define
 
   # ── PLAN: Breaking it down ──
   - intent: [plan, planning, breakdown, tasks, roadmap, steps, decompose, subtasks, estimate]
-    skill: planning-and-task-breakdown
+    skill: to-tickets
     phase: plan
 
   # ── BUILD: Implementing ──
   - intent: [implement, build, code, develop, create, add, make, write code]
-    skill: incremental-implementation
+    skill: implement
     phase: build
   - intent: [test driven, tdd, write tests first, red green, prove it, test-first]
-    skill: test-driven-development
+    skill: tdd
     phase: build
   - intent: [context, what does this do, explain codebase, understand code, codebase overview]
-    skill: context-engineering
+    skill: domain-modeling
     phase: build
   - intent: [docs, documentation, official, source, verify against docs, api reference]
     skill: source-driven-development
     phase: build
   - intent: [doubt, skeptical, adversarial, high stakes, critical, verify again, challenge]
-    skill: doubt-driven-development
+    skill: wait-what
     phase: build
   - intent: [ui, frontend, component, interface, css, style, layout, design system, react, vue, angular]
-    skill: frontend-ui-engineering
+    skill: prototype
     phase: build
   - intent: [api, endpoint, contract, interface design, rest, graphql, grpc, protocol, schema]
     skill: api-and-interface-design
@@ -58,23 +58,23 @@ dispatch:
 
   # ── VERIFY: Proving it works ──
   - intent: [test, testing, write tests, coverage, unit test, integration test, e2e test]
-    skill: test-driven-development
+    skill: tdd
     phase: verify
     persona: test-engineer
   - intent: [browser test, devtools, chrome, playwright, selenium, e2e browser, visual test]
     skill: browser-testing-with-devtools
     phase: verify
   - intent: [bug, broken, not working, error, crash, debug, fix, troubleshooting, issue]
-    skill: debugging-and-error-recovery
+    skill: diagnosing-bugs
     phase: verify
 
   # ── REVIEW: Quality gates ──
   - intent: [review, code review, pr review, pull request, check my code, inspect, audit code]
-    skill: code-review-and-quality
+    skill: code-review
     phase: review
     persona: code-reviewer
   - intent: [simplify, refactor, clean up, complexity, too complex, messy, reduce, shorten]
-    skill: code-simplification
+    skill: improve-codebase-architecture
     phase: review
   - intent: [security, vulnerability, secure, owasp, exploit, threat, pen test, hardening, safe]
     skill: security-and-hardening
@@ -87,7 +87,7 @@ dispatch:
 
   # ── SHIP: Delivering ──
   - intent: [git, commit, branch, merge, rebase, version, tag, release]
-    skill: git-workflow-and-versioning
+    skill: resolving-merge-conflicts
     phase: ship
   - intent: [cicd, pipeline, ci, cd, deploy, automation, build system, github actions]
     skill: ci-cd-and-automation

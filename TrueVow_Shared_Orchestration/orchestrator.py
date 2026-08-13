@@ -127,6 +127,10 @@ def dispatch(user_request: str):
         skill_path = ROOT / svc / ".opencode" / "skills" / best["skill"] / "SKILL.md"
     else:
         skill_path = SKILLS_DIR / best["skill"] / "SKILL.md"
+        if not skill_path.exists():
+            pocock_p = SKILLS_DIR / "pocock" / best["skill"] / "SKILL.md"
+            if pocock_p.exists():
+                skill_path = pocock_p
 
     if skill_path and skill_path.exists():
         content = skill_path.read_text(encoding="utf-8")
@@ -862,26 +866,33 @@ def list_all():
 
     print("\n=== TrueVow Agent Ecosystem — All Registered Agents ===\n")
 
-    # 1. Lifecycle Skills (24)
-    print("1. LIFECYCLE SKILLS (24) — DEFINE → PLAN → BUILD → VERIFY → REVIEW → SHIP")
+    # 1. Lifecycle Skills — TrueVow platform + Pocock fundamentals
+    print("1. LIFECYCLE SKILLS — DEFINE → PLAN → BUILD → VERIFY → REVIEW → SHIP")
     phases = {
-        "META": ["using-agent-skills"],
-        "DEFINE": ["interview-me", "idea-refine", "spec-driven-development"],
-        "PLAN": ["planning-and-task-breakdown"],
-        "BUILD": ["incremental-implementation", "test-driven-development",
-                   "context-engineering", "source-driven-development",
-                   "doubt-driven-development", "frontend-ui-engineering",
-                   "api-and-interface-design"],
-        "VERIFY": ["browser-testing-with-devtools", "debugging-and-error-recovery"],
-        "REVIEW": ["code-review-and-quality", "code-simplification",
+        "META": ["using-agent-skills", "truevow-ask"],
+        "DEFINE": ["to-spec", "grill-me"],
+        "PLAN": ["to-tickets", "wayfinder"],
+        "BUILD": ["tdd", "implement", "prototype", "api-and-interface-design",
+                   "source-driven-development", "codebase-design", "domain-modeling"],
+        "VERIFY": ["diagnosing-bugs", "browser-testing-with-devtools"],
+        "REVIEW": ["code-review", "improve-codebase-architecture",
                     "security-and-hardening", "performance-optimization"],
-        "SHIP": ["git-workflow-and-versioning", "ci-cd-and-automation",
-                  "deprecation-and-migration", "documentation-and-adrs",
-                  "observability-and-instrumentation", "shipping-and-launch"],
+        "SHIP": ["shipping-and-launch", "ci-cd-and-automation",
+                  "deprecation-and-migration", "observability-and-instrumentation",
+                  "resolving-merge-conflicts"],
     }
+    skill_dirs = _find_skill_dirs()
     for phase, skills in phases.items():
-        active = sum(1 for s in skills if (SKILLS_DIR / s / "SKILL.md").exists())
+        active = sum(1 for s in skills if s in skill_dirs)
         print(f"  {phase:8s}  {active}/{len(skills)} loaded  |  {', '.join(skills)}")
+    print()
+
+    # 1b. Pocock productivity skills
+    pocock_root = SKILLS_DIR / "pocock"
+    pocock_names = sorted(d.name for d in pocock_root.iterdir() if d.is_dir() and (d / "SKILL.md").exists()) if pocock_root.is_dir() else []
+    extra = [n for n in pocock_names if n not in sum(phases.values(), [])]
+    print(f"1b. POCOCK SKILLS ({len(pocock_names)} total, {len(extra)} additional) — productivity + engineering")
+    print(f"    Additional: {', '.join(extra) if extra else '(all covered above)'}")
     print()
 
     # 2. Agent Personas (4)
@@ -962,11 +973,32 @@ def list_all():
 #  SKILL: Print a skill's content
 # ═══════════════════════════════════════════════
 
+def _find_skill_dirs():
+    """Return {skill_name: path} for top-level TrueVow skills + nested Pocock skills."""
+    found = {}
+    for d in sorted(SKILLS_DIR.iterdir()):
+        if d.is_dir() and (d / "SKILL.md").exists():
+            found[d.name] = d
+    # Nested Pocock skills
+    pocock_root = SKILLS_DIR / "pocock"
+    if pocock_root.is_dir():
+        for d in sorted(pocock_root.iterdir()):
+            if d.is_dir() and (d / "SKILL.md").exists():
+                if d.name not in found:
+                    found[d.name] = d
+    return found
+
+
 def print_skill(name: str):
     # Check main skills
     path = SKILLS_DIR / name / "SKILL.md"
     if path.exists():
         print(path.read_text(encoding="utf-8"))
+        return
+    # Check nested Pocock skills
+    pocock_path = SKILLS_DIR / "pocock" / name / "SKILL.md"
+    if pocock_path.exists():
+        print(pocock_path.read_text(encoding="utf-8"))
         return
     # Check agent-reach
     path = AGENT_TOOLS / "agent-reach" / "agent_reach" / "skill" / "SKILL_en.md"
@@ -979,7 +1011,7 @@ def print_skill(name: str):
         print(path.read_text(encoding="utf-8"))
         return
     print(f"Skill/persona not found: {name}")
-    available = [d.name for d in sorted(SKILLS_DIR.iterdir()) if d.is_dir()]
+    available = sorted(_find_skill_dirs().keys())
     available += [p.stem for p in AGENTS_DIR.glob("*.md")]
     available += ["agent-reach", "skillspector-guardrail"]
     print(f"Available: {', '.join(sorted(available))}")
