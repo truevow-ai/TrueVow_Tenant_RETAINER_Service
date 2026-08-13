@@ -1,0 +1,32 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "skills": {
+    "paths": [
+      "TrueVow_Shared_Agent_Tools/agent-skills/skills"
+    ]
+  },
+  "agent": {
+    "cto-orchestrator": {
+      "description": "TrueVow CTO Orchestrator — independent QA and architecture gatekeeper. Verifies claims, challenges evidence, audits diffs, gates work orders. Read-only by default.",
+      "mode": "subagent",
+      "permission": {
+        "edit": "deny",
+        "bash": "ask"
+      }
+    }
+  },
+  "command": {
+    "skill-gate": {
+      "description": "Run the TrueVow skill gate on staged files (security + review, blocks CRITICAL)",
+      "template": "Run: python TrueVow_Shared_Orchestration/skill-gate.py pre-commit and report the verdict. $ARGUMENTS"
+    },
+    "skill-watcher": {
+      "description": "Run the always-on TrueVow skill watcher across all service repos",
+      "template": "Run: python TrueVow_Shared_Orchestration/skill-watcher.py --once and report findings by invariant. $ARGUMENTS"
+    },
+    "cto-qa": {
+      "description": "Invoke the CTO Orchestrator to independently verify a work order (read-only audit)",
+      "template": "Act as the TrueVow CTO Orchestrator per TrueVow_CTO_Knowledge_Orchestrator/CTO-ORCHESTRATOR-QA-MANDATE.md. Independently verify the claim: $ARGUMENTS. Read code, not markdown. Classify evidence. Return QA RESULT: PASS/CONDITIONAL_PASS/FAIL/HOLD."
+    }
+  }
+}
