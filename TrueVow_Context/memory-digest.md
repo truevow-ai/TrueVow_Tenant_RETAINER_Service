@@ -3,8 +3,8 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-14T13:55:21.459975+00:00
-- Total memories: 547
+- Generated: 2026-08-14T15:18:27.357117+00:00
+- Total memories: 549
 
 ## High-importance decisions (8+, routine noise excluded) - 277
 
@@ -563,7 +563,7 @@
 - **[8][todo] FIX gitignore source-leak: TrueVow-Tenant_Billing-Service** - ASSIGNED to the TrueVow-Tenant_Billing-Service agent. Real lib/ source is currently hidden from git (confirmed). Run the playbook: TrueVow_SaaS_Administration_Service/docs/01-main/ECOSYSTEM_ADVISORY_GITIGNORE_SOURCE_LEAK.md (fix .gitignore: anchor/remove stray lib/ + logs/; secrets-scan; commit recovered source in reviewed batches by explicit path; verify clean-clone build). REPORT RESULT via memory.py remember category=bug title='TrueVow-Tenant_Billing-Service gitignore RESULT' content='FIXED n files | CLEAN | BLOCKED + reason; secrets found?'. NOTE: reporting.py agent-checkin is broken — report via memory.
   _by user - 2026-06-25 - tags: gitignore, todo, assigned_
 
-## architecture (107)
+## architecture (108)
 
 - **[10] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Li...
   _by Admin - 2026-08-12_
@@ -775,6 +775,8 @@
   _by user - 2026-06-25_
 - **[6] LedgerPoster seam boundary: do not swap GL route CRUD** - journal_entry_routes.py posting/reversal/draft paths already use get_ledger_poster() (lines 59/185/259). The 6 remaining JournalEntryService(db) sites only use entry_repo/line_repo, bulk_upsert_lines, and _validate_required_dimensions, which the LedgerPoster Protocol intentionally excludes. Do NOT r...
   _by user - 2026-06-25_
+- **[5] Ops deploy + pre-human smoke PASS. FLY_TRUVEOW_GLOBAL_TECH is the tenant-app token (FLY_API_TOKEN different org — Ops note). truevow-tenant-public redeployed (image 01M00D7R6HN9) with F6+v1.1.0, /health DB connected. Deployed smoke explicit tenant truevow-production: bootstrap 200 ready v1.1.0/7a7b0495, correct greeting, F6 role-guard live-verified on 'other driver was John Smith' turn, one-request-per-turn throughout. Oakwood NOT reprovisioned (CTO decision) — human retest uses explicit tenant metadata.** - --importance
+  _by Admin - 2026-08-14_
 - **[5] F6 repair + v1.1.0 republish gate COMPLETE. extractor.py commit guard: weak enum keywords require expected-context; name-pair gated on utterance-start/expected + attribution markers. 16/16 regressions. v1.1.0 published (file 99a8e599, semantic 7a7b0495, 26 facts/9 goals), v1.0.0 preserved. truevow-production provisioned via HMAC, bootstrap 200 ready. Oakwood fails closed until reprovision. Deterministic 216, REAL_DB 18, agent 101+3 pre-existing.** - --importance
   _by Admin - 2026-08-14_
 - **[5] 04G amendment frozen: obtain_conflict_party REMOVED from Schema/Goal standard qualification goal set (CTO directive). Adverse-party identity = optional tenant policy / spontaneous capture only. OPI responsible.party now conditional clarification. Grading split: CASE PRIORITY vs INTAKE COMPLETENESS vs ROUTING_SAFETY. New semantic checksum 7a7b0495 (v1.1.0 candidate; staging pinned v1.0.0/3c0c130b until republish).** - --importance
@@ -1103,7 +1105,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (264)
+## context (265)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1163,6 +1165,8 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: INTAKE: Ops Fly tenant deploy + pre-human smoke complete | outcome: tenant service redeployed (01M00** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: Ops Fly tenant deploy + pre-human smoke complete | outcome: tenant service redeployed (01M00D7R6HN9), /health DB connected, deployed smoke 200 ready v1.1.0/7a7b0495, F6 guard live-verified, zero fal...
+  _by user - 2026-08-14_
 - **[7] [DONE] DONE: INTAKE: F6 repair + v1.1.0 republish gate executed per CTO authorization | outcome: extractor commit** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: F6 repair + v1.1.0 republish gate executed per CTO authorization | outcome: extractor commit guard (enum weak-keyword expected-gating + name-pair attribution gating) 16/16 regressions; v1.1.0 publis...
   _by user - 2026-08-14_
 - **[7] [DONE] DONE: INTAKE: 04G amendment adopted (bridge view) | outcome: Core agent removed obtain_conflict_party + de** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: 04G amendment adopted (bridge view) | outcome: Core agent removed obtain_conflict_party + demoted conflict/responsible facts; bridge needs ZERO changes (adapter verbatim); my 04G repairs compatible ...
