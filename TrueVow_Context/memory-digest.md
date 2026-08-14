@@ -3,8 +3,8 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-14T16:24:46.070429+00:00
-- Total memories: 555
+- Generated: 2026-08-14T16:46:06.651936+00:00
+- Total memories: 558
 
 ## High-importance decisions (8+, routine noise excluded) - 278
 
@@ -1109,7 +1109,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (269)
+## context (270)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1171,6 +1171,8 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: INTAKE: LEGACY-RETIREMENT-05 read-only plan complete | outcome: 32-section plan with per-item reacha** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: LEGACY-RETIREMENT-05 read-only plan complete | outcome: 32-section plan with per-item reachability proofs; source-of-truth HEAD c96e9f6f 2449 tracked 90 uncommitted; secrets tracked = 0; stray C:/ s...
+  _by user - 2026-08-14_
 - **[7] [DONE] DONE: INTAKE: hold state — human retest card issued, legacy retirement pre-staged read-only | outcome: ret** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: hold state \u2014 human retest card issued, legacy retirement pre-staged read-only | outcome: retest card with pass criteria + evidence grid; reachability inventory complete (3 cores registered, 17+...
   _by user - 2026-08-14_
 - **[7] [DONE] DONE: INTAKE: 04I dispatch/config correction PROVEN | outcome: DEPLOYMENT_DEFAULT_TENANT_ID -> truevow-pro** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: 04I dispatch/config correction PROVEN | outcome: DEPLOYMENT_DEFAULT_TENANT_ID -> truevow-production (canonical v1.1.0); TRACE log now shows resolved tenant; agent xdsLsUFiTXvH deployed; non-human co...
@@ -1650,7 +1652,7 @@
 - **[4] [ACTIVE] START: Orchestrator CTO: monitoring all 19 services, building reporting dashboard** - {"agent_id": "orchestrator", "action": "start", "status": "ACTIVE", "message": "Orchestrator CTO: monitoring all 19 services, building reporting dashboard", "timestamp": "2026-06-25T02:06:16.484425+00:00", "working_dir": "C:\\Users\\yasha\\OneDrive\\Documents\\TrueVow\\Cursor"}
   _by user - 2026-06-25_
 
-## todo (22)
+## todo (24)
 
 - **[10] TV-INTAKE-BENJAMIN-VNEXT-E2E-QUALIFICATION-01** - Independent QA qualification work order for INTAKE. 28 sections covering: config resolution, two-tenant isolation, CA/OPI E2E journeys, conflict/represented, emergency, barge-in, LLM provider proof (real vs deterministic fallback), effects, success-language truth, session termination, legacy fallbac...
   _by Admin - 2026-08-12_
@@ -1678,6 +1680,10 @@
   _by user - 2026-06-25_
 - **[7] Resolve SEND_WELCOME_COMMUNICATION Ownership** - SaaS Admin seeding SEND_WELCOME_COMMUNICATION command to SendGrid conflicts with CSM owning welcome/onboarding communications. Need exactly one owner. Options: SaaS Admin owns platform/account invitation, CSM owns customer-success welcome. Or rename commands to make responsibility explicit. Currentl...
   _by Admin - 2026-08-10_
+- **[5] LEGACY-RETIREMENT-05 plan complete (read-only): operations/audit/LEGACY_RETIREMENT_05_PLAN.md. Critical freeze fact: benjamin_goal + catalog + schema_goal bridge/tests are UNTRACKED in git - pre-retirement freeze MUST commit the known-good working tree (which built deployed image 01M00D7R6HN9) BEFORE tagging. Execution gated on bounded human retest PASS. After PASS: commit+tag freeze, execute 32-section plan, regression, redeploy, WebRTC sanity.** - --importance
+  _by Admin - 2026-08-14_
+- **[5] LEGACY-RETIREMENT-05 plan complete (read-only): operations/audit/LEGACY_RETIREMENT_05_PLAN.md. Critical freeze fact: benjamin_goal + catalog + schema_goal bridge/tests are UNTRACKED in git — pre-retirement freeze MUST commit the known-good working tree (which built deployed image 01M00D7R6HN9) BEFORE tagging. Execution gated on bounded human retest PASS. After PASS: commit+tag freeze → execute 32-section plan → regression → redeploy → WebRTC sanity.** - --importance
+  _by Admin - 2026-08-14_
 - **[5] Bounded human representation/control retest card ready (operations/audit/SCHEMA_GOAL_HUMAN_RETEST_CARD.md) — needs human with LiveKit console + tenant_id=truevow-production metadata. After PASS: execute LEGACY-RETIREMENT-05 per pre-staged inventory (operations/audit/LEGACY_RETIREMENT_05_INVENTORY.md).** - --importance
   _by Admin - 2026-08-14_
 - **[5] Before human representation/control retest: (1) Ops Fly tenant deploy/auth, (2) decision on Oakwood reprovision to v1.1.0 (currently fails closed on 3c0c130b pin), (3) then bounded human retest. G13 HOLD, G14 HARD HOLD, production default NO.** - --importance
