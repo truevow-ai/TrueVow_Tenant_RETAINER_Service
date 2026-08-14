@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-13T17:09:37.545986+00:00
-- Total memories: 527
+- Generated: 2026-08-14T07:58:49.577066+00:00
+- Total memories: 543
 
-## High-importance decisions (8+, routine noise excluded) - 271
+## High-importance decisions (8+, routine noise excluded) - 277
 
 - **[10][architecture] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Lifecycle shrinks to ~6 states (BOOTSTRAP/SCREENING/INTAKE/RESOLUTION/AWAITING_EFFECT/COMPLETE + HANDOFF/TERMINATED). LLM = conversation conductor within code-determined agenda; code = agenda authority. LiveKit = voice runtime only, TrueVow Core consumes provider-neutral CoreTurn. First Call Readiness Certificate requires all policy branches have outcomes + effect fallbacks; external integrations NOT required for first call. Prototype-first: challenger (Car Accident + OPI) vs current 22-state FSM, measure task completion/false commits/repeats/turns. SaaS Admin Builder implication: NOT a flowchart editor — firm configures facts, routing policy, destinations; previews generated sample conversations.
   _by Admin - 2026-08-12 - tags: -_
@@ -80,6 +80,8 @@
   _by user - 2026-06-25 - tags: intake, voice-bridge, gemini, dograh, assemblyai, pipecat, xai, fsm, workflow, orchestration_
 - **[10][architecture] LEVERAGE (ex-DRAFT) — 3-Tier Rules Engine, NO AI** - LEVERAGE is a 3-tier legal rule validation system: TIER 1: State/Jurisdiction rules (mandatory, cannot be disabled). TIER 2: Practice Area rules (customizable). TIER 3: Firm/Attorney/Client-specific rules. CORE PRINCIPLE: NO AI — no machine learning, no neural networks, no LLM. Uses peer benchmarking (real firm data) and FSM engine analysis. Features: citation checking, server-side validation, customer portal UI (4 tabs: Validate, History, Rules, Downloads), SaaS Admin compliance reports (React), template browser. v2.0 with global templates from SaaS Admin + tenant-specific rules. 98.25% complete. Stack: Python/FastAPI + Next.js frontend. Was previously called DRAFT — fully renamed to LEVERAGE.
   _by user - 2026-06-25 - tags: leverage, rules-engine, no-ai, peer-benchmarking, fsm, 3-tier, citation, compliance_
+- **[10][bug] F1 FALSE representation commit from 'engineers'** - Call #3: 'I spoke to a couple of engineers.' -> extractor consulted_phrases includes 'spoke to' -> representation.status=consulted_only committed (0.85, deterministic, validator passed). FALSE LEGAL-SAFETY FACT (engineers != attorneys). None of the 'retained' policy triggered this time, but false fact is durable + flows downstream. F2: conductor combinable_with + identity ask_hint bundles 4 facts per spoken turn, repeated verbatim. Core-owner repairs required; bridge authority boundary held (0 files).
+  _by Admin - 2026-08-14 - tags: -_
 - **[10][bug] Engine: ca_police/medical loop + email empty + jurisdiction hardcode** - Three critical bugs from Aug 1 call: (1) ca_police and ca_medical_treatment nodes cycle infinitely on 'no' answers — the ca workflow ladder has a next-pointer loop. (2) Email verify prompt shows empty '{contact_email}' — email extraction stores raw text instead of parsed email address. (3) conflict_check_prior_rep routes 'no' to ca_jurisdiction regardless of practice area — should route to identify_practice_area when practice area unknown. Also: Gemini STOP errors after long calls suggesting context overflow.
   _by Admin - 2026-08-01 - tags: -_
 - **[10][bug] D3 Fixed: Global Secret Fallback Removed** - RETAINER webhook_signature.py: sign_request() no longer falls back to settings.service_api_key. _resolve_secret() no longer falls back to TRUEVOW_WEBHOOK_SECONDARY_KEYS universal pool. deps.py: legacy bearer validates against per-link keys only. Each key resolved strictly from WEBHOOK_KEY_<KEY_ID> env var. Severity 1 — authentication boundary failure.
@@ -278,6 +280,8 @@
   _by user - 2026-06-25 - tags: saas-admin, hub, central, tenant-management, auth, database, architecture_
 - **[9][architecture] FM Service Wired to Ecosystem** - TrueVow_Financial_Management_Service is registered in the agent ecosystem with 13 domain agents (orchestrator, code-agent, search-agent, gl-agent, ar-agent, ap-agent, payroll-agent, treasury-agent, intercompany-agent, reporting-agent, affiliates-agent, benjamin-agent, fintech-patterns). Auto-dispatch routes FM-specific keywords (journal, invoice, payroll, treasury, intercompany, etc.) directly to the right domain agent SKILL.md.
   _by user - 2026-06-25 - tags: ecosystem, fm, financial-management, dispatch, integration, architecture_
+- **[9][bug] F5+F6 same-class extraction defects** - F5 HIGH: conflict.other_party is TEXT; deterministic extractor cannot fill it and deployed SG bridge wires llm_interpreter=None -> obtain_conflict_party never satisfied -> conversation stalls at conflict question indefinitely (why call #3 looped). F6 MEDIUM: ENUM keyword rule commits collision.type=other from 'other driver' words; bare capitalized-pair heuristic assigns the ADVERSE party's name to the CALLER (John Smith of Acme -> caller.first_name=john). Reproduced deterministically. Core-owner backlog; not fixed in 04G (scope F1-F4).
+  _by Admin - 2026-08-14 - tags: -_
 - **[9][bug] D6 FIXED: TRACE now uses milliseconds (commit b74d83c)** - TRACE timestamp verification updated from seconds to milliseconds, matching frozen WebhookSignature v1.0 contract. SaaS Admin Date.now() (ms) and TRACE time.time() * 1000 (ms) will produce identical canonical signing strings. Owner: yasha.
   _by Admin - 2026-07-31 - tags: -_
 - **[9][bug] D5 FIXED: SaaS Admin activation routes now use HMAC (commit 56720be)** - Both POST /api/v1/matters/activate and GET /api/v1/matters/resolve-config now use HMAC WebhookSignature v1.0, not Clerk withAuth. Allowed keys: tv-retainer-to-saas-admin-*. Idempotency: command_id replay returns prior result. Raw body verified before JSON.parse. 68/68 tests pass, 17/17 golden fixtures pass. Owner: ghous-isb.
@@ -434,6 +438,12 @@
   _by user - 2026-06-25 - tags: analytics, events, warehouse, dashboards, star-schema, platform_
 - **[8][architecture] Tenant Application Service (INTAKE) - Voice + NLP Pipeline** - Phase I intake services. Stack: Python/FastAPI backend, FSM-based deterministic NLP engine, voice pipeline. Purpose: Legal AI intake for personal injury attorneys - captures client information via voice/NLP. Separated from website code (Nov 2025). Technology: Finite State Machine, deterministic NLP (not LLM-based for compliance). Voice pipeline components integrated. Ports: API backend. Depends on: SaaS Admin (tenant management, auth). Related: Benjamin voice agent (STT/TTS), Dialogflow Intake (alternative intake path).
   _by user - 2026-06-25 - tags: intake, nlp, fsm, voice, fastapi, python, tenant-application_
+- **[8][bug] lk update-secrets comma parsing trap** - lk agent update-secrets --secrets 'A=true,B=...' parses as ONE key-value pair (A='true,B=...'), NOT two. Setting ALLOW_DEPLOYMENT_TENANT_FALLBACK this way produced a garbage value -> falsy -> fallback disabled -> 400s. Always use separate --secrets flags per pair.
+  _by Admin - 2026-08-13 - tags: -_
+- **[8][bug] R5 llm_node messages() root cause** - Call #2 silent turns root-caused: ChatContext.messages is a METHOD in livekit-agents 1.6.6 AND 1.6.9 (not a property). TrueVowSchemaGoalAgent.llm_node iterates chat_ctx.messages -> TypeError 'method' object is not iterable -> _llm_inference_task dies instantly -> silent turns (49ms/29ms thinking, zero /process, no replies). Reproduced in isolated 1.6.9 venv. Fix: callable-guard accessor + unit tests with real ChatContext. Awaiting CTO authorization (directive: no code changes yet).
+  _by Admin - 2026-08-13 - tags: -_
+- **[8][bug] R4 dispatch metadata defect PROVEN** - Call #2 RM_wW2de9zcqxYk: bootstrap 400 (3ms) = tenant_id absent from console dispatch metadata. Proof by controlled variables: same agent om4pvetdLoWH + same secrets + same tenant passed Smoke C (CLI dispatch WITH tenant_id) minutes earlier; bridge_type is code constant, conversation_core proven schema_goal by Smoke C; live reproduction returns exact 'tenant_id is required' detail; other 400 branches return different details (excluded). Zero pin rows. Fail-closed behavior correct - defect is dispatch path only. Fix B (TENANT_ID agent-secret fallback, identity only) awaiting CTO authorization.
+  _by Admin - 2026-08-13 - tags: -_
 - **[8][bug] 04D-STT: 44.65s Deepgram usage, 0 transcripts** - Evidence: intelligible recording + Deepgram 44.65s usage + zero user_input_transcribed (interim AND final) + zero SpeechStarted VAD events. 44.65s WS lifetime proves send+recv loops alive - Deepgram heard nothing intelligible or returned nothing. Top hypothesis: agent-subscribed track != recording audio or upstream format issue. ai_coustics fail-soft. Controlled test: STT_DIAGNOSTIC=true + TRACK_EVIDENCE sid comparison.
   _by Admin - 2026-08-13 - tags: -_
 - **[8][bug] 04C forensics: LiveKit say(None) TypeError** - Root cause: on_enter() passes None to session.say when prime_workflow returns None (greeting resolution GREETING_TEXT empty + engine greeting None). LiveKit 1.6.6 _tts_task_impl leaves text_source=None -> default transcription_node gets None -> TypeError in _text_forwarding_task. Trigger: tenant returns HTTP 500 because SchemaGoalBridge.start_session fails closed (payload missing config_version/config_checksum).
@@ -472,6 +482,8 @@
   _by Admin - 2026-07-08 - tags: -_
 - **[8][bug] gitignore source-leak ECOSYSTEM AUDIT results (June 25) — which repos still affected** - Audited all sibling git repos for the gitignore source-leak (advisory 64bc43bf). NONE have run the fix yet (advisory just issued). CONFIRMED UNFIXED SOURCE LEAKS (real lib/ source hidden from git): TrueVow_Financial_Management_Service (frontend/lib + frontend/__tests__/lib), TrueVow_Tenant_Application_Service (app/portal/lib, dograh server ui/src/lib, scripts/lib), TrueVow-Tenant_Billing-Service (ui/lib; ALSO its .gitignore has an embedded NULL/control byte — corrupted). LATENT (dangerous unanchored lib/ rule present but no active source leak yet): TrueVow_Internal_Ops_Service, TrueVow_Tenant_SETTLE-Service, TrueVow_Tenant_LEVERAGE_Service. NOT GIT REPOS AT ALL (no version control — separate severe issue): TrueVow_Dialogflow_Intake_Service, TrueVow_Platform_Analytics_Service, TrueVow_Tenant_VERIFY_Service, TrueVow_TWIML_SoftPhone_App. CLEAN: Website, Customer_Success_CORE, First_Line_Support, Sales_Ops, Tenant_CONNECT, Customer_Portal, cartesia_test. SaaS_Admin already fixed. Each affected repo agent: run docs/01-main/ECOSYSTEM_ADVISORY_GITIGNORE_SOURCE_LEAK.md (in SaaS Admin).
   _by user - 2026-06-25 - tags: gitignore, audit, ecosystem, cross-service_
+- **[8][context] Call #3 REAL SG PIPELINE PASS** - Human call 2026-08-14 05:25Z: core greeting audible, 7+ real multi-turns, /process per turn (llmNodeTtft 0.30-0.40s), Cartesia audible (ttfb 0.11-0.12s, e2e 1.9-3.9s), pin 5138d957-73c8-565c-9851-c37838d40b93 v1.0.0. REAL_WEBRTC/STT/SCHEMA_GOAL/TTS/MULTI_TURN all PASS. Core-quality observations: conductor combined question phrasing repeats verbatim (caller complaints), negation turn-1 extraction, no anti-repetition empathy - Core owner items.
+  _by Admin - 2026-08-14 - tags: -_
 - **[8][context] STT-1 PASS + shutdown fix** - STT-1 human diag: PASS. REAL_STT_DEEPGRAM=PASS (10 interim, 6 final, text match). First-call zero-transcripts NOT REPRODUCED - no STT stack changes. STT-DIAG-SHUTDOWN-01: livekit-agents 1.6.9 job.py:536-539 awaits zero-arg shutdown callbacks -> lambdas returning None = TypeError; fixed with async callbacks. Agent om4pvetdLoWH, STT_DIAGNOSTIC=false. Frame hook 24kHz upstream of Deepgram 16k - ACTION NONE.
   _by Admin - 2026-08-13 - tags: -_
 - **[8][context] 04D1 deployed versions** - LiveKit agent CA_UxWtcHqLEUTp version r2KRVtRsyJw9 (16:12:47Z 2026-08-13) from deploy/livekit/agent.py sha256 4d287f11001d07fb88fd580d5307f2fd0d1af0c7570642fd391d3bb3305c1023. Tenant truevow-tenant-public Fly redeployed same session. Secret STT_DIAGNOSTIC=true active - next human test is STT-1; must set false before TEST B+. Smoke pin row 5e9450ed... v1.0.0 proved end-to-end bootstrap.
@@ -551,7 +563,7 @@
 - **[8][todo] FIX gitignore source-leak: TrueVow-Tenant_Billing-Service** - ASSIGNED to the TrueVow-Tenant_Billing-Service agent. Real lib/ source is currently hidden from git (confirmed). Run the playbook: TrueVow_SaaS_Administration_Service/docs/01-main/ECOSYSTEM_ADVISORY_GITIGNORE_SOURCE_LEAK.md (fix .gitignore: anchor/remove stray lib/ + logs/; secrets-scan; commit recovered source in reviewed batches by explicit path; verify clean-clone build). REPORT RESULT via memory.py remember category=bug title='TrueVow-Tenant_Billing-Service gitignore RESULT' content='FIXED n files | CLEAN | BLOCKED + reason; secrets found?'. NOTE: reporting.py agent-checkin is broken — report via memory.
   _by user - 2026-06-25 - tags: gitignore, todo, assigned_
 
-## architecture (105)
+## architecture (106)
 
 - **[10] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Li...
   _by Admin - 2026-08-12_
@@ -763,6 +775,8 @@
   _by user - 2026-06-25_
 - **[6] LedgerPoster seam boundary: do not swap GL route CRUD** - journal_entry_routes.py posting/reversal/draft paths already use get_ledger_poster() (lines 59/185/259). The 6 remaining JournalEntryService(db) sites only use entry_repo/line_repo, bulk_upsert_lines, and _validate_required_dimensions, which the LedgerPoster Protocol intentionally excludes. Do NOT r...
   _by user - 2026-06-25_
+- **[5] 04G amendment frozen: obtain_conflict_party REMOVED from Schema/Goal standard qualification goal set (CTO directive). Adverse-party identity = optional tenant policy / spontaneous capture only. OPI responsible.party now conditional clarification. Grading split: CASE PRIORITY vs INTAKE COMPLETENESS vs ROUTING_SAFETY. New semantic checksum 7a7b0495 (v1.1.0 candidate; staging pinned v1.0.0/3c0c130b until republish).** - --importance
+  _by Admin - 2026-08-14_
 
 ## pattern (11)
 
@@ -984,8 +998,10 @@
 - **[8] Golden Fixture Cross-Repository Testing** - Created app/shared/contracts.py with frozen contract versions and deterministic golden fixture (make_golden_envelope, make_golden_fixture_json, compute_golden_hmac). Every TrueVow product must deserialize the same 18-field EventEnvelope and compute the same HMAC over the exact raw fixture. Tests at ...
   _by Admin - 2026-07-31_
 
-## bug (45)
+## bug (50)
 
+- **[10] F1 FALSE representation commit from 'engineers'** - Call #3: 'I spoke to a couple of engineers.' -> extractor consulted_phrases includes 'spoke to' -> representation.status=consulted_only committed (0.85, deterministic, validator passed). FALSE LEGAL-SAFETY FACT (engineers != attorneys). None of the 'retained' policy triggered this time, but false fa...
+  _by Admin - 2026-08-14_
 - **[10] Engine: ca_police/medical loop + email empty + jurisdiction hardcode** - Three critical bugs from Aug 1 call: (1) ca_police and ca_medical_treatment nodes cycle infinitely on 'no' answers — the ca workflow ladder has a next-pointer loop. (2) Email verify prompt shows empty '{contact_email}' — email extraction stores raw text instead of parsed email address. (3) conflict_...
   _by Admin - 2026-08-01_
 - **[10] D3 Fixed: Global Secret Fallback Removed** - RETAINER webhook_signature.py: sign_request() no longer falls back to settings.service_api_key. _resolve_secret() no longer falls back to TRUEVOW_WEBHOOK_SECONDARY_KEYS universal pool. deps.py: legacy bearer validates against per-link keys only. Each key resolved strictly from WEBHOOK_KEY_<KEY_ID> e...
@@ -1006,6 +1022,8 @@
   _by Admin - 2026-07-07_
 - **[10] Gitignore Source-Leak FIXED — All 6 services** - All 6 affected services now have anchored .gitignore patterns. lib/, env/, venv/, build/, dist/ now use leading / to prevent accidental source file hiding. Leaked PowerShell commands removed from FM, Billing, and LEVERAGE. SETTLE test_db_conn.py and recover_pyc.py anchored to root only. Internal Ops...
   _by Admin - 2026-07-01_
+- **[9] F5+F6 same-class extraction defects** - F5 HIGH: conflict.other_party is TEXT; deterministic extractor cannot fill it and deployed SG bridge wires llm_interpreter=None -> obtain_conflict_party never satisfied -> conversation stalls at conflict question indefinitely (why call #3 looped). F6 MEDIUM: ENUM keyword rule commits collision.type=...
+  _by Admin - 2026-08-14_
 - **[9] D6 FIXED: TRACE now uses milliseconds (commit b74d83c)** - TRACE timestamp verification updated from seconds to milliseconds, matching frozen WebhookSignature v1.0 contract. SaaS Admin Date.now() (ms) and TRACE time.time() * 1000 (ms) will produce identical canonical signing strings. Owner: yasha.
   _by Admin - 2026-07-31_
 - **[9] D5 FIXED: SaaS Admin activation routes now use HMAC (commit 56720be)** - Both POST /api/v1/matters/activate and GET /api/v1/matters/resolve-config now use HMAC WebhookSignature v1.0, not Clerk withAuth. Allowed keys: tv-retainer-to-saas-admin-*. Idempotency: command_id replay returns prior result. Raw body verified before JSON.parse. 68/68 tests pass, 17/17 golden fixtur...
@@ -1026,6 +1044,12 @@
   _by Admin - 2026-07-31_
 - **[9] contact_info_sequence dropped phone+email** - Root cause: routing INTO a sequence node used _execute_node, which returned the sequence's own intro prompt and left current_node=contact_info_sequence WITHOUT priming the first sub-node. Next turn the C10 terminal guard (workflow_engine.py:518) saw no next/branches/options and returned _build_compl...
   _by Admin - 2026-07-14_
+- **[8] lk update-secrets comma parsing trap** - lk agent update-secrets --secrets 'A=true,B=...' parses as ONE key-value pair (A='true,B=...'), NOT two. Setting ALLOW_DEPLOYMENT_TENANT_FALLBACK this way produced a garbage value -> falsy -> fallback disabled -> 400s. Always use separate --secrets flags per pair.
+  _by Admin - 2026-08-13_
+- **[8] R5 llm_node messages() root cause** - Call #2 silent turns root-caused: ChatContext.messages is a METHOD in livekit-agents 1.6.6 AND 1.6.9 (not a property). TrueVowSchemaGoalAgent.llm_node iterates chat_ctx.messages -> TypeError 'method' object is not iterable -> _llm_inference_task dies instantly -> silent turns (49ms/29ms thinking, ze...
+  _by Admin - 2026-08-13_
+- **[8] R4 dispatch metadata defect PROVEN** - Call #2 RM_wW2de9zcqxYk: bootstrap 400 (3ms) = tenant_id absent from console dispatch metadata. Proof by controlled variables: same agent om4pvetdLoWH + same secrets + same tenant passed Smoke C (CLI dispatch WITH tenant_id) minutes earlier; bridge_type is code constant, conversation_core proven sch...
+  _by Admin - 2026-08-13_
 - **[8] 04D-STT: 44.65s Deepgram usage, 0 transcripts** - Evidence: intelligible recording + Deepgram 44.65s usage + zero user_input_transcribed (interim AND final) + zero SpeechStarted VAD events. 44.65s WS lifetime proves send+recv loops alive - Deepgram heard nothing intelligible or returned nothing. Top hypothesis: agent-subscribed track != recording a...
   _by Admin - 2026-08-13_
 - **[8] 04C forensics: LiveKit say(None) TypeError** - Root cause: on_enter() passes None to session.say when prime_workflow returns None (greeting resolution GREETING_TEXT empty + engine greeting None). LiveKit 1.6.6 _tts_task_impl leaves text_source=None -> default transcription_node gets None -> TypeError in _text_forwarding_task. Trigger: tenant ret...
@@ -1077,7 +1101,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (253)
+## context (262)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1099,6 +1123,8 @@
   _by Admin - 2026-08-11_
 - **[9] G10 Canary Status** - Lead 1763aee9-52ca-4418-abb8-a60e7f90d847 at HANDOFF_PENDING. T020 passed, T022 passed. Handoff to SaaS Admin deployed and ready for retry. SaaS Admin webhook at truevow-saas-admin-staging.fly.dev with HMAC key tv-sales-ops-to-saas-admin-v1. PIPELINE_SECRET and TRUEVOW_DEPLOYMENT_ENV=staging set.
   _by Admin - 2026-08-10_
+- **[8] Call #3 REAL SG PIPELINE PASS** - Human call 2026-08-14 05:25Z: core greeting audible, 7+ real multi-turns, /process per turn (llmNodeTtft 0.30-0.40s), Cartesia audible (ttfb 0.11-0.12s, e2e 1.9-3.9s), pin 5138d957-73c8-565c-9851-c37838d40b93 v1.0.0. REAL_WEBRTC/STT/SCHEMA_GOAL/TTS/MULTI_TURN all PASS. Core-quality observations: con...
+  _by Admin - 2026-08-14_
 - **[8] STT-1 PASS + shutdown fix** - STT-1 human diag: PASS. REAL_STT_DEEPGRAM=PASS (10 interim, 6 final, text match). First-call zero-transcripts NOT REPRODUCED - no STT stack changes. STT-DIAG-SHUTDOWN-01: livekit-agents 1.6.9 job.py:536-539 awaits zero-arg shutdown callbacks -> lambdas returning None = TypeError; fixed with async ca...
   _by Admin - 2026-08-13_
 - **[8] 04D1 deployed versions** - LiveKit agent CA_UxWtcHqLEUTp version r2KRVtRsyJw9 (16:12:47Z 2026-08-13) from deploy/livekit/agent.py sha256 4d287f11001d07fb88fd580d5307f2fd0d1af0c7570642fd391d3bb3305c1023. Tenant truevow-tenant-public Fly redeployed same session. Secret STT_DIAGNOSTIC=true active - next human test is STT-1; must...
@@ -1135,6 +1161,16 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: INTAKE: 04G amendment frozen per CTO directive | outcome: obtain_conflict_party removed from Schema/** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: 04G amendment frozen per CTO directive | outcome: obtain_conflict_party removed from Schema/Goal standard goal set, OPI responsible.party conditional, grading split recorded, checksum 7a7b0495 v1.1....
+  _by user - 2026-08-14_
+- **[7] [DONE] DONE: INTAKE: 04F forensics complete (read-only) | outcome: replayed exact call through deterministic core** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: 04F forensics complete (read-only) | outcome: replayed exact call through deterministic core - every response reproduced; CONFIRMED F1 HIGH false representation commit (spoke to engineers -> represe...
+  _by user - 2026-08-14_
+- **[7] [DONE] DONE: INTAKE: HUMAN CALL #3 = REAL SCHEMA/GOAL PIPELINE PASS | outcome: full chain executed - core greetin** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: HUMAN CALL #3 = REAL SCHEMA/GOAL PIPELINE PASS | outcome: full chain executed - core greeting (bootstrap say path), 7+ turns each /process->GoalRuntime->ResponseIntent->Cartesia audible; pin 5138d95...
+  _by user - 2026-08-14_
+- **[7] [DONE] DONE: INTAKE: 04E formal authorization absorbed - already deployed, acceptance completed | outcome: real-1** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: 04E formal authorization absorbed - already deployed, acceptance completed | outcome: real-1.6.9-ChatContext acceptance scripts/verify_04e_169.py 15/15 PASS (llm_node /process exactly once, correct ...
+  _by user - 2026-08-14_
+- **[7] [DONE] DONE: INTAKE: 04E executed | outcome: R4 deployment tenant fallback (metadata > fallback > fail-closed, in** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: 04E executed | outcome: R4 deployment tenant fallback (metadata > fallback > fail-closed, invalid-never-substituted) + R5 fail-closed lifecycle (unavailable once -> wait_for_playout -> aclose) + sil...
+  _by user - 2026-08-13_
 - **[7] [DONE] DONE: INTAKE: 04D FINAL PASS recorded | outcome: CTO upgraded 04D CONDITIONAL_PASS -> PASS (code, cloud de** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: 04D FINAL PASS recorded | outcome: CTO upgraded 04D CONDITIONAL_PASS -> PASS (code, cloud deploy om4pvetdLoWH, bootstrap, pin, authority boundary, STT diag, shutdown CLOSED); STT anomaly = NOT_REPRO...
   _by user - 2026-08-13_
 - **[7] [DONE] DONE: INTAKE: STT-1 PASS recorded + shutdown defect fixed + real pipeline armed | outcome: STT-1 human tes** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: STT-1 PASS recorded + shutdown defect fixed + real pipeline armed | outcome: STT-1 human test PASS (10 interims/6 finals, text matches) -> REAL_STT_DEEPGRAM PASS, first-call zero-transcript NOT REPR...
@@ -1441,6 +1477,12 @@
   _by user - 2026-06-25_
 - **[6] Documentation Status: TrueVow_Documentation is Stale** - TrueVow_Documentation/ contains older documentation (Word docs, markdown exports) including TrueVow_PRD.md, Complete System Technical Documentation, Financial Management guides, and Billing Service updates. These are outdated - they reflect the old architecture with DRAFT naming, CONNECT active, and...
   _by user - 2026-06-25_
+- **[5] [ACTIVE] BLOCKED: INTAKE: 04G core repair DONE (F1-F4), deploy BLOCKED | outcome: 04G 19/19 + deterministic 219 + REAL** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "blocked", "status": "ACTIVE", "message": "INTAKE: 04G core repair DONE (F1-F4), deploy BLOCKED | outcome: 04G 19/19 + deterministic 219 + REAL_DB 17 all green; replay proves T1 no->none, T2 engineers->0 candidates, T3 control ack; new findings...
+  _by user - 2026-08-14_
+- **[5] [ACTIVE] BLOCKED: INTAKE: R5 root-caused + reproduced | attempted: forensic return for call #2 - (1) greeting fail-clo** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "blocked", "status": "ACTIVE", "message": "INTAKE: R5 root-caused + reproduced | attempted: forensic return for call #2 - (1) greeting fail-closed = tenant_id absent (already proven, fix B ready), (2) silent turns root-caused: ChatContext.messa...
+  _by user - 2026-08-13_
+- **[5] [ACTIVE] BLOCKED: INTAKE: human call #2 fail-closed at bootstrap - tenant_id missing in console dispatch | attempted:** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "blocked", "status": "ACTIVE", "message": "INTAKE: human call #2 fail-closed at bootstrap - tenant_id missing in console dispatch | attempted: pulled tenant logs (PROOF: single POST /bootstrap -> 400 3ms @17:11:27Z, zero /process) | need: (1) a...
+  _by user - 2026-08-13_
 - **[5] Dispatch: review this code** - Dispatched to skill='code-review' phase='review' personas=['code-reviewer'] tool=
   _by Admin - 2026-08-13_
 - **[5] Dispatch: write tests for this feature** - Dispatched to skill='tdd' phase='verify' personas=['test-engineer'] tool=
@@ -1586,7 +1628,7 @@
 - **[4] [ACTIVE] START: Orchestrator CTO: monitoring all 19 services, building reporting dashboard** - {"agent_id": "orchestrator", "action": "start", "status": "ACTIVE", "message": "Orchestrator CTO: monitoring all 19 services, building reporting dashboard", "timestamp": "2026-06-25T02:06:16.484425+00:00", "working_dir": "C:\\Users\\yasha\\OneDrive\\Documents\\TrueVow\\Cursor"}
   _by user - 2026-06-25_
 
-## todo (19)
+## todo (20)
 
 - **[10] TV-INTAKE-BENJAMIN-VNEXT-E2E-QUALIFICATION-01** - Independent QA qualification work order for INTAKE. 28 sections covering: config resolution, two-tenant isolation, CA/OPI E2E journeys, conflict/represented, emergency, barge-in, LLM provider proof (real vs deterministic fallback), effects, success-language truth, session termination, legacy fallbac...
   _by Admin - 2026-08-12_
@@ -1614,6 +1656,8 @@
   _by user - 2026-06-25_
 - **[7] Resolve SEND_WELCOME_COMMUNICATION Ownership** - SaaS Admin seeding SEND_WELCOME_COMMUNICATION command to SendGrid conflicts with CSM owning welcome/onboarding communications. Need exactly one owner. Options: SaaS Admin owns platform/account invitation, CSM owns customer-success welcome. Or rename commands to make responsibility explicit. Currentl...
   _by Admin - 2026-08-10_
+- **[5] Core-owner 04G repair backlog: F6 extractor false-commits (collision.type=other from 'other driver'; adverse-name assigned to CALLER); optional tenant conflict-screening policy path; v1.1.0 republish needs CTO authorization; 5 workflow_engine test failures pre-existing from uncommitted oakwood_law_firm dir move.** - --importance
+  _by Admin - 2026-08-14_
 - **[5] Phase 5: Remaining ungoverned pipeline_stage writes** - 26+ legacy pipeline_stage write sites identified. Most go through leadsRepo.update() which auto-translates. Remaining direct supabaseAdmin writes: lead-promotion-service (waitlist path unmapped), test-call-service.ts, demos/request/route.ts, demos/book-discovery/route.ts (lead create). Also onboardi...
   _by Admin - 2026-08-03_
 - **[1] FIXED: gitignore source-leak: Tenant App** - FIXED July 1.
