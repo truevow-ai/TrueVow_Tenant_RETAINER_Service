@@ -3,8 +3,8 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-14T16:46:06.651936+00:00
-- Total memories: 558
+- Generated: 2026-08-14T17:17:44.414722+00:00
+- Total memories: 560
 
 ## High-importance decisions (8+, routine noise excluded) - 278
 
@@ -809,7 +809,7 @@
 - **[6] xai_cloud bridge test suite** - Created tests/test_xai_cloud_bridge.py (34 tests) for XaiCloudBridge. Mirrors test_xai_bridge.py but adapts for cloud bridge: dual registration (xai_cloud + xai_cloud_voice_agent), default voice rex (male-only), end_session returns {bridge,session_id,status} without had_audio, double-start early-ret...
   _by Admin - 2026-07-08_
 
-## decision (81)
+## decision (82)
 
 - **[10] CTO Orchestrator QA Mandate Permanent** - Permanent CTO Orchestrator QA instruction set saved at TrueVow_CTO_Knowledge_Orchestrator/CTO-ORCHESTRATOR-QA-MANDATE.md. 57 sections: verify/challenge/reconcile/classify/gate. Hard invariants (LLM zero authority, bridge zero business authority), evidence classification (STATIC..PRODUCTION), never e...
   _by Admin - 2026-08-13_
@@ -969,6 +969,8 @@
   _by user - 2026-06-25_
 - **[7] Website Copy - No Payment Before Trial** - FAQ clarification: No payment collected on application page. Trial activates automatically after onboarding. Customer chooses paid plan from Portal during trial. Remaining trial continues unchanged. Paid plan begins automatically when trial ends. Customer does not need to choose a paid plan before s...
   _by Admin - 2026-08-10_
+- **[5] Retirement-05 refinements frozen: curated freeze commit (explicit include manifest, no git add -A), 3-commit execution A(debris)/B(voice orchestration + agent consolidation)/C(engine retirement), negative architectural tests as permanent CI invariants post-C. 90 uncommitted entries classified UNKNOWN=0. Import proof: livekit lifecycle/output/session/turn adapters are vNext-coupled with zero canonical importers. practice_module_loader kept (tenant_config_schema importer). Rollback = immutable image, not source commit completeness.** - --importance
+  _by Admin - 2026-08-14_
 - **[5] Legacy retirement authorized as the very next gate AFTER the bounded human retest (before full CA/OPI/emergency, before G13). Single-path target: 1 core (Schema/Goal), 1 LiveKit agent source, 1 tenant resolution, no Oakwood/demo/config fallbacks, no runtime core selector. Rollback = immutable image/Git tag, not cohabiting engines. vNext tagged/frozen then removed; its 113-test suite stops being a release gate. 129-node FSM kept only as semantic oracle fixture.** - --importance
   _by Admin - 2026-08-14_
 - **[4] All 18 Active Services Wired to Ecosystem + 1 Archived** - 18 of 18 active TrueVow services wired with AGENTS.md + ecosystem integration. 1 archived: CONNECT (decommissioned June 2026, no longer on TrueVow agenda). Every agent opening any active service reads ecosystem preamble: check in with CTO orchestrator, dispatch tasks, remember decisions, report stat...
@@ -1109,7 +1111,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (270)
+## context (271)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1171,6 +1173,8 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: INTAKE: Retirement-05 curated freeze manifest + classification complete | outcome: all 90 uncommitte** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: Retirement-05 curated freeze manifest + classification complete | outcome: all 90 uncommitted entries classified (UNKNOWN=0); freeze manifest with explicit include/exclude; 3-commit A/B/C sequence; ...
+  _by user - 2026-08-14_
 - **[7] [DONE] DONE: INTAKE: LEGACY-RETIREMENT-05 read-only plan complete | outcome: 32-section plan with per-item reacha** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: LEGACY-RETIREMENT-05 read-only plan complete | outcome: 32-section plan with per-item reachability proofs; source-of-truth HEAD c96e9f6f 2449 tracked 90 uncommitted; secrets tracked = 0; stray C:/ s...
   _by user - 2026-08-14_
 - **[7] [DONE] DONE: INTAKE: hold state — human retest card issued, legacy retirement pre-staged read-only | outcome: ret** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: hold state \u2014 human retest card issued, legacy retirement pre-staged read-only | outcome: retest card with pass criteria + evidence grid; reachability inventory complete (3 cores registered, 17+...
