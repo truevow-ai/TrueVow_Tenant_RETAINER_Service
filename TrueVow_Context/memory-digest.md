@@ -3,8 +3,8 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-14T21:29:17.486551+00:00
-- Total memories: 566
+- Generated: 2026-08-14T23:18:38.832103+00:00
+- Total memories: 568
 
 ## High-importance decisions (8+, routine noise excluded) - 278
 
@@ -1012,7 +1012,7 @@
 - **[8] Golden Fixture Cross-Repository Testing** - Created app/shared/contracts.py with frozen contract versions and deterministic golden fixture (make_golden_envelope, make_golden_fixture_json, compute_golden_hmac). Every TrueVow product must deserialize the same 18-field EventEnvelope and compute the same HMAC over the exact raw fixture. Tests at ...
   _by Admin - 2026-07-31_
 
-## bug (50)
+## bug (51)
 
 - **[10] F1 FALSE representation commit from 'engineers'** - Call #3: 'I spoke to a couple of engineers.' -> extractor consulted_phrases includes 'spoke to' -> representation.status=consulted_only committed (0.85, deterministic, validator passed). FALSE LEGAL-SAFETY FACT (engineers != attorneys). None of the 'retained' policy triggered this time, but false fa...
   _by Admin - 2026-08-14_
@@ -1112,10 +1112,12 @@
   _by user - 2026-06-25_
 - **[6] vNext E2E QA - TEST DEFECTS x2** - 1) Oakwood scanner flags comment in config_resolver.py (not code). 2) Legacy-import scanner includes its own test file which contains 'intake_engine'/'workflow_engine' assertion strings. Both scanners need exclusions.
   _by Admin - 2026-08-12_
+- **[5] HUMAN RETEST 2026-08-15: CONDITIONAL. Real chain PASS (WebRTC/STT 84-100%/TTS/schema_goal route/one-question-per-turn/zero false commits). Two reproduced extractor divergences: (1) elliptical bare negation 'No. I have not.' not recognized - F3 fullmatch requires 'hired any(one|body)' - rep question repeated; (2) 'My first name is X' not captured - phrase regex only matches 'my name is' - 4 name attempts 4 repeats. Scripted 04J sentences not exercised (caller answered naturally). Retirement A/B/C NOT AUTHORIZED. 04K repair recommended: elliptical negation family + first/last-name phrases.** - --importance
+  _by Admin - 2026-08-14_
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (274)
+## context (275)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1177,6 +1179,8 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: INTAKE: human retest verdict recorded | outcome: real-time chain PASS (WebRTC/STT/TTS/schema_goal/te** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: human retest verdict recorded | outcome: real-time chain PASS (WebRTC/STT/TTS/schema_goal/tenant truevow-production v1.1.0 pinned), semantics FAIL on 2 reproduced divergences (elliptical 'No. I have...
+  _by user - 2026-08-14_
 - **[7] [DONE] DONE: INTAKE: pre-call hygiene complete | outcome: replay session explicitly closed (DELETE endpoint, no r** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: pre-call hygiene complete | outcome: replay session explicitly closed (DELETE endpoint, no restart/ redeploy), active_sessions=0, DB connected, image 01M00TT7CDN3 verified, config v1.1.0/7a7b0495 | ...
   _by user - 2026-08-14_
 - **[7] [DONE] DONE: INTAKE: 04J bounded extractor repair complete | outcome: both pre-flight defects reproduced, root-ca** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: 04J bounded extractor repair complete | outcome: both pre-flight defects reproduced, root-caused, repaired; 19/19 04J regressions; 136+18+99+101 suites green; deployed tenant image 01M00TT7CDN3 with...
