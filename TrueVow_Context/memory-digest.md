@@ -3,8 +3,8 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-14T19:13:17.765926+00:00
-- Total memories: 564
+- Generated: 2026-08-14T21:29:17.486551+00:00
+- Total memories: 566
 
 ## High-importance decisions (8+, routine noise excluded) - 278
 
@@ -1115,7 +1115,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (273)
+## context (274)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1177,6 +1177,8 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: INTAKE: pre-call hygiene complete | outcome: replay session explicitly closed (DELETE endpoint, no r** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: pre-call hygiene complete | outcome: replay session explicitly closed (DELETE endpoint, no restart/ redeploy), active_sessions=0, DB connected, image 01M00TT7CDN3 verified, config v1.1.0/7a7b0495 | ...
+  _by user - 2026-08-14_
 - **[7] [DONE] DONE: INTAKE: 04J bounded extractor repair complete | outcome: both pre-flight defects reproduced, root-ca** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: 04J bounded extractor repair complete | outcome: both pre-flight defects reproduced, root-caused, repaired; 19/19 04J regressions; 136+18+99+101 suites green; deployed tenant image 01M00TT7CDN3 with...
   _by user - 2026-08-14_
 - **[7] [DONE] DONE: INTAKE: v1.2 conversation experience principles frozen | outcome: spec doc with consent-first bounde** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: v1.2 conversation experience principles frozen | outcome: spec doc with consent-first bounded narrative, early hard gates, trust funnel, ConversationLoadProfile, experience policy layer, metrics, 20...
@@ -1664,7 +1666,7 @@
 - **[4] [ACTIVE] START: Orchestrator CTO: monitoring all 19 services, building reporting dashboard** - {"agent_id": "orchestrator", "action": "start", "status": "ACTIVE", "message": "Orchestrator CTO: monitoring all 19 services, building reporting dashboard", "timestamp": "2026-06-25T02:06:16.484425+00:00", "working_dir": "C:\\Users\\yasha\\OneDrive\\Documents\\TrueVow\\Cursor"}
   _by user - 2026-06-25_
 
-## todo (24)
+## todo (25)
 
 - **[10] TV-INTAKE-BENJAMIN-VNEXT-E2E-QUALIFICATION-01** - Independent QA qualification work order for INTAKE. 28 sections covering: config resolution, two-tenant isolation, CA/OPI E2E journeys, conflict/represented, emergency, barge-in, LLM provider proof (real vs deterministic fallback), effects, success-language truth, session termination, legacy fallbac...
   _by Admin - 2026-08-12_
@@ -1692,6 +1694,8 @@
   _by user - 2026-06-25_
 - **[7] Resolve SEND_WELCOME_COMMUNICATION Ownership** - SaaS Admin seeding SEND_WELCOME_COMMUNICATION command to SendGrid conflicts with CSM owning welcome/onboarding communications. Need exactly one owner. Options: SaaS Admin owns platform/account invitation, CSM owns customer-success welcome. Or rename commands to make responsibility explicit. Currentl...
   _by Admin - 2026-08-10_
+- **[5] Pre-human-call hygiene DONE: replay session 12bc56a3 closed via DELETE session endpoint, active_sessions=0, DB connected, image 01M00TT7CDN3, config v1.1.0/7a7b0495. HUMAN CALL GO with difficult wording (3 turns + 1-2 natural). AFTER HUMAN PASS: execute curated freeze+tag then Retirement A-B-C directly, no planning round, stop only for dependency blockers.** - --importance
+  _by Admin - 2026-08-14_
 - **[5] LEGACY-RETIREMENT-05 plan complete (read-only): operations/audit/LEGACY_RETIREMENT_05_PLAN.md. Critical freeze fact: benjamin_goal + catalog + schema_goal bridge/tests are UNTRACKED in git - pre-retirement freeze MUST commit the known-good working tree (which built deployed image 01M00D7R6HN9) BEFORE tagging. Execution gated on bounded human retest PASS. After PASS: commit+tag freeze, execute 32-section plan, regression, redeploy, WebRTC sanity.** - --importance
   _by Admin - 2026-08-14_
 - **[5] LEGACY-RETIREMENT-05 plan complete (read-only): operations/audit/LEGACY_RETIREMENT_05_PLAN.md. Critical freeze fact: benjamin_goal + catalog + schema_goal bridge/tests are UNTRACKED in git — pre-retirement freeze MUST commit the known-good working tree (which built deployed image 01M00D7R6HN9) BEFORE tagging. Execution gated on bounded human retest PASS. After PASS: commit+tag freeze → execute 32-section plan → regression → redeploy → WebRTC sanity.** - --importance
