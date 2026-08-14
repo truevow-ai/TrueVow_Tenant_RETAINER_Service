@@ -3,8 +3,8 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-14T17:58:43.060329+00:00
-- Total memories: 562
+- Generated: 2026-08-14T19:13:17.765926+00:00
+- Total memories: 564
 
 ## High-importance decisions (8+, routine noise excluded) - 278
 
@@ -565,7 +565,7 @@
 - **[8][todo] FIX gitignore source-leak: TrueVow-Tenant_Billing-Service** - ASSIGNED to the TrueVow-Tenant_Billing-Service agent. Real lib/ source is currently hidden from git (confirmed). Run the playbook: TrueVow_SaaS_Administration_Service/docs/01-main/ECOSYSTEM_ADVISORY_GITIGNORE_SOURCE_LEAK.md (fix .gitignore: anchor/remove stray lib/ + logs/; secrets-scan; commit recovered source in reviewed batches by explicit path; verify clean-clone build). REPORT RESULT via memory.py remember category=bug title='TrueVow-Tenant_Billing-Service gitignore RESULT' content='FIXED n files | CLEAN | BLOCKED + reason; secrets found?'. NOTE: reporting.py agent-checkin is broken — report via memory.
   _by user - 2026-06-25 - tags: gitignore, todo, assigned_
 
-## architecture (108)
+## architecture (109)
 
 - **[10] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Li...
   _by Admin - 2026-08-12_
@@ -777,6 +777,8 @@
   _by user - 2026-06-25_
 - **[6] LedgerPoster seam boundary: do not swap GL route CRUD** - journal_entry_routes.py posting/reversal/draft paths already use get_ledger_poster() (lines 59/185/259). The 6 remaining JournalEntryService(db) sites only use entry_repo/line_repo, bulk_upsert_lines, and _validate_required_dimensions, which the LedgerPoster Protocol intentionally excludes. Do NOT r...
   _by user - 2026-06-25_
+- **[5] 04J bounded extractor repair PASS (local + deployed). Reproduced both defects first: representation 'did speak with lawyer...didn't hire or retain' committed none (present-tense consult gap); 'other driver had State Farm insurance' with identity expected committed caller=state/farm ('had' marker gap). Fixed: negated-consult invalidation, non-negated hired-her retention, anaphoric-one, name-pair sentence-structure guard + follow-block, insurance terminator. 19/19 04J tests incl. exact 3-turn replay. Provenance: extractor sha256 41a60c57bec5, tenant image 01M00TT7CDN3, config unchanged v1.1.0/7a7b0495. F6 discrepancy proven: local test never combined expected+had; smoke passed via first-pair ordering; untracked-source gap. Human retest GO with original wording.** - --importance
+  _by Admin - 2026-08-14_
 - **[5] Ops deploy + pre-human smoke PASS. FLY_TRUVEOW_GLOBAL_TECH is the tenant-app token (FLY_API_TOKEN different org — Ops note). truevow-tenant-public redeployed (image 01M00D7R6HN9) with F6+v1.1.0, /health DB connected. Deployed smoke explicit tenant truevow-production: bootstrap 200 ready v1.1.0/7a7b0495, correct greeting, F6 role-guard live-verified on 'other driver was John Smith' turn, one-request-per-turn throughout. Oakwood NOT reprovisioned (CTO decision) — human retest uses explicit tenant metadata.** - --importance
   _by Admin - 2026-08-14_
 - **[5] F6 repair + v1.1.0 republish gate COMPLETE. extractor.py commit guard: weak enum keywords require expected-context; name-pair gated on utterance-start/expected + attribution markers. 16/16 regressions. v1.1.0 published (file 99a8e599, semantic 7a7b0495, 26 facts/9 goals), v1.0.0 preserved. truevow-production provisioned via HMAC, bootstrap 200 ready. Oakwood fails closed until reprovision. Deterministic 216, REAL_DB 18, agent 101+3 pre-existing.** - --importance
@@ -1113,7 +1115,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (272)
+## context (273)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1175,6 +1177,8 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: INTAKE: 04J bounded extractor repair complete | outcome: both pre-flight defects reproduced, root-ca** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: 04J bounded extractor repair complete | outcome: both pre-flight defects reproduced, root-caused, repaired; 19/19 04J regressions; 136+18+99+101 suites green; deployed tenant image 01M00TT7CDN3 with...
+  _by user - 2026-08-14_
 - **[7] [DONE] DONE: INTAKE: v1.2 conversation experience principles frozen | outcome: spec doc with consent-first bounde** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: v1.2 conversation experience principles frozen | outcome: spec doc with consent-first bounded narrative, early hard gates, trust funnel, ConversationLoadProfile, experience policy layer, metrics, 20...
   _by user - 2026-08-14_
 - **[7] [DONE] DONE: INTAKE: Retirement-05 curated freeze manifest + classification complete | outcome: all 90 uncommitte** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: Retirement-05 curated freeze manifest + classification complete | outcome: all 90 uncommitted entries classified (UNKNOWN=0); freeze manifest with explicit include/exclude; 3-commit A/B/C sequence; ...
