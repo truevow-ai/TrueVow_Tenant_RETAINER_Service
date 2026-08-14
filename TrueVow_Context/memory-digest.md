@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-14T15:18:27.357117+00:00
-- Total memories: 549
+- Generated: 2026-08-14T16:24:46.070429+00:00
+- Total memories: 555
 
-## High-importance decisions (8+, routine noise excluded) - 277
+## High-importance decisions (8+, routine noise excluded) - 278
 
 - **[10][architecture] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Lifecycle shrinks to ~6 states (BOOTSTRAP/SCREENING/INTAKE/RESOLUTION/AWAITING_EFFECT/COMPLETE + HANDOFF/TERMINATED). LLM = conversation conductor within code-determined agenda; code = agenda authority. LiveKit = voice runtime only, TrueVow Core consumes provider-neutral CoreTurn. First Call Readiness Certificate requires all policy branches have outcomes + effect fallbacks; external integrations NOT required for first call. Prototype-first: challenger (Car Accident + OPI) vs current 22-state FSM, measure task completion/false commits/repeats/turns. SaaS Admin Builder implication: NOT a flowchart editor — firm configures facts, routing policy, destinations; previews generated sample conversations.
   _by Admin - 2026-08-12 - tags: -_
@@ -482,6 +482,8 @@
   _by Admin - 2026-07-08 - tags: -_
 - **[8][bug] gitignore source-leak ECOSYSTEM AUDIT results (June 25) — which repos still affected** - Audited all sibling git repos for the gitignore source-leak (advisory 64bc43bf). NONE have run the fix yet (advisory just issued). CONFIRMED UNFIXED SOURCE LEAKS (real lib/ source hidden from git): TrueVow_Financial_Management_Service (frontend/lib + frontend/__tests__/lib), TrueVow_Tenant_Application_Service (app/portal/lib, dograh server ui/src/lib, scripts/lib), TrueVow-Tenant_Billing-Service (ui/lib; ALSO its .gitignore has an embedded NULL/control byte — corrupted). LATENT (dangerous unanchored lib/ rule present but no active source leak yet): TrueVow_Internal_Ops_Service, TrueVow_Tenant_SETTLE-Service, TrueVow_Tenant_LEVERAGE_Service. NOT GIT REPOS AT ALL (no version control — separate severe issue): TrueVow_Dialogflow_Intake_Service, TrueVow_Platform_Analytics_Service, TrueVow_Tenant_VERIFY_Service, TrueVow_TWIML_SoftPhone_App. CLEAN: Website, Customer_Success_CORE, First_Line_Support, Sales_Ops, Tenant_CONNECT, Customer_Portal, cartesia_test. SaaS_Admin already fixed. Each affected repo agent: run docs/01-main/ECOSYSTEM_ADVISORY_GITIGNORE_SOURCE_LEAK.md (in SaaS Admin).
   _by user - 2026-06-25 - tags: gitignore, audit, ecosystem, cross-service_
+- **[8][context] R6 fix deployed PcFm5bmpNk75** - 04G-R6: fail-closed path now calls JobContext.shutdown via attach_job_shutdown (session aclose alone never terminated the job - call #4 lingered with 60s aclose timeout). Deployed agent PcFm5bmpNk75 16:01:30Z. Unit test proves shutdown callback invoked after wait_for_playout. Non-human room-level verification inconclusive from CLI (no job logs access; Fly auth expired). Definitive check = next real call logs or console view.
+  _by Admin - 2026-08-14 - tags: -_
 - **[8][context] Call #3 REAL SG PIPELINE PASS** - Human call 2026-08-14 05:25Z: core greeting audible, 7+ real multi-turns, /process per turn (llmNodeTtft 0.30-0.40s), Cartesia audible (ttfb 0.11-0.12s, e2e 1.9-3.9s), pin 5138d957-73c8-565c-9851-c37838d40b93 v1.0.0. REAL_WEBRTC/STT/SCHEMA_GOAL/TTS/MULTI_TURN all PASS. Core-quality observations: conductor combined question phrasing repeats verbatim (caller complaints), negation turn-1 extraction, no anti-repetition empathy - Core owner items.
   _by Admin - 2026-08-14 - tags: -_
 - **[8][context] STT-1 PASS + shutdown fix** - STT-1 human diag: PASS. REAL_STT_DEEPGRAM=PASS (10 interim, 6 final, text match). First-call zero-transcripts NOT REPRODUCED - no STT stack changes. STT-DIAG-SHUTDOWN-01: livekit-agents 1.6.9 job.py:536-539 awaits zero-arg shutdown callbacks -> lambdas returning None = TypeError; fixed with async callbacks. Agent om4pvetdLoWH, STT_DIAGNOSTIC=false. Frame hook 24kHz upstream of Deepgram 16k - ACTION NONE.
@@ -807,7 +809,7 @@
 - **[6] xai_cloud bridge test suite** - Created tests/test_xai_cloud_bridge.py (34 tests) for XaiCloudBridge. Mirrors test_xai_bridge.py but adapts for cloud bridge: dual registration (xai_cloud + xai_cloud_voice_agent), default voice rex (male-only), end_session returns {bridge,session_id,status} without had_audio, double-start early-ret...
   _by Admin - 2026-07-08_
 
-## decision (80)
+## decision (81)
 
 - **[10] CTO Orchestrator QA Mandate Permanent** - Permanent CTO Orchestrator QA instruction set saved at TrueVow_CTO_Knowledge_Orchestrator/CTO-ORCHESTRATOR-QA-MANDATE.md. 57 sections: verify/challenge/reconcile/classify/gate. Hard invariants (LLM zero authority, bridge zero business authority), evidence classification (STATIC..PRODUCTION), never e...
   _by Admin - 2026-08-13_
@@ -967,6 +969,8 @@
   _by user - 2026-06-25_
 - **[7] Website Copy - No Payment Before Trial** - FAQ clarification: No payment collected on application page. Trial activates automatically after onboarding. Customer chooses paid plan from Portal during trial. Remaining trial continues unchanged. Paid plan begins automatically when trial ends. Customer does not need to choose a paid plan before s...
   _by Admin - 2026-08-10_
+- **[5] Legacy retirement authorized as the very next gate AFTER the bounded human retest (before full CA/OPI/emergency, before G13). Single-path target: 1 core (Schema/Goal), 1 LiveKit agent source, 1 tenant resolution, no Oakwood/demo/config fallbacks, no runtime core selector. Rollback = immutable image/Git tag, not cohabiting engines. vNext tagged/frozen then removed; its 113-test suite stops being a release gate. 129-node FSM kept only as semantic oracle fixture.** - --importance
+  _by Admin - 2026-08-14_
 - **[4] All 18 Active Services Wired to Ecosystem + 1 Archived** - 18 of 18 active TrueVow services wired with AGENTS.md + ecosystem integration. 1 archived: CONNECT (decommissioned June 2026, no longer on TrueVow agenda). Every agent opening any active service reads ecosystem preamble: check in with CTO orchestrator, dispatch tasks, remember decisions, report stat...
   _by user - 2026-06-25_
 
@@ -1105,7 +1109,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (265)
+## context (269)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1127,6 +1131,8 @@
   _by Admin - 2026-08-11_
 - **[9] G10 Canary Status** - Lead 1763aee9-52ca-4418-abb8-a60e7f90d847 at HANDOFF_PENDING. T020 passed, T022 passed. Handoff to SaaS Admin deployed and ready for retry. SaaS Admin webhook at truevow-saas-admin-staging.fly.dev with HMAC key tv-sales-ops-to-saas-admin-v1. PIPELINE_SECRET and TRUEVOW_DEPLOYMENT_ENV=staging set.
   _by Admin - 2026-08-10_
+- **[8] R6 fix deployed PcFm5bmpNk75** - 04G-R6: fail-closed path now calls JobContext.shutdown via attach_job_shutdown (session aclose alone never terminated the job - call #4 lingered with 60s aclose timeout). Deployed agent PcFm5bmpNk75 16:01:30Z. Unit test proves shutdown callback invoked after wait_for_playout. Non-human room-level ve...
+  _by Admin - 2026-08-14_
 - **[8] Call #3 REAL SG PIPELINE PASS** - Human call 2026-08-14 05:25Z: core greeting audible, 7+ real multi-turns, /process per turn (llmNodeTtft 0.30-0.40s), Cartesia audible (ttfb 0.11-0.12s, e2e 1.9-3.9s), pin 5138d957-73c8-565c-9851-c37838d40b93 v1.0.0. REAL_WEBRTC/STT/SCHEMA_GOAL/TTS/MULTI_TURN all PASS. Core-quality observations: con...
   _by Admin - 2026-08-14_
 - **[8] STT-1 PASS + shutdown fix** - STT-1 human diag: PASS. REAL_STT_DEEPGRAM=PASS (10 interim, 6 final, text match). First-call zero-transcripts NOT REPRODUCED - no STT stack changes. STT-DIAG-SHUTDOWN-01: livekit-agents 1.6.9 job.py:536-539 awaits zero-arg shutdown callbacks -> lambdas returning None = TypeError; fixed with async ca...
@@ -1165,6 +1171,12 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: INTAKE: hold state — human retest card issued, legacy retirement pre-staged read-only | outcome: ret** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: hold state \u2014 human retest card issued, legacy retirement pre-staged read-only | outcome: retest card with pass criteria + evidence grid; reachability inventory complete (3 cores registered, 17+...
+  _by user - 2026-08-14_
+- **[7] [DONE] DONE: INTAKE: 04I dispatch/config correction PROVEN | outcome: DEPLOYMENT_DEFAULT_TENANT_ID -> truevow-pro** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: 04I dispatch/config correction PROVEN | outcome: DEPLOYMENT_DEFAULT_TENANT_ID -> truevow-production (canonical v1.1.0); TRACE log now shows resolved tenant; agent xdsLsUFiTXvH deployed; non-human co...
+  _by user - 2026-08-14_
+- **[7] [DONE] DONE: INTAKE: call #4 analyzed + R6 repaired | outcome: 422 = expected checksum fail-closed (Core republis** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: call #4 analyzed + R6 repaired | outcome: 422 = expected checksum fail-closed (Core republish pending); R4 fallback PASS; R5 close exposed R6 - aclose() inline in on_enter deadlocks (60s timeout, ag...
+  _by user - 2026-08-14_
 - **[7] [DONE] DONE: INTAKE: Ops Fly tenant deploy + pre-human smoke complete | outcome: tenant service redeployed (01M00** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: Ops Fly tenant deploy + pre-human smoke complete | outcome: tenant service redeployed (01M00D7R6HN9), /health DB connected, deployed smoke 200 ready v1.1.0/7a7b0495, F6 guard live-verified, zero fal...
   _by user - 2026-08-14_
 - **[7] [DONE] DONE: INTAKE: F6 repair + v1.1.0 republish gate executed per CTO authorization | outcome: extractor commit** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: F6 repair + v1.1.0 republish gate executed per CTO authorization | outcome: extractor commit guard (enum weak-keyword expected-gating + name-pair attribution gating) 16/16 regressions; v1.1.0 publis...
@@ -1638,7 +1650,7 @@
 - **[4] [ACTIVE] START: Orchestrator CTO: monitoring all 19 services, building reporting dashboard** - {"agent_id": "orchestrator", "action": "start", "status": "ACTIVE", "message": "Orchestrator CTO: monitoring all 19 services, building reporting dashboard", "timestamp": "2026-06-25T02:06:16.484425+00:00", "working_dir": "C:\\Users\\yasha\\OneDrive\\Documents\\TrueVow\\Cursor"}
   _by user - 2026-06-25_
 
-## todo (21)
+## todo (22)
 
 - **[10] TV-INTAKE-BENJAMIN-VNEXT-E2E-QUALIFICATION-01** - Independent QA qualification work order for INTAKE. 28 sections covering: config resolution, two-tenant isolation, CA/OPI E2E journeys, conflict/represented, emergency, barge-in, LLM provider proof (real vs deterministic fallback), effects, success-language truth, session termination, legacy fallbac...
   _by Admin - 2026-08-12_
@@ -1666,6 +1678,8 @@
   _by user - 2026-06-25_
 - **[7] Resolve SEND_WELCOME_COMMUNICATION Ownership** - SaaS Admin seeding SEND_WELCOME_COMMUNICATION command to SendGrid conflicts with CSM owning welcome/onboarding communications. Need exactly one owner. Options: SaaS Admin owns platform/account invitation, CSM owns customer-success welcome. Or rename commands to make responsibility explicit. Currentl...
   _by Admin - 2026-08-10_
+- **[5] Bounded human representation/control retest card ready (operations/audit/SCHEMA_GOAL_HUMAN_RETEST_CARD.md) — needs human with LiveKit console + tenant_id=truevow-production metadata. After PASS: execute LEGACY-RETIREMENT-05 per pre-staged inventory (operations/audit/LEGACY_RETIREMENT_05_INVENTORY.md).** - --importance
+  _by Admin - 2026-08-14_
 - **[5] Before human representation/control retest: (1) Ops Fly tenant deploy/auth, (2) decision on Oakwood reprovision to v1.1.0 (currently fails closed on 3c0c130b pin), (3) then bounded human retest. G13 HOLD, G14 HARD HOLD, production default NO.** - --importance
   _by Admin - 2026-08-14_
 - **[5] Core-owner 04G repair backlog: F6 extractor false-commits (collision.type=other from 'other driver'; adverse-name assigned to CALLER); optional tenant conflict-screening policy path; v1.1.0 republish needs CTO authorization; 5 workflow_engine test failures pre-existing from uncommitted oakwood_law_firm dir move.** - --importance
