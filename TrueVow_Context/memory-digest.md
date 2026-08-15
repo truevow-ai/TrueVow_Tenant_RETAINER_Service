@@ -3,8 +3,8 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-15T01:07:50.034297+00:00
-- Total memories: 576
+- Generated: 2026-08-15T02:18:13.787686+00:00
+- Total memories: 579
 
 ## High-importance decisions (8+, routine noise excluded) - 278
 
@@ -1014,7 +1014,7 @@
 - **[8] Golden Fixture Cross-Repository Testing** - Created app/shared/contracts.py with frozen contract versions and deterministic golden fixture (make_golden_envelope, make_golden_fixture_json, compute_golden_hmac). Every TrueVow product must deserialize the same 18-field EventEnvelope and compute the same HMAC over the exact raw fixture. Tests at ...
   _by Admin - 2026-07-31_
 
-## bug (53)
+## bug (54)
 
 - **[10] F1 FALSE representation commit from 'engineers'** - Call #3: 'I spoke to a couple of engineers.' -> extractor consulted_phrases includes 'spoke to' -> representation.status=consulted_only committed (0.85, deterministic, validator passed). FALSE LEGAL-SAFETY FACT (engineers != attorneys). None of the 'retained' policy triggered this time, but false fa...
   _by Admin - 2026-08-14_
@@ -1114,6 +1114,8 @@
   _by user - 2026-06-25_
 - **[6] vNext E2E QA - TEST DEFECTS x2** - 1) Oakwood scanner flags comment in config_resolver.py (not code). 2) Legacy-import scanner includes its own test file which contains 'intake_engine'/'workflow_engine' assertion strings. Both scanners need exclusions.
   _by Admin - 2026-08-12_
+- **[5] 04M bootstrap recovery PASS. 05:05 call failed closed pre-Core: console dispatch has no tenant metadata - agent used DEPLOYMENT_DEFAULT_TENANT_ID=Oakwood(4f797776) which has been fail-closed since the 04G catalog freeze (3c0c130b vs 7a7b0495) - 422 - static unavailable. Proven: 0 pin rows in call window; tenant-side direct bootstrap truevow-production = 200 ready v1.1.0 greeting. FIX: DEPLOYMENT_DEFAULT_TENANT_ID=truevow-production (overdue repoint; config only). Fail-closed behavior under failure = correct. Final human call GO.** - --importance
+  _by Admin - 2026-08-15_
 - **[5] Human confirmation call #2: CONDITIONAL. PASS: real chain, 04K-F3 live-verified ('My first name is Yashar Ulla.' captured), rep resolved by 'I have not retained any attorney.' FOUR new reproduced extractor gaps: D1 'Yes. I've spoken to a couple of attorneys.' repeats rep (participle 'spoken to' missing); D2 'I did not give you my last name.' ignored - false last_name persists; D3 'Last name is Afghan.' skipped (no re-statement override); D4 spelled phone digits + triple/double never captured - phone asked 3x. Proposed 04L bounded repair awaiting authorization.** - --importance
   _by Admin - 2026-08-15_
 - **[5] 04K human-semantics repair PASS. Three real-call defects root-caused: F1 elliptical negation 'No. I have not.' unbound; F2 'I spoke someone yesterday.' false incident.date via m3 regex matching 'someONE yesterday' substring; F3 'My first name is X' ignored (phrase regex gap). Repaired in extractor.py: negation family + anaphoric retention, date gate (expected/correction/event-anchor) + word boundaries, name phrases + bare single-word expected capture. 31/31 04K tests; 167/18 suites; deployed image 01M01APNYEKR replay with actual call utterances PASS. Next: short human confirmation call, then freeze + Retirement A-B-C.** - --importance
@@ -1123,7 +1125,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (280)
+## context (282)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1185,6 +1187,8 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: INTAKE: 04M bootstrap recovery complete | outcome: first divergence PROVEN (Oakwood deployment-defau** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: 04M bootstrap recovery complete | outcome: first divergence PROVEN (Oakwood deployment-default fail-closed post-04G), tenant side verified healthy (200 ready v1.1.0), agent default repointed to true...
+  _by user - 2026-08-15_
 - **[7] [DONE] DONE: INTAKE: 04L natural-speech closure complete | outcome: D1-D4 repaired, precedence contract frozen, N** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: 04L natural-speech closure complete | outcome: D1-D4 repaired, precedence contract frozen, NL battery 30/30, suites 223/18+18, deployed image 01M01F44E5Q8 exact call-#2 replay PASS | learned: secret...
   _by user - 2026-08-15_
 - **[7] [DONE] DONE: INTAKE: 04K human-confirmation preflight | outcome: replayed exact CTO script against current tree -** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: 04K human-confirmation preflight | outcome: replayed exact CTO script against current tree - T1 'spoke to someone yesterday' -> date UNSET + rep UNRESOLVED (re-ask, no false date ack); T2 'No. I hav...
@@ -1533,6 +1537,8 @@
   _by user - 2026-06-25_
 - **[6] Documentation Status: TrueVow_Documentation is Stale** - TrueVow_Documentation/ contains older documentation (Word docs, markdown exports) including TrueVow_PRD.md, Complete System Technical Documentation, Financial Management guides, and Billing Service updates. These are outdated - they reflect the old architecture with DRAFT naming, CONNECT active, and...
   _by user - 2026-06-25_
+- **[5] [ACTIVE] BLOCKED: INTAKE: 05:05Z call fail-closed - transient outage window | attempted: tenant curl NOW x4 = ready/v1** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "blocked", "status": "ACTIVE", "message": "INTAKE: 05:05Z call fail-closed - transient outage window | attempted: tenant curl NOW x4 = ready/v1.1.0 (healthy); DB shows two SUCCESSFUL bootstrap pins at 23:08Z and 00:04Z Aug 14 (prior calls) but ...
+  _by user - 2026-08-15_
 - **[5] INCIDENT: lk agent update-secrets --overwrite replaced the ENTIRE agent secret set (19 secrets removed) during Cartesia voice switch. Detected by re-listing, restored all 22 + new TTS_VOICE_ID from defaults.env + .env.local, verified 25 present. Lesson: NEVER use --overwrite on lk update-secrets; always verify the full secret list after every secrets operation. Voice test intent preserved: cartesia_plugin + 9fa83ce3 (empirically synthesizes HTTP 200).** - --importance
   _by Admin - 2026-08-15_
 - **[5] [ACTIVE] BLOCKED: INTAKE: 04G core repair DONE (F1-F4), deploy BLOCKED | outcome: 04G 19/19 + deterministic 219 + REAL** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "blocked", "status": "ACTIVE", "message": "INTAKE: 04G core repair DONE (F1-F4), deploy BLOCKED | outcome: 04G 19/19 + deterministic 219 + REAL_DB 17 all green; replay proves T1 no->none, T2 engineers->0 candidates, T3 control ack; new findings...
