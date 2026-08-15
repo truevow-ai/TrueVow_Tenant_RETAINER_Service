@@ -3,8 +3,8 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-14T23:50:02.198683+00:00
-- Total memories: 570
+- Generated: 2026-08-15T00:10:12.753150+00:00
+- Total memories: 572
 
 ## High-importance decisions (8+, routine noise excluded) - 278
 
@@ -1012,7 +1012,7 @@
 - **[8] Golden Fixture Cross-Repository Testing** - Created app/shared/contracts.py with frozen contract versions and deterministic golden fixture (make_golden_envelope, make_golden_fixture_json, compute_golden_hmac). Every TrueVow product must deserialize the same 18-field EventEnvelope and compute the same HMAC over the exact raw fixture. Tests at ...
   _by Admin - 2026-07-31_
 
-## bug (52)
+## bug (53)
 
 - **[10] F1 FALSE representation commit from 'engineers'** - Call #3: 'I spoke to a couple of engineers.' -> extractor consulted_phrases includes 'spoke to' -> representation.status=consulted_only committed (0.85, deterministic, validator passed). FALSE LEGAL-SAFETY FACT (engineers != attorneys). None of the 'retained' policy triggered this time, but false fa...
   _by Admin - 2026-08-14_
@@ -1112,6 +1112,8 @@
   _by user - 2026-06-25_
 - **[6] vNext E2E QA - TEST DEFECTS x2** - 1) Oakwood scanner flags comment in config_resolver.py (not code). 2) Legacy-import scanner includes its own test file which contains 'intake_engine'/'workflow_engine' assertion strings. Both scanners need exclusions.
   _by Admin - 2026-08-12_
+- **[5] Human confirmation call #2: CONDITIONAL. PASS: real chain, 04K-F3 live-verified ('My first name is Yashar Ulla.' captured), rep resolved by 'I have not retained any attorney.' FOUR new reproduced extractor gaps: D1 'Yes. I've spoken to a couple of attorneys.' repeats rep (participle 'spoken to' missing); D2 'I did not give you my last name.' ignored - false last_name persists; D3 'Last name is Afghan.' skipped (no re-statement override); D4 spelled phone digits + triple/double never captured - phone asked 3x. Proposed 04L bounded repair awaiting authorization.** - --importance
+  _by Admin - 2026-08-15_
 - **[5] 04K human-semantics repair PASS. Three real-call defects root-caused: F1 elliptical negation 'No. I have not.' unbound; F2 'I spoke someone yesterday.' false incident.date via m3 regex matching 'someONE yesterday' substring; F3 'My first name is X' ignored (phrase regex gap). Repaired in extractor.py: negation family + anaphoric retention, date gate (expected/correction/event-anchor) + word boundaries, name phrases + bare single-word expected capture. 31/31 04K tests; 167/18 suites; deployed image 01M01APNYEKR replay with actual call utterances PASS. Next: short human confirmation call, then freeze + Retirement A-B-C.** - --importance
   _by Admin - 2026-08-14_
 - **[5] HUMAN RETEST 2026-08-15: CONDITIONAL. Real chain PASS (WebRTC/STT 84-100%/TTS/schema_goal route/one-question-per-turn/zero false commits). Two reproduced extractor divergences: (1) elliptical bare negation 'No. I have not.' not recognized - F3 fullmatch requires 'hired any(one|body)' - rep question repeated; (2) 'My first name is X' not captured - phrase regex only matches 'my name is' - 4 name attempts 4 repeats. Scripted 04J sentences not exercised (caller answered naturally). Retirement A/B/C NOT AUTHORIZED. 04K repair recommended: elliptical negation family + first/last-name phrases.** - --importance
@@ -1119,7 +1121,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (276)
+## context (277)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1181,6 +1183,8 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: INTAKE: confirmation call #2 verdict recorded | outcome: real chain PASS + 04K-F3 live-confirmed; 4** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: confirmation call #2 verdict recorded | outcome: real chain PASS + 04K-F3 live-confirmed; 4 new natural-speech gaps reproduced (spoken-to participle, name retraction, re-statement override, spelled ...
+  _by user - 2026-08-15_
 - **[7] [DONE] DONE: INTAKE: 04K human-semantics repair complete | outcome: 3 call defects reproduced then fixed (ellipti** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: 04K human-semantics repair complete | outcome: 3 call defects reproduced then fixed (elliptical negation, false date via 'someONE yesterday' substring match, 'my first name is X' capture); 31/31 reg...
   _by user - 2026-08-14_
 - **[7] [DONE] DONE: INTAKE: human retest verdict recorded | outcome: real-time chain PASS (WebRTC/STT/TTS/schema_goal/te** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: human retest verdict recorded | outcome: real-time chain PASS (WebRTC/STT/TTS/schema_goal/tenant truevow-production v1.1.0 pinned), semantics FAIL on 2 reproduced divergences (elliptical 'No. I have...
