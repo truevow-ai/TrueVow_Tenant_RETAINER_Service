@@ -3,8 +3,8 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-15T13:02:36.553906+00:00
-- Total memories: 588
+- Generated: 2026-08-15T17:37:55.364449+00:00
+- Total memories: 590
 
 ## High-importance decisions (8+, routine noise excluded) - 278
 
@@ -565,7 +565,7 @@
 - **[8][todo] FIX gitignore source-leak: TrueVow-Tenant_Billing-Service** - ASSIGNED to the TrueVow-Tenant_Billing-Service agent. Real lib/ source is currently hidden from git (confirmed). Run the playbook: TrueVow_SaaS_Administration_Service/docs/01-main/ECOSYSTEM_ADVISORY_GITIGNORE_SOURCE_LEAK.md (fix .gitignore: anchor/remove stray lib/ + logs/; secrets-scan; commit recovered source in reviewed batches by explicit path; verify clean-clone build). REPORT RESULT via memory.py remember category=bug title='TrueVow-Tenant_Billing-Service gitignore RESULT' content='FIXED n files | CLEAN | BLOCKED + reason; secrets found?'. NOTE: reporting.py agent-checkin is broken — report via memory.
   _by user - 2026-06-25 - tags: gitignore, todo, assigned_
 
-## architecture (113)
+## architecture (114)
 
 - **[10] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Li...
   _by Admin - 2026-08-12_
@@ -777,6 +777,8 @@
   _by user - 2026-06-25_
 - **[6] LedgerPoster seam boundary: do not swap GL route CRUD** - journal_entry_routes.py posting/reversal/draft paths already use get_ledger_poster() (lines 59/185/259). The 6 remaining JournalEntryService(db) sites only use entry_repo/line_repo, bulk_upsert_lines, and _validate_required_dimensions, which the LedgerPoster Protocol intentionally excludes. Do NOT r...
   _by user - 2026-06-25_
+- **[5] 04O name-scope repair PASS - frozen rule: EXPLICIT LABEL > ACTIVE FIELD-SCOPED QUESTION > UNLABELED FULL-NAME HEURISTIC. Human audio acceptance = PASS (consulted_only, phone 9215551133, Yes-it-did bound, This-morning resolved). False-surname defect repaired (spelling binds active field). Tests 04O 11/11, 277/18, REAL_DB 18. Deployed image 01M037PFN exact replay clean. SHA chain verified (extractor 084e517e / v1.1.0 / 7a7b0495). CTO: NO further human gate - next: freeze/tag + Retirement A-B-C.** - --importance
+  _by Admin - 2026-08-15_
 - **[5] SIMULATION SEMANTIC SAFETY GATE = PASS (disposition-based, frozen ledger operations/audit/SIMULATION_SEMANTIC_SAFETY_GATE.md). 38 scenarios: 17 direct PASS, 0 CORE_DEFECT, 0 false facts, 0 authority violations, 20 JUDGE_ARTIFACT (sim judge hallucinates cross-field mix-ups - transcripts + deployed probes contradict), 1 SIM_CALLER_ARTIFACT, 1 CONVERSATION_UX (FAQ->Experience-06). Sim fixes G1-G3 + bare last-name + active-name-question gate deployed (image 01M02QBZ8YXS). Regressions: A21 B264 C32 D18 E99 F101+3pre. NEXT: one short 6-step human acceptance; on PASS: freeze tag + Retirement A-B-C.** - --importance
   _by Admin - 2026-08-15_
 - **[5] Simulation QA protocol ACTIVE: LiveKit Agent Simulations are Benjamin's synthetic-caller QA army (text mode; audio not yet available). Checked-in battery tests/simulation/schema_goal/scenarios.yaml (38 scenarios). Failure taxonomy: CORE_DEFECT / SIM_CALLER_ARTIFACT / JUDGE_ARTIFACT / CONVERSATION_UX / INFRA. Sim findings S1-S5 repaired (curly quotes, trailing-clause negatives, it's-X, hyphen in-state, phone restatement). Exit-coded regression: core 21, bridge 237/18, semantics 64, REAL_DB 18, vNext 99/14, agent 101+3-pre-existing. Deployed tenant image 01M021CS5HTB. Iterate sims to 0 semantic safety failures, then ONE human acceptance, then Retirement A-B-C.** - --importance
@@ -1133,7 +1135,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (287)
+## context (288)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1195,6 +1197,8 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: INTAKE: 04O complete + human acceptance PASS | outcome: name-scoping rule frozen and repaired, exact** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: 04O complete + human acceptance PASS | outcome: name-scoping rule frozen and repaired, exact transcript replays clean on deployed image 01M037PFN, SHA-image-checksum chain verified | learned: unlabe...
+  _by user - 2026-08-15_
 - **[7] [DONE] DONE: INTAKE: simulation semantic safety gate PASS | outcome: 38-scenario frozen ledger, release condition** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: simulation semantic safety gate PASS | outcome: 38-scenario frozen ledger, release conditions met (CORE_DEFECT=0, false facts=0, unclassified=0), judge-artifact mass identified via transcript/probe ...
   _by user - 2026-08-15_
 - **[7] [DONE] DONE: INTAKE: checkpoint commit | outcome: sim QA army standing (38-scenario battery), S1-S5 sim findings** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: checkpoint commit | outcome: sim QA army standing (38-scenario battery), S1-S5 sim findings repaired, exit-coded regressions green (21/237/64/18/99), tenant deployed 01M021CS5HTB, smoke clean | lear...
