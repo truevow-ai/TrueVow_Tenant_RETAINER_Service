@@ -3,8 +3,8 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-15T02:18:13.787686+00:00
-- Total memories: 579
+- Generated: 2026-08-15T02:53:42.354734+00:00
+- Total memories: 581
 
 ## High-importance decisions (8+, routine noise excluded) - 278
 
@@ -1125,7 +1125,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (282)
+## context (284)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1187,6 +1187,8 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: INTAKE: 04M closed | outcome: metadata-less simulate smoke PASS (2 pins truevow-production v1.1.0 +** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: 04M closed | outcome: metadata-less simulate smoke PASS (2 pins truevow-production v1.1.0 + greeting); record correction owned (my restore introduced Oakwood - pin evidence refutes latent-defect att...
+  _by user - 2026-08-15_
 - **[7] [DONE] DONE: INTAKE: 04M bootstrap recovery complete | outcome: first divergence PROVEN (Oakwood deployment-defau** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: 04M bootstrap recovery complete | outcome: first divergence PROVEN (Oakwood deployment-default fail-closed post-04G), tenant side verified healthy (200 ready v1.1.0), agent default repointed to true...
   _by user - 2026-08-15_
 - **[7] [DONE] DONE: INTAKE: 04L natural-speech closure complete | outcome: D1-D4 repaired, precedence contract frozen, N** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: 04L natural-speech closure complete | outcome: D1-D4 repaired, precedence contract frozen, NL battery 30/30, suites 223/18+18, deployed image 01M01F44E5Q8 exact call-#2 replay PASS | learned: secret...
@@ -1537,6 +1539,8 @@
   _by user - 2026-06-25_
 - **[6] Documentation Status: TrueVow_Documentation is Stale** - TrueVow_Documentation/ contains older documentation (Word docs, markdown exports) including TrueVow_PRD.md, Complete System Technical Documentation, Financial Management guides, and Billing Service updates. These are outdated - they reflect the old architecture with DRAFT naming, CONNECT active, and...
   _by user - 2026-06-25_
+- **[5] 04M CLOSED: metadata-less lk agent simulate smoke PASS - two jobs pinned truevow-production v1.1.0 + representation greeting, deployment-default repoint EFFECTIVE. RECORD CORRECTION (owned): pin evidence proves pre-wipe default WAS truevow-production (call #2 00:04Z pin; secret updated 08-14 16:08:59Z); my 00:27Z restore set Oakwood from stale SESSION_STATE and INTRODUCED the 05:05 regression - not a latent defect. NEW FINDING: curly apostrophe U+2019 in 'No, I haven't' misses the negation family (extractor strips only straight quotes) - 1-line normalization fix awaiting authorization.** - --importance
+  _by Admin - 2026-08-15_
 - **[5] [ACTIVE] BLOCKED: INTAKE: 05:05Z call fail-closed - transient outage window | attempted: tenant curl NOW x4 = ready/v1** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "blocked", "status": "ACTIVE", "message": "INTAKE: 05:05Z call fail-closed - transient outage window | attempted: tenant curl NOW x4 = ready/v1.1.0 (healthy); DB shows two SUCCESSFUL bootstrap pins at 23:08Z and 00:04Z Aug 14 (prior calls) but ...
   _by user - 2026-08-15_
 - **[5] INCIDENT: lk agent update-secrets --overwrite replaced the ENTIRE agent secret set (19 secrets removed) during Cartesia voice switch. Detected by re-listing, restored all 22 + new TTS_VOICE_ID from defaults.env + .env.local, verified 25 present. Lesson: NEVER use --overwrite on lk update-secrets; always verify the full secret list after every secrets operation. Voice test intent preserved: cartesia_plugin + 9fa83ce3 (empirically synthesizes HTTP 200).** - --importance
