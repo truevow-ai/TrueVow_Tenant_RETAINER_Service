@@ -3,8 +3,8 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-15T00:10:12.753150+00:00
-- Total memories: 572
+- Generated: 2026-08-15T01:07:50.034297+00:00
+- Total memories: 576
 
 ## High-importance decisions (8+, routine noise excluded) - 278
 
@@ -565,7 +565,7 @@
 - **[8][todo] FIX gitignore source-leak: TrueVow-Tenant_Billing-Service** - ASSIGNED to the TrueVow-Tenant_Billing-Service agent. Real lib/ source is currently hidden from git (confirmed). Run the playbook: TrueVow_SaaS_Administration_Service/docs/01-main/ECOSYSTEM_ADVISORY_GITIGNORE_SOURCE_LEAK.md (fix .gitignore: anchor/remove stray lib/ + logs/; secrets-scan; commit recovered source in reviewed batches by explicit path; verify clean-clone build). REPORT RESULT via memory.py remember category=bug title='TrueVow-Tenant_Billing-Service gitignore RESULT' content='FIXED n files | CLEAN | BLOCKED + reason; secrets found?'. NOTE: reporting.py agent-checkin is broken — report via memory.
   _by user - 2026-06-25 - tags: gitignore, todo, assigned_
 
-## architecture (109)
+## architecture (110)
 
 - **[10] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Li...
   _by Admin - 2026-08-12_
@@ -777,6 +777,8 @@
   _by user - 2026-06-25_
 - **[6] LedgerPoster seam boundary: do not swap GL route CRUD** - journal_entry_routes.py posting/reversal/draft paths already use get_ledger_poster() (lines 59/185/259). The 6 remaining JournalEntryService(db) sites only use entry_repo/line_repo, bulk_upsert_lines, and _validate_required_dimensions, which the LedgerPoster Protocol intentionally excludes. Do NOT r...
   _by user - 2026-06-25_
+- **[5] 04L natural-speech semantic closure PASS (local + deployed). D1 participle consult + proposition revision (consulted_only never downgraded by 'not retained'; 'I hired one of them' upgrades retained); D2 first-class retraction (detect_name_retraction + FactStore.retract SUPERSEDED with provenance); D3 explicit field label outranks heuristics ('My first name is Yashar Ulla.' -> first_name='yashar ulla', no false surname; unlabeled still splits); D4 spoken phone normalization (triple/double/word digits -> 9215551133). Interpretation precedence contract frozen (6 levels). NL adversarial battery 30/30. Suites 223/18 + REAL_DB 18. Deployed image 01M01F44E5Q8 exact call-#2 replay PASS.** - --importance
+  _by Admin - 2026-08-15_
 - **[5] 04J bounded extractor repair PASS (local + deployed). Reproduced both defects first: representation 'did speak with lawyer...didn't hire or retain' committed none (present-tense consult gap); 'other driver had State Farm insurance' with identity expected committed caller=state/farm ('had' marker gap). Fixed: negated-consult invalidation, non-negated hired-her retention, anaphoric-one, name-pair sentence-structure guard + follow-block, insurance terminator. 19/19 04J tests incl. exact 3-turn replay. Provenance: extractor sha256 41a60c57bec5, tenant image 01M00TT7CDN3, config unchanged v1.1.0/7a7b0495. F6 discrepancy proven: local test never combined expected+had; smoke passed via first-pair ordering; untracked-source gap. Human retest GO with original wording.** - --importance
   _by Admin - 2026-08-14_
 - **[5] Ops deploy + pre-human smoke PASS. FLY_TRUVEOW_GLOBAL_TECH is the tenant-app token (FLY_API_TOKEN different org — Ops note). truevow-tenant-public redeployed (image 01M00D7R6HN9) with F6+v1.1.0, /health DB connected. Deployed smoke explicit tenant truevow-production: bootstrap 200 ready v1.1.0/7a7b0495, correct greeting, F6 role-guard live-verified on 'other driver was John Smith' turn, one-request-per-turn throughout. Oakwood NOT reprovisioned (CTO decision) — human retest uses explicit tenant metadata.** - --importance
@@ -1121,7 +1123,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (277)
+## context (280)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1183,6 +1185,10 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: INTAKE: 04L natural-speech closure complete | outcome: D1-D4 repaired, precedence contract frozen, N** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: 04L natural-speech closure complete | outcome: D1-D4 repaired, precedence contract frozen, NL battery 30/30, suites 223/18+18, deployed image 01M01F44E5Q8 exact call-#2 replay PASS | learned: secret...
+  _by user - 2026-08-15_
+- **[7] [DONE] DONE: INTAKE: 04K human-confirmation preflight | outcome: replayed exact CTO script against current tree -** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: 04K human-confirmation preflight | outcome: replayed exact CTO script against current tree - T1 'spoke to someone yesterday' -> date UNSET + rep UNRESOLVED (re-ask, no false date ack); T2 'No. I hav...
+  _by user - 2026-08-15_
 - **[7] [DONE] DONE: INTAKE: confirmation call #2 verdict recorded | outcome: real chain PASS + 04K-F3 live-confirmed; 4** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: confirmation call #2 verdict recorded | outcome: real chain PASS + 04K-F3 live-confirmed; 4 new natural-speech gaps reproduced (spoken-to participle, name retraction, re-statement override, spelled ...
   _by user - 2026-08-15_
 - **[7] [DONE] DONE: INTAKE: 04K human-semantics repair complete | outcome: 3 call defects reproduced then fixed (ellipti** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: 04K human-semantics repair complete | outcome: 3 call defects reproduced then fixed (elliptical negation, false date via 'someONE yesterday' substring match, 'my first name is X' capture); 31/31 reg...
@@ -1527,6 +1533,8 @@
   _by user - 2026-06-25_
 - **[6] Documentation Status: TrueVow_Documentation is Stale** - TrueVow_Documentation/ contains older documentation (Word docs, markdown exports) including TrueVow_PRD.md, Complete System Technical Documentation, Financial Management guides, and Billing Service updates. These are outdated - they reflect the old architecture with DRAFT naming, CONNECT active, and...
   _by user - 2026-06-25_
+- **[5] INCIDENT: lk agent update-secrets --overwrite replaced the ENTIRE agent secret set (19 secrets removed) during Cartesia voice switch. Detected by re-listing, restored all 22 + new TTS_VOICE_ID from defaults.env + .env.local, verified 25 present. Lesson: NEVER use --overwrite on lk update-secrets; always verify the full secret list after every secrets operation. Voice test intent preserved: cartesia_plugin + 9fa83ce3 (empirically synthesizes HTTP 200).** - --importance
+  _by Admin - 2026-08-15_
 - **[5] [ACTIVE] BLOCKED: INTAKE: 04G core repair DONE (F1-F4), deploy BLOCKED | outcome: 04G 19/19 + deterministic 219 + REAL** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "blocked", "status": "ACTIVE", "message": "INTAKE: 04G core repair DONE (F1-F4), deploy BLOCKED | outcome: 04G 19/19 + deterministic 219 + REAL_DB 17 all green; replay proves T1 no->none, T2 engineers->0 candidates, T3 control ack; new findings...
   _by user - 2026-08-14_
 - **[5] [ACTIVE] BLOCKED: INTAKE: R5 root-caused + reproduced | attempted: forensic return for call #2 - (1) greeting fail-clo** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "blocked", "status": "ACTIVE", "message": "INTAKE: R5 root-caused + reproduced | attempted: forensic return for call #2 - (1) greeting fail-closed = tenant_id absent (already proven, fix B ready), (2) silent turns root-caused: ChatContext.messa...
