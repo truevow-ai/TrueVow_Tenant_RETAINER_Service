@@ -3,8 +3,8 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-15T03:33:55.683622+00:00
-- Total memories: 583
+- Generated: 2026-08-15T06:27:27.980276+00:00
+- Total memories: 585
 
 ## High-importance decisions (8+, routine noise excluded) - 278
 
@@ -565,7 +565,7 @@
 - **[8][todo] FIX gitignore source-leak: TrueVow-Tenant_Billing-Service** - ASSIGNED to the TrueVow-Tenant_Billing-Service agent. Real lib/ source is currently hidden from git (confirmed). Run the playbook: TrueVow_SaaS_Administration_Service/docs/01-main/ECOSYSTEM_ADVISORY_GITIGNORE_SOURCE_LEAK.md (fix .gitignore: anchor/remove stray lib/ + logs/; secrets-scan; commit recovered source in reviewed batches by explicit path; verify clean-clone build). REPORT RESULT via memory.py remember category=bug title='TrueVow-Tenant_Billing-Service gitignore RESULT' content='FIXED n files | CLEAN | BLOCKED + reason; secrets found?'. NOTE: reporting.py agent-checkin is broken — report via memory.
   _by user - 2026-06-25 - tags: gitignore, todo, assigned_
 
-## architecture (111)
+## architecture (112)
 
 - **[10] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Li...
   _by Admin - 2026-08-12_
@@ -777,6 +777,8 @@
   _by user - 2026-06-25_
 - **[6] LedgerPoster seam boundary: do not swap GL route CRUD** - journal_entry_routes.py posting/reversal/draft paths already use get_ledger_poster() (lines 59/185/259). The 6 remaining JournalEntryService(db) sites only use entry_repo/line_repo, bulk_upsert_lines, and _validate_required_dimensions, which the LedgerPoster Protocol intentionally excludes. Do NOT r...
   _by user - 2026-06-25_
+- **[5] Simulation QA protocol ACTIVE: LiveKit Agent Simulations are Benjamin's synthetic-caller QA army (text mode; audio not yet available). Checked-in battery tests/simulation/schema_goal/scenarios.yaml (38 scenarios). Failure taxonomy: CORE_DEFECT / SIM_CALLER_ARTIFACT / JUDGE_ARTIFACT / CONVERSATION_UX / INFRA. Sim findings S1-S5 repaired (curly quotes, trailing-clause negatives, it's-X, hyphen in-state, phone restatement). Exit-coded regression: core 21, bridge 237/18, semantics 64, REAL_DB 18, vNext 99/14, agent 101+3-pre-existing. Deployed tenant image 01M021CS5HTB. Iterate sims to 0 semantic safety failures, then ONE human acceptance, then Retirement A-B-C.** - --importance
+  _by Admin - 2026-08-15_
 - **[5] 04N generic semantic-class closure PASS (local + deployed). N1 loose 'I am X' identity expected-gated (reproduced caller.first_name='speaking' first; 'my name is X' stays strong anywhere). N2 representation participles speaking/talking/consulting + 'not hired' nonretain family. N3 generic active-goal boolean binding primitive (Yes./Yes it did./That's right -> true; No./No it didn't -> false; correction outranks). N4 generic location nouns rejected + session-injected reference_now for relative dates (This morning -> reference date). Tests 04N 19/19, battery 39/39, suites 242/18, REAL_DB 18. Deployed image 01M01QFTWZJ exact 6-turn replay CLEAN. One 6-step live confirmation next - on PASS: curated freeze + Retirement A-B-C.** - --importance
   _by Admin - 2026-08-15_
 - **[5] 04L natural-speech semantic closure PASS (local + deployed). D1 participle consult + proposition revision (consulted_only never downgraded by 'not retained'; 'I hired one of them' upgrades retained); D2 first-class retraction (detect_name_retraction + FactStore.retract SUPERSEDED with provenance); D3 explicit field label outranks heuristics ('My first name is Yashar Ulla.' -> first_name='yashar ulla', no false surname; unlabeled still splits); D4 spoken phone normalization (triple/double/word digits -> 9215551133). Interpretation precedence contract frozen (6 levels). NL adversarial battery 30/30. Suites 223/18 + REAL_DB 18. Deployed image 01M01F44E5Q8 exact call-#2 replay PASS.** - --importance
@@ -1127,7 +1129,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (285)
+## context (286)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1189,6 +1191,8 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: INTAKE: checkpoint commit | outcome: sim QA army standing (38-scenario battery), S1-S5 sim findings** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: checkpoint commit | outcome: sim QA army standing (38-scenario battery), S1-S5 sim findings repaired, exit-coded regressions green (21/237/64/18/99), tenant deployed 01M021CS5HTB, smoke clean | lear...
+  _by user - 2026-08-15_
 - **[7] [DONE] DONE: INTAKE: 04N generic semantic-class closure complete | outcome: 4 classes repaired (identity inferenc** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: 04N generic semantic-class closure complete | outcome: 4 classes repaired (identity inference, participle morphology, generic boolean binding, location/relative-date semantics); 19/19 + battery 39/3...
   _by user - 2026-08-15_
 - **[7] [DONE] DONE: INTAKE: 04M closed | outcome: metadata-less simulate smoke PASS (2 pins truevow-production v1.1.0 +** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: 04M closed | outcome: metadata-less simulate smoke PASS (2 pins truevow-production v1.1.0 + greeting); record correction owned (my restore introduced Oakwood - pin evidence refutes latent-defect att...
