@@ -3,8 +3,8 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-15T06:27:27.980276+00:00
-- Total memories: 585
+- Generated: 2026-08-15T13:02:36.553906+00:00
+- Total memories: 588
 
 ## High-importance decisions (8+, routine noise excluded) - 278
 
@@ -565,7 +565,7 @@
 - **[8][todo] FIX gitignore source-leak: TrueVow-Tenant_Billing-Service** - ASSIGNED to the TrueVow-Tenant_Billing-Service agent. Real lib/ source is currently hidden from git (confirmed). Run the playbook: TrueVow_SaaS_Administration_Service/docs/01-main/ECOSYSTEM_ADVISORY_GITIGNORE_SOURCE_LEAK.md (fix .gitignore: anchor/remove stray lib/ + logs/; secrets-scan; commit recovered source in reviewed batches by explicit path; verify clean-clone build). REPORT RESULT via memory.py remember category=bug title='TrueVow-Tenant_Billing-Service gitignore RESULT' content='FIXED n files | CLEAN | BLOCKED + reason; secrets found?'. NOTE: reporting.py agent-checkin is broken — report via memory.
   _by user - 2026-06-25 - tags: gitignore, todo, assigned_
 
-## architecture (112)
+## architecture (113)
 
 - **[10] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Li...
   _by Admin - 2026-08-12_
@@ -777,6 +777,8 @@
   _by user - 2026-06-25_
 - **[6] LedgerPoster seam boundary: do not swap GL route CRUD** - journal_entry_routes.py posting/reversal/draft paths already use get_ledger_poster() (lines 59/185/259). The 6 remaining JournalEntryService(db) sites only use entry_repo/line_repo, bulk_upsert_lines, and _validate_required_dimensions, which the LedgerPoster Protocol intentionally excludes. Do NOT r...
   _by user - 2026-06-25_
+- **[5] SIMULATION SEMANTIC SAFETY GATE = PASS (disposition-based, frozen ledger operations/audit/SIMULATION_SEMANTIC_SAFETY_GATE.md). 38 scenarios: 17 direct PASS, 0 CORE_DEFECT, 0 false facts, 0 authority violations, 20 JUDGE_ARTIFACT (sim judge hallucinates cross-field mix-ups - transcripts + deployed probes contradict), 1 SIM_CALLER_ARTIFACT, 1 CONVERSATION_UX (FAQ->Experience-06). Sim fixes G1-G3 + bare last-name + active-name-question gate deployed (image 01M02QBZ8YXS). Regressions: A21 B264 C32 D18 E99 F101+3pre. NEXT: one short 6-step human acceptance; on PASS: freeze tag + Retirement A-B-C.** - --importance
+  _by Admin - 2026-08-15_
 - **[5] Simulation QA protocol ACTIVE: LiveKit Agent Simulations are Benjamin's synthetic-caller QA army (text mode; audio not yet available). Checked-in battery tests/simulation/schema_goal/scenarios.yaml (38 scenarios). Failure taxonomy: CORE_DEFECT / SIM_CALLER_ARTIFACT / JUDGE_ARTIFACT / CONVERSATION_UX / INFRA. Sim findings S1-S5 repaired (curly quotes, trailing-clause negatives, it's-X, hyphen in-state, phone restatement). Exit-coded regression: core 21, bridge 237/18, semantics 64, REAL_DB 18, vNext 99/14, agent 101+3-pre-existing. Deployed tenant image 01M021CS5HTB. Iterate sims to 0 semantic safety failures, then ONE human acceptance, then Retirement A-B-C.** - --importance
   _by Admin - 2026-08-15_
 - **[5] 04N generic semantic-class closure PASS (local + deployed). N1 loose 'I am X' identity expected-gated (reproduced caller.first_name='speaking' first; 'my name is X' stays strong anywhere). N2 representation participles speaking/talking/consulting + 'not hired' nonretain family. N3 generic active-goal boolean binding primitive (Yes./Yes it did./That's right -> true; No./No it didn't -> false; correction outranks). N4 generic location nouns rejected + session-injected reference_now for relative dates (This morning -> reference date). Tests 04N 19/19, battery 39/39, suites 242/18, REAL_DB 18. Deployed image 01M01QFTWZJ exact 6-turn replay CLEAN. One 6-step live confirmation next - on PASS: curated freeze + Retirement A-B-C.** - --importance
@@ -817,7 +819,7 @@
 - **[6] xai_cloud bridge test suite** - Created tests/test_xai_cloud_bridge.py (34 tests) for XaiCloudBridge. Mirrors test_xai_bridge.py but adapts for cloud bridge: dual registration (xai_cloud + xai_cloud_voice_agent), default voice rex (male-only), end_session returns {bridge,session_id,status} without had_audio, double-start early-ret...
   _by Admin - 2026-07-08_
 
-## decision (83)
+## decision (84)
 
 - **[10] CTO Orchestrator QA Mandate Permanent** - Permanent CTO Orchestrator QA instruction set saved at TrueVow_CTO_Knowledge_Orchestrator/CTO-ORCHESTRATOR-QA-MANDATE.md. 57 sections: verify/challenge/reconcile/classify/gate. Hard invariants (LLM zero authority, bridge zero business authority), evidence classification (STATIC..PRODUCTION), never e...
   _by Admin - 2026-08-13_
@@ -977,6 +979,8 @@
   _by user - 2026-06-25_
 - **[7] Website Copy - No Payment Before Trial** - FAQ clarification: No payment collected on application page. Trial activates automatically after onboarding. Customer chooses paid plan from Portal during trial. Remaining trial continues unchanged. Paid plan begins automatically when trial ends. Customer does not need to choose a paid plan before s...
   _by Admin - 2026-08-10_
+- **[5] Checkpoint commit 16f2b97 pushed to origin/review/tv-intake-engine-p1-02e-r1: curated canonical snapshot (benjamin_goal + catalog + schema_goal bridge + tests + simulation battery + audit evidence + SESSION_STATE/PROGRESS_LOG). Deployed tenant image 01M021CS5HTB (Fly truevow-tenant-public, tenant-only; agent secrets unchanged since 04M repoint). Gate state: sim loop continues to 0 semantic safety failures, then ONE human acceptance, then curated freeze tag + Retirement A-B-C. G13 HOLD, G14 HARD HOLD, production default NO.** - --importance
+  _by Admin - 2026-08-15_
 - **[5] Benjamin Conversation Experience v1.2 principles FROZEN: open story first (after required consent). Flow: CONSENT - BOUNDED STORY - silent multi-fact extraction - early hard gates (emergency/practice/jurisdiction-if-unresolved/representation) - ask only what remains. Trust funnel over questionnaire funnel; trust = conversion mechanism, no pressure. ConversationLoadProfile (observable signals only, no prosody inference) changes delivery ONLY - never qualification/policy/case value. Conversation Experience Policy layer between AllowedAgenda and Conductor. Work order 06 after legacy retirement + v1.1.0 human baseline. Spec: docs/benjamin_goal/CONVERSATION_EXPERIENCE_V12_FROZEN_PRINCIPLES.md. Evidence-informed hypothesis, test against 20 personas before freeze.** - --importance
   _by Admin - 2026-08-14_
 - **[5] Retirement-05 refinements frozen: curated freeze commit (explicit include manifest, no git add -A), 3-commit execution A(debris)/B(voice orchestration + agent consolidation)/C(engine retirement), negative architectural tests as permanent CI invariants post-C. 90 uncommitted entries classified UNKNOWN=0. Import proof: livekit lifecycle/output/session/turn adapters are vNext-coupled with zero canonical importers. practice_module_loader kept (tenant_config_schema importer). Rollback = immutable image, not source commit completeness.** - --importance
@@ -1129,7 +1133,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (286)
+## context (287)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1191,6 +1195,8 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: INTAKE: simulation semantic safety gate PASS | outcome: 38-scenario frozen ledger, release condition** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: simulation semantic safety gate PASS | outcome: 38-scenario frozen ledger, release conditions met (CORE_DEFECT=0, false facts=0, unclassified=0), judge-artifact mass identified via transcript/probe ...
+  _by user - 2026-08-15_
 - **[7] [DONE] DONE: INTAKE: checkpoint commit | outcome: sim QA army standing (38-scenario battery), S1-S5 sim findings** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: checkpoint commit | outcome: sim QA army standing (38-scenario battery), S1-S5 sim findings repaired, exit-coded regressions green (21/237/64/18/99), tenant deployed 01M021CS5HTB, smoke clean | lear...
   _by user - 2026-08-15_
 - **[7] [DONE] DONE: INTAKE: 04N generic semantic-class closure complete | outcome: 4 classes repaired (identity inferenc** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: 04N generic semantic-class closure complete | outcome: 4 classes repaired (identity inference, participle morphology, generic boolean binding, location/relative-date semantics); 19/19 + battery 39/3...
