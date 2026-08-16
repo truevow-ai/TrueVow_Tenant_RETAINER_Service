@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-15T23:05:55.876031+00:00
-- Total memories: 592
+- Generated: 2026-08-16T02:40:47.110305+00:00
+- Total memories: 596
 
-## High-importance decisions (8+, routine noise excluded) - 279
+## High-importance decisions (8+, routine noise excluded) - 280
 
 - **[10][architecture] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Lifecycle shrinks to ~6 states (BOOTSTRAP/SCREENING/INTAKE/RESOLUTION/AWAITING_EFFECT/COMPLETE + HANDOFF/TERMINATED). LLM = conversation conductor within code-determined agenda; code = agenda authority. LiveKit = voice runtime only, TrueVow Core consumes provider-neutral CoreTurn. First Call Readiness Certificate requires all policy branches have outcomes + effect fallbacks; external integrations NOT required for first call. Prototype-first: challenger (Car Accident + OPI) vs current 22-state FSM, measure task completion/false commits/repeats/turns. SaaS Admin Builder implication: NOT a flowchart editor — firm configures facts, routing policy, destinations; previews generated sample conversations.
   _by Admin - 2026-08-12 - tags: -_
@@ -380,6 +380,8 @@
   _by Admin - 2026-08-10 - tags: -_
 - **[9][todo] xai_cloud NEXT STEPS after C->B conversion** - DONE: C->B force_message conversion, VQM wiring, per-node VAD, missing test helpers (_VOICES/_DEFAULT_VOICE/_build_collected_data_text/_vad_for_node/_VAD_*), frontend rebuild w/ End Call+event log+report download. 40/40 tests pass. NOT YET DONE / NEXT: (1) USER LIVE TEST PENDING on http://127.0.0.1:3023/demo/xai_cloud_test.html — verify no more repetition loop, check transcripts/{sid}-report.json. (2) Add 3-retry-then-escalate guard in WorkflowEngine (industry doc HIGH priority; pushback loops forever currently). (3) 'You mean X?' repair pattern (Dialogflow §2). (4) Preamble/soft-timeout filler on slow LLM-routing nodes (1.5-3.2s classification nodes: conflict_check_prior_rep, opi_jurisdiction). (5) NOT committed yet — commit after successful live test. Ref: docs/VOICE_AI_INDUSTRY_ANALYSIS.md gap table, VOICE_AGENT_CHECKLIST.md §11.
   _by Admin - 2026-07-13 - tags: -_
+- **[8][architecture] Experience-06A v1.2.0 deployed: story-first intake, practice-aware agenda, zero internal narration** - semantic bc1cf3c1; 54 facts/17 goals; 6 practices; consent gate; jurisdiction/location split; practice-scoped goals; conductor narration removed; 398 deterministic + 18 REAL_DB RC=0; deployed replay CLEAN
+  _by Admin - 2026-08-16 - tags: -_
 - **[8][architecture] Retirement-05 executed: single-path Schema/Goal+LiveKit live on staging** - A/B/C commits e694280/60ab4cc/b9670cc pushed; vNext+intake_engine+old bridges deleted; arch invariants tests/arch_invariants/test_single_path_architecture.py (11 negative tests) gate reintroduction; tenant image 01M03SM7E..., agent CizGsNyMzJHz; exact-transcript replay CLEAN incl 04O name-scoping + new full-negated-retention fix 14c7e99
   _by Admin - 2026-08-15 - tags: -_
 - **[8][architecture] First Call Readiness Certificate** - Tenant publishable only when proven: firm identity valid, tenant active, published intake version valid, practice schema valid, phone/LiveKit routing valid, STT/TTS healthy, answer persistence writable, emergency policy present, conflict-screen strategy present, every policy branch has outcome, effect fallback present. External calendar NOT required — booking unavailable → auto offer callback or internal scheduling. LLM down → deterministic extraction or clarification. CRM down → persist internally + outbox retry. Every dependency has a safe outcome.
@@ -567,7 +569,7 @@
 - **[8][todo] FIX gitignore source-leak: TrueVow-Tenant_Billing-Service** - ASSIGNED to the TrueVow-Tenant_Billing-Service agent. Real lib/ source is currently hidden from git (confirmed). Run the playbook: TrueVow_SaaS_Administration_Service/docs/01-main/ECOSYSTEM_ADVISORY_GITIGNORE_SOURCE_LEAK.md (fix .gitignore: anchor/remove stray lib/ + logs/; secrets-scan; commit recovered source in reviewed batches by explicit path; verify clean-clone build). REPORT RESULT via memory.py remember category=bug title='TrueVow-Tenant_Billing-Service gitignore RESULT' content='FIXED n files | CLEAN | BLOCKED + reason; secrets found?'. NOTE: reporting.py agent-checkin is broken — report via memory.
   _by user - 2026-06-25 - tags: gitignore, todo, assigned_
 
-## architecture (115)
+## architecture (116)
 
 - **[10] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Li...
   _by Admin - 2026-08-12_
@@ -719,6 +721,8 @@
   _by user - 2026-06-25_
 - **[9] FM Service Wired to Ecosystem** - TrueVow_Financial_Management_Service is registered in the agent ecosystem with 13 domain agents (orchestrator, code-agent, search-agent, gl-agent, ar-agent, ap-agent, payroll-agent, treasury-agent, intercompany-agent, reporting-agent, affiliates-agent, benjamin-agent, fintech-patterns). Auto-dispatc...
   _by user - 2026-06-25_
+- **[8] Experience-06A v1.2.0 deployed: story-first intake, practice-aware agenda, zero internal narration** - semantic bc1cf3c1; 54 facts/17 goals; 6 practices; consent gate; jurisdiction/location split; practice-scoped goals; conductor narration removed; 398 deterministic + 18 REAL_DB RC=0; deployed replay CLEAN
+  _by Admin - 2026-08-16_
 - **[8] Retirement-05 executed: single-path Schema/Goal+LiveKit live on staging** - A/B/C commits e694280/60ab4cc/b9670cc pushed; vNext+intake_engine+old bridges deleted; arch invariants tests/arch_invariants/test_single_path_architecture.py (11 negative tests) gate reintroduction; tenant image 01M03SM7E..., agent CizGsNyMzJHz; exact-transcript replay CLEAN incl 04O name-scoping + ...
   _by Admin - 2026-08-15_
 - **[8] First Call Readiness Certificate** - Tenant publishable only when proven: firm identity valid, tenant active, published intake version valid, practice schema valid, phone/LiveKit routing valid, STT/TTS healthy, answer persistence writable, emergency policy present, conflict-screen strategy present, every policy branch has outcome, effe...
@@ -1139,7 +1143,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (289)
+## context (292)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1201,6 +1205,12 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: INTAKE: EXPERIENCE-06A story-first/practice-aware v1.2.0 executed+deployed | outcome: machine gate g** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: EXPERIENCE-06A story-first/practice-aware v1.2.0 executed+deployed | outcome: machine gate green (398 det RC=0, REAL_DB 18, deployed funnel replay CLEAN; narration=0, generic-location=0, redundant-r...
+  _by user - 2026-08-16_
+- **[7] [ACTIVE] START: Billing: LEVERAGE quarantine migration + TRACE activation + remove founding tiers | resuming from ca** - {"agent_id": "TrueVow-Tenant_Billing-Service", "action": "start", "status": "ACTIVE", "message": "Billing: LEVERAGE quarantine migration + TRACE activation + remove founding tiers | resuming from catalogue audit | goal: catalogue matches retirement decision", "timestamp": "2026-08-16T02:05:35.995407...
+  _by user - 2026-08-16_
+- **[7] [ACTIVE] START: INTAKE: EXPERIENCE-06A story-first/practice-aware agenda | resuming from Retirement-05 (single-path** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "start", "status": "ACTIVE", "message": "INTAKE: EXPERIENCE-06A story-first/practice-aware agenda | resuming from Retirement-05 (single-path deployed) | goal: caller-facing narration=0, jurisdiction/location split, practice-projected goals, gre...
+  _by user - 2026-08-15_
 - **[7] [DONE] DONE: INTAKE: Retirement-05 A→B→C executed + deployed | outcome: single-path live (tenant 01M03SM7E..., ag** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: Retirement-05 A\u2192B\u2192C executed + deployed | outcome: single-path live (tenant 01M03SM7E..., agent CizGsNyMzJHz), exact-transcript replay CLEAN, arch invariants 11/11 | learned: staged-index ...
   _by user - 2026-08-15_
 - **[7] [DONE] DONE: INTAKE: 04O complete + human acceptance PASS | outcome: name-scoping rule frozen and repaired, exact** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: 04O complete + human acceptance PASS | outcome: name-scoping rule frozen and repaired, exact transcript replays clean on deployed image 01M037PFN, SHA-image-checksum chain verified | learned: unlabe...
