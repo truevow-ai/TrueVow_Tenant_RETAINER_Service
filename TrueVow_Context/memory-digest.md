@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-16T07:02:49.367649+00:00
-- Total memories: 606
+- Generated: 2026-08-16T20:25:57.875265+00:00
+- Total memories: 609
 
-## High-importance decisions (8+, routine noise excluded) - 284
+## High-importance decisions (8+, routine noise excluded) - 285
 
 - **[10][architecture] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Lifecycle shrinks to ~6 states (BOOTSTRAP/SCREENING/INTAKE/RESOLUTION/AWAITING_EFFECT/COMPLETE + HANDOFF/TERMINATED). LLM = conversation conductor within code-determined agenda; code = agenda authority. LiveKit = voice runtime only, TrueVow Core consumes provider-neutral CoreTurn. First Call Readiness Certificate requires all policy branches have outcomes + effect fallbacks; external integrations NOT required for first call. Prototype-first: challenger (Car Accident + OPI) vs current 22-state FSM, measure task completion/false commits/repeats/turns. SaaS Admin Builder implication: NOT a flowchart editor — firm configures facts, routing policy, destinations; previews generated sample conversations.
   _by Admin - 2026-08-12 - tags: -_
@@ -312,6 +312,8 @@
   _by Admin - 2026-08-11 - tags: -_
 - **[9][context] G10 Canary Status** - Lead 1763aee9-52ca-4418-abb8-a60e7f90d847 at HANDOFF_PENDING. T020 passed, T022 passed. Handoff to SaaS Admin deployed and ready for retry. SaaS Admin webhook at truevow-saas-admin-staging.fly.dev with HMAC key tv-sales-ops-to-saas-admin-v1. PIPELINE_SECRET and TRUEVOW_DEPLOYMENT_ENV=staging set.
   _by Admin - 2026-08-10 - tags: -_
+- **[9][decision] AUTH-08 + VOICE-AUTH-09 deployed: G13 auth controls enforced** - truevow_auth 1.0.0 vendored (shared-libraries@e64f8b8); 4 security suites unskipped (real scope bug fixed); voice service credential enforced at router level on voice-bridge/tts/contacts; deployed probes 401/401/401/422/200; fingerprint-only logging
+  _by Admin - 2026-08-16 - tags: -_
 - **[9][decision] Bounded Challenger Prototype Authorized** - Build bounded parallel prototype: Car Accident + OPI only. Run same scenarios: CURRENT (22-state FSM+QuestionRunner) vs CHALLENGER (small lifecycle + Fact Schema + Goal Engine). Metrics: task completion, false fact commits, irrelevant questions, repeated questions, turns to completion, caller corrections, out-of-order info reuse, digressions, outcome/effect correctness, provider dependence, practice expansion cost. If challenger cannot materially outperform on conversation quality while keeping deterministic safety boundary → DO NOT migrate. Evidence over enthusiasm.
   _by Admin - 2026-08-12 - tags: -_
 - **[9][decision] Verification Layers** - AUTHOR VERIFICATION = tests by implementation agent. FRESH-SESSION QA = separate agent session with no implementation context. CTO AUDIT = architectural evidence review. For G13 require fresh-session QA + CTO audit after production integrations exist. Same model writing code and acceptance tests is NOT independent verification.
@@ -839,7 +841,7 @@
 - **[6] xai_cloud bridge test suite** - Created tests/test_xai_cloud_bridge.py (34 tests) for XaiCloudBridge. Mirrors test_xai_bridge.py but adapts for cloud bridge: dual registration (xai_cloud + xai_cloud_voice_agent), default voice rex (male-only), end_session returns {bridge,session_id,status} without had_audio, double-start early-ret...
   _by Admin - 2026-07-08_
 
-## decision (87)
+## decision (88)
 
 - **[10] Frozen Commercial Contract Gate deployed — drift is now impossible to merge** - PLG-BILL-02 gate: frozen_catalogue.py (v2.0.0) is the single machine-readable source of finalized commercial state. 3 layers: (1) CI gate tests/unit/test_frozen_contract.py + fail-hard CI step, (2) CLI python scripts/check_catalogue_drift.py (exit 1 on drift), (3) runtime catalogue_guard.validate_ca...
   _by Admin - 2026-08-16_
@@ -917,6 +919,8 @@
   _by user - 2026-06-25_
 - **[10] CONNECT Archived - DRAFT Renamed to LEVERAGE - INTAKE Updated** - CONNECT (attorney referral network) is decommissioned and archived from the ecosystem permanently - no longer on TrueVow agenda. DRAFT has been completely replaced by LEVERAGE everywhere (same service, renamed). INTAKE (Tenant Application Service) is no longer just FSM NLP - it is now FSM applied to...
   _by user - 2026-06-25_
+- **[9] AUTH-08 + VOICE-AUTH-09 deployed: G13 auth controls enforced** - truevow_auth 1.0.0 vendored (shared-libraries@e64f8b8); 4 security suites unskipped (real scope bug fixed); voice service credential enforced at router level on voice-bridge/tts/contacts; deployed probes 401/401/401/422/200; fingerprint-only logging
+  _by Admin - 2026-08-16_
 - **[9] Bounded Challenger Prototype Authorized** - Build bounded parallel prototype: Car Accident + OPI only. Run same scenarios: CURRENT (22-state FSM+QuestionRunner) vs CHALLENGER (small lifecycle + Fact Schema + Goal Engine). Metrics: task completion, false fact commits, irrelevant questions, repeated questions, turns to completion, caller correc...
   _by Admin - 2026-08-12_
 - **[9] Verification Layers** - AUTHOR VERIFICATION = tests by implementation agent. FRESH-SESSION QA = separate agent session with no implementation context. CTO AUDIT = architectural evidence review. For G13 require fresh-session QA + CTO audit after production integrations exist. Same model writing code and acceptance tests is ...
@@ -1159,7 +1163,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (298)
+## context (300)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1221,6 +1225,10 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: INTAKE: AUTH-08 + VOICE-AUTH-09 executed+deployed | outcome: G13 PASS bar fully evidenced (1400/0/0/** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: AUTH-08 + VOICE-AUTH-09 executed+deployed | outcome: G13 PASS bar fully evidenced (1400/0/0/16-skip; 4 auth suites unskipped 122 green; /process 401-negatives with Core=0; valid+unknown 422; valid 2...
+  _by user - 2026-08-16_
+- **[7] [ACTIVE] START: INTAKE: AUTH-08 truevow_auth restoration + VOICE-AUTH-09 service-to-service enforcement | resuming f** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "start", "status": "ACTIVE", "message": "INTAKE: AUTH-08 truevow_auth restoration + VOICE-AUTH-09 service-to-service enforcement | resuming from G13 refresh (signed, PASS blocked on 08+09) | goal: 4 security suites unskipped+green, /process aut...
+  _by user - 2026-08-16_
 - **[7] [DONE] DONE: INTAKE: G13-REFRESH-07 evidence compiled | outcome: truevow_auth dispositioned OUTCOME A (REQUIRED/D** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: G13-REFRESH-07 evidence compiled | outcome: truevow_auth dispositioned OUTCOME A (REQUIRED/DEPENDENCY_BLOCKER, voice-path bearer-key finding recorded); provisioning ops path supported (shared servic...
   _by user - 2026-08-16_
 - **[7] [ACTIVE] START: INTAKE: G13-REFRESH-07 | task: truevow_auth security disposition + internal provisioning ops command** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "start", "status": "ACTIVE", "message": "INTAKE: G13-REFRESH-07 | task: truevow_auth security disposition + internal provisioning ops command + consolidated G13 evidence | goal: two dispositions evidenced, G13 refresh record complete", "timesta...
