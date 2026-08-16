@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-16T03:03:03.180846+00:00
-- Total memories: 599
+- Generated: 2026-08-16T04:01:33.645694+00:00
+- Total memories: 601
 
-## High-importance decisions (8+, routine noise excluded) - 281
+## High-importance decisions (8+, routine noise excluded) - 282
 
 - **[10][architecture] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Lifecycle shrinks to ~6 states (BOOTSTRAP/SCREENING/INTAKE/RESOLUTION/AWAITING_EFFECT/COMPLETE + HANDOFF/TERMINATED). LLM = conversation conductor within code-determined agenda; code = agenda authority. LiveKit = voice runtime only, TrueVow Core consumes provider-neutral CoreTurn. First Call Readiness Certificate requires all policy branches have outcomes + effect fallbacks; external integrations NOT required for first call. Prototype-first: challenger (Car Accident + OPI) vs current 22-state FSM, measure task completion/false commits/repeats/turns. SaaS Admin Builder implication: NOT a flowchart editor — firm configures facts, routing policy, destinations; previews generated sample conversations.
   _by Admin - 2026-08-12 - tags: -_
@@ -120,6 +120,8 @@
   _by Admin - 2026-08-10 - tags: -_
 - **[10][convention] zero hardcoded tunable values** - RULE: This is a multi-tenant platform. Never hardcode ANY value that may need adjustment per-tenant, per-firm, or per-environment. All tunables must live in one of: (1) tenant_config, (2) workflow JSON config, or (3) named module-level constants with clear documentation. Bare numbers, strings, or IDs in logic statements are FORBIDDEN. If you need a value that could change — threshold, timeout, limit, firm identifier, VAD setting, confidence score — expose it via config. Test by asking: 'Could a different law firm need this set differently?'
   _by Admin - 2026-07-15 - tags: -_
+- **[10][decision] Frozen Commercial Contract Gate deployed — drift is now impossible to merge** - PLG-BILL-02 gate: frozen_catalogue.py (v2.0.0) is the single machine-readable source of finalized commercial state. 3 layers: (1) CI gate tests/unit/test_frozen_contract.py + fail-hard CI step, (2) CLI python scripts/check_catalogue_drift.py (exit 1 on drift), (3) runtime catalogue_guard.validate_catalogue() now enforces the contract against the LIVE DB — retired LEVERAGE ACTIVE/purchasable, TRACE mispriced, or founding rows/tables -> catalogue NOT READY -> 503 fail-closed on all commercial endpoints. The CI gate simulates the ENTIRE alembic chain final state (products/plans exact cents, founding tables dropped) so a future migration re-activating a retired product fails the PR. Change procedure: any commercial change = frozen_catalogue + migration + constants + tests in ONE PR + CTO approval. AGENTS.md updated so every agent sees the gate on startup.
+  _by Admin - 2026-08-16 - tags: -_
 - **[10][decision] LEVERAGE quarantined, TRACE activated, founding tiers removed — billing migration 1a9b8c7d6e5f** - Billing catalogue aligned with retirement decisions. Migration 1a9b8c7d6e5f: LEVERAGE product+plans -> RETIRED (not purchasable, grandfathered only; surviving components seeded as DRAFT add-ons LEVERAGE_SOL_DEADLINES + LEVERAGE_DAMAGES_CALC, pricing TBD, TRACE-fold candidates). TRACE -> ACTIVE with finalized per-matter pricing: Start / Essential / Complete , intro offer first 12 matters TRACE Complete free for new INTAKE customers (promotion trace_complete_launch_12_v1, 180d). Founding member/council fully removed: FOUNDING_MEMBER constant, founding_council pricing rows, council endpoints, attorney_founding_members/founding_intelligence_members/billing_tenant_council_status tables. Public pricing-catalog endpoint now surfaces trace tiers + addons; LEVERAGE reports true RETIRED status. Unit: 172 pass, 1 pre-existing failure.
   _by Admin - 2026-08-16 - tags: -_
 - **[10][decision] CTO Orchestrator QA Mandate Permanent** - Permanent CTO Orchestrator QA instruction set saved at TrueVow_CTO_Knowledge_Orchestrator/CTO-ORCHESTRATOR-QA-MANDATE.md. 57 sections: verify/challenge/reconcile/classify/gate. Hard invariants (LLM zero authority, bridge zero business authority), evidence classification (STATIC..PRODUCTION), never equate test count with capability, read code not markdown, diff audit, runtime reachability, fresh-context QA, read-only auditing, PASS semantics strict. Current task: verify 04A staging enablement (D1-D4), then fresh-context qualification for P1-P5.
@@ -831,8 +833,10 @@
 - **[6] xai_cloud bridge test suite** - Created tests/test_xai_cloud_bridge.py (34 tests) for XaiCloudBridge. Mirrors test_xai_bridge.py but adapts for cloud bridge: dual registration (xai_cloud + xai_cloud_voice_agent), default voice rex (male-only), end_session returns {bridge,session_id,status} without had_audio, double-start early-ret...
   _by Admin - 2026-07-08_
 
-## decision (85)
+## decision (86)
 
+- **[10] Frozen Commercial Contract Gate deployed — drift is now impossible to merge** - PLG-BILL-02 gate: frozen_catalogue.py (v2.0.0) is the single machine-readable source of finalized commercial state. 3 layers: (1) CI gate tests/unit/test_frozen_contract.py + fail-hard CI step, (2) CLI python scripts/check_catalogue_drift.py (exit 1 on drift), (3) runtime catalogue_guard.validate_ca...
+  _by Admin - 2026-08-16_
 - **[10] LEVERAGE quarantined, TRACE activated, founding tiers removed — billing migration 1a9b8c7d6e5f** - Billing catalogue aligned with retirement decisions. Migration 1a9b8c7d6e5f: LEVERAGE product+plans -> RETIRED (not purchasable, grandfathered only; surviving components seeded as DRAFT add-ons LEVERAGE_SOL_DEADLINES + LEVERAGE_DAMAGES_CALC, pricing TBD, TRACE-fold candidates). TRACE -> ACTIVE with ...
   _by Admin - 2026-08-16_
 - **[10] CTO Orchestrator QA Mandate Permanent** - Permanent CTO Orchestrator QA instruction set saved at TrueVow_CTO_Knowledge_Orchestrator/CTO-ORCHESTRATOR-QA-MANDATE.md. 57 sections: verify/challenge/reconcile/classify/gate. Hard invariants (LLM zero authority, bridge zero business authority), evidence classification (STATIC..PRODUCTION), never e...
@@ -1147,7 +1151,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (294)
+## context (295)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1209,6 +1213,8 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: Billing: Frozen Commercial Contract Gate (PLG-BILL-02) deployed | outcome: frozen_catalogue.py v2.0.** - {"agent_id": "TrueVow-Tenant_Billing-Service", "action": "done", "status": "DONE", "message": "Billing: Frozen Commercial Contract Gate (PLG-BILL-02) deployed | outcome: frozen_catalogue.py v2.0.0 + CI gate (24 tests) + CLI drift check + runtime DB enforcement all green; unit suite 137 pass | learne...
+  _by user - 2026-08-16_
 - **[7] [DONE] DONE: Billing: LEVERAGE quarantine migration 1a9b8c7d6e5f (heads merged) + TRACE activated (// per matter** - {"agent_id": "TrueVow-Tenant_Billing-Service", "action": "done", "status": "DONE", "message": "Billing: LEVERAGE quarantine migration 1a9b8c7d6e5f (heads merged) + TRACE activated (// per matter + 12-free intro) + founding member/council fully removed | outcome: catalogue now matches retirement deci...
   _by user - 2026-08-16_
 - **[7] [ACTIVE] START: INTAKE: 05D test reconciliation + 06A identity-confirm delta | resuming from 06A v1.2.0 deployed | g** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "start", "status": "ACTIVE", "message": "INTAKE: 05D test reconciliation + 06A identity-confirm delta | resuming from 06A v1.2.0 deployed | goal: supported tree failures=0 errors=0, then confirm-loop identity flow, machine gate green", "timesta...
