@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-16T05:57:51.018333+00:00
-- Total memories: 603
+- Generated: 2026-08-16T07:02:49.367649+00:00
+- Total memories: 606
 
-## High-importance decisions (8+, routine noise excluded) - 283
+## High-importance decisions (8+, routine noise excluded) - 284
 
 - **[10][architecture] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Lifecycle shrinks to ~6 states (BOOTSTRAP/SCREENING/INTAKE/RESOLUTION/AWAITING_EFFECT/COMPLETE + HANDOFF/TERMINATED). LLM = conversation conductor within code-determined agenda; code = agenda authority. LiveKit = voice runtime only, TrueVow Core consumes provider-neutral CoreTurn. First Call Readiness Certificate requires all policy branches have outcomes + effect fallbacks; external integrations NOT required for first call. Prototype-first: challenger (Car Accident + OPI) vs current 22-state FSM, measure task completion/false commits/repeats/turns. SaaS Admin Builder implication: NOT a flowchart editor — firm configures facts, routing policy, destinations; previews generated sample conversations.
   _by Admin - 2026-08-12 - tags: -_
@@ -516,6 +516,8 @@
   _by Admin - 2026-07-31 - tags: -_
 - **[8][convention] Golden Fixture Cross-Repository Testing** - Created app/shared/contracts.py with frozen contract versions and deterministic golden fixture (make_golden_envelope, make_golden_fixture_json, compute_golden_hmac). Every TrueVow product must deserialize the same 18-field EventEnvelope and compute the same HMAC over the exact raw fixture. Tests at tests/test_golden_fixtures.py validate envelope serialization, roundtrip deserialization, HMAC determinism, evidence manifest completeness (9 refs), and jurisdiction separation (global vs tenant).
   _by Admin - 2026-07-31 - tags: -_
+- **[8][decision] G13 refresh dispositions: truevow_auth = REQUIRED (A); provisioning ops = shared service + fly-ssh CLI** - truevow_auth blocks 4 security suites protecting tenant-facing HTTP auth; endpoints fail-closed by absence; voice-path bearer key unenforced (finding). scripts/provision_config.py + provisioning_service.py = one transaction, two boundaries (HMAC/trusted-runtime)
+  _by Admin - 2026-08-16 - tags: -_
 - **[8][decision] 04D: LiveKit never authors config pin** - Bootstrap contract: realtime plane supplies tenant_id+session_id+conversation_core ONLY. INTAKE resolves published config, durably pins (session_fsm_versions via uuid5 pin_session_key), starts GoalRuntime, returns core greeting ResponseIntent. Strict request models (extra=forbid). schema_goal route uses deterministic llm_node override - generic LiveKit LLM business authority = 0.
   _by Admin - 2026-08-13 - tags: -_
 - **[8][decision] Firm Configures Facts+Goals Not Questions** - INTAKE Builder (SaaS Admin) exposes: firm setup, practice selection from standard template, fact schema editing (enable optional/custom facts), qualification+ routing policy in business terms (IF/THEN advanced mode), destination connections (calendar/CRM/phone default internal), behavior preview with generated sample conversations, automated scenario tests + one real test call, publish immutable version. Never a flowchart editor. ABA Rule 1.18: avoid unrestricted case narrative before screening/conflict info.
@@ -837,7 +839,7 @@
 - **[6] xai_cloud bridge test suite** - Created tests/test_xai_cloud_bridge.py (34 tests) for XaiCloudBridge. Mirrors test_xai_bridge.py but adapts for cloud bridge: dual registration (xai_cloud + xai_cloud_voice_agent), default voice rex (male-only), end_session returns {bridge,session_id,status} without had_audio, double-start early-ret...
   _by Admin - 2026-07-08_
 
-## decision (86)
+## decision (87)
 
 - **[10] Frozen Commercial Contract Gate deployed — drift is now impossible to merge** - PLG-BILL-02 gate: frozen_catalogue.py (v2.0.0) is the single machine-readable source of finalized commercial state. 3 layers: (1) CI gate tests/unit/test_frozen_contract.py + fail-hard CI step, (2) CLI python scripts/check_catalogue_drift.py (exit 1 on drift), (3) runtime catalogue_guard.validate_ca...
   _by Admin - 2026-08-16_
@@ -969,6 +971,8 @@
   _by Admin - 2026-07-03_
 - **[9] CONNECT Service Deleted** - TrueVow_Tenant_CONNECT_Service directory deleted. Removed from config.yaml services block and .gitignore. Was archived June 2026 — attorney referral network, no longer on TrueVow's agenda.
   _by user - 2026-07-01_
+- **[8] G13 refresh dispositions: truevow_auth = REQUIRED (A); provisioning ops = shared service + fly-ssh CLI** - truevow_auth blocks 4 security suites protecting tenant-facing HTTP auth; endpoints fail-closed by absence; voice-path bearer key unenforced (finding). scripts/provision_config.py + provisioning_service.py = one transaction, two boundaries (HMAC/trusted-runtime)
+  _by Admin - 2026-08-16_
 - **[8] 04D: LiveKit never authors config pin** - Bootstrap contract: realtime plane supplies tenant_id+session_id+conversation_core ONLY. INTAKE resolves published config, durably pins (session_fsm_versions via uuid5 pin_session_key), starts GoalRuntime, returns core greeting ResponseIntent. Strict request models (extra=forbid). schema_goal route ...
   _by Admin - 2026-08-13_
 - **[8] Firm Configures Facts+Goals Not Questions** - INTAKE Builder (SaaS Admin) exposes: firm setup, practice selection from standard template, fact schema editing (enable optional/custom facts), qualification+ routing policy in business terms (IF/THEN advanced mode), destination connections (calendar/CRM/phone default internal), behavior preview wit...
@@ -1155,7 +1159,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (296)
+## context (298)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1217,6 +1221,10 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: INTAKE: G13-REFRESH-07 evidence compiled | outcome: truevow_auth dispositioned OUTCOME A (REQUIRED/D** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: G13-REFRESH-07 evidence compiled | outcome: truevow_auth dispositioned OUTCOME A (REQUIRED/DEPENDENCY_BLOCKER, voice-path bearer-key finding recorded); provisioning ops path supported (shared servic...
+  _by user - 2026-08-16_
+- **[7] [ACTIVE] START: INTAKE: G13-REFRESH-07 | task: truevow_auth security disposition + internal provisioning ops command** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "start", "status": "ACTIVE", "message": "INTAKE: G13-REFRESH-07 | task: truevow_auth security disposition + internal provisioning ops command + consolidated G13 evidence | goal: two dispositions evidenced, G13 refresh record complete", "timesta...
+  _by user - 2026-08-16_
 - **[7] [DONE] DONE: INTAKE: 05D test reconciliation + 06A identity confirm loop | outcome: supported tree 1305 passed/0** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: 05D test reconciliation + 06A identity confirm loop | outcome: supported tree 1305 passed/0 failed/0 errors/20 skipped; confirm flow deployed+replayed CLEAN | learned: same-value respell detection n...
   _by user - 2026-08-16_
 - **[7] [DONE] DONE: Billing: Frozen Commercial Contract Gate (PLG-BILL-02) deployed | outcome: frozen_catalogue.py v2.0.** - {"agent_id": "TrueVow-Tenant_Billing-Service", "action": "done", "status": "DONE", "message": "Billing: Frozen Commercial Contract Gate (PLG-BILL-02) deployed | outcome: frozen_catalogue.py v2.0.0 + CI gate (24 tests) + CLI drift check + runtime DB enforcement all green; unit suite 137 pass | learne...
