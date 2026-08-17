@@ -3,8 +3,8 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-17T17:59:40.843859+00:00
-- Total memories: 619
+- Generated: 2026-08-17T18:54:08.464246+00:00
+- Total memories: 623
 
 ## High-importance decisions (8+, routine noise excluded) - 288
 
@@ -1062,7 +1062,7 @@
 - **[8] Golden Fixture Cross-Repository Testing** - Created app/shared/contracts.py with frozen contract versions and deterministic golden fixture (make_golden_envelope, make_golden_fixture_json, compute_golden_hmac). Every TrueVow product must deserialize the same 18-field EventEnvelope and compute the same HMAC over the exact raw fixture. Tests at ...
   _by Admin - 2026-07-31_
 
-## bug (55)
+## bug (56)
 
 - **[10] F1 FALSE representation commit from 'engineers'** - Call #3: 'I spoke to a couple of engineers.' -> extractor consulted_phrases includes 'spoke to' -> representation.status=consulted_only committed (0.85, deterministic, validator passed). FALSE LEGAL-SAFETY FACT (engineers != attorneys). None of the 'retained' policy triggered this time, but false fa...
   _by Admin - 2026-08-14_
@@ -1162,6 +1162,8 @@
   _by Admin - 2026-07-09_
 - **[7] Fixed obsidian-bridge.py Windows-filename crash (orchestration tooling)** - obsidian-bridge.py built Obsidian filenames from memory/session titles but only stripped / and \ — any title containing a Windows-illegal char (: ? * " < > |) threw OSError [Errno 22] and crashed the ENTIRE ecosystem knowledge-sync on Windows (e.g. a title ending "active: me"). Fix: added safe_filen...
   _by user - 2026-06-25_
+- **[6] INTAKE LiveKit Meet human QA camera placeholder** - INTAKE: diagnosed Meet browser visual error after successful Benjamin bootstrap as no microphone publication; changed human QA LiveKit token to canPublishSources=[microphone] so QA links are audio-only and avoid camera placeholders | focused launcher tests pass | next: user can request tokenized URL...
+  _by Admin - 2026-08-17_
 - **[6] vNext E2E QA - TEST DEFECTS x2** - 1) Oakwood scanner flags comment in config_resolver.py (not code). 2) Legacy-import scanner includes its own test file which contains 'intake_engine'/'workflow_engine' assertion strings. Both scanners need exclusions.
   _by Admin - 2026-08-12_
 - **[5] 04M bootstrap recovery PASS. 05:05 call failed closed pre-Core: console dispatch has no tenant metadata - agent used DEPLOYMENT_DEFAULT_TENANT_ID=Oakwood(4f797776) which has been fail-closed since the 04G catalog freeze (3c0c130b vs 7a7b0495) - 422 - static unavailable. Proven: 0 pin rows in call window; tenant-side direct bootstrap truevow-production = 200 ready v1.1.0 greeting. FIX: DEPLOYMENT_DEFAULT_TENANT_ID=truevow-production (overdue repoint; config only). Fail-closed behavior under failure = correct. Final human call GO.** - --importance
@@ -1175,7 +1177,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (307)
+## context (310)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1239,6 +1241,10 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: INTAKE: patched human QA launcher to mint microphone-only LiveKit tokens | outcome: focused tests 9** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: patched human QA launcher to mint microphone-only LiveKit tokens | outcome: focused tests 9 passed and fresh exact-room launch gate PASS for qa-1786992763 | learned: prior Meet issue reached Benjami...
+  _by user - 2026-08-17_
+- **[7] [ACTIVE] START: INTAKE: continue LiveKit human QA audio path | resuming from Meet visual error with zero STT audio |** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "start", "status": "ACTIVE", "message": "INTAKE: continue LiveKit human QA audio path | resuming from Meet visual error with zero STT audio | goal: audio-only verified launcher URL", "timestamp": "2026-08-17T18:50:17.841861+00:00", "working_dir...
+  _by user - 2026-08-17_
 - **[7] [DONE] DONE: INTAKE: HUMAN-QA-HARNESS-10B self-verifying launch gate implemented | outcome: --launch now withhold** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: HUMAN-QA-HARNESS-10B self-verifying launch gate implemented | outcome: --launch now withholds human URL until exact room pin and v1.2.0/bc1cf3c1 readiness pass; focused tests 9 passed | learned: fix...
   _by user - 2026-08-17_
 - **[7] [DONE] DONE: INTAKE: TV-INTAKE-HUMAN-QA-FAILCLOSE-10A forensics completed | outcome: no Aug 17 durable pin/sessio** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: TV-INTAKE-HUMAN-QA-FAILCLOSE-10A forensics completed | outcome: no Aug 17 durable pin/session; current auth/bootstrap pass for truevow-production v1.2.0/bc1cf3c1; exact historical dispatch metadata ...
@@ -1631,6 +1637,8 @@
   _by user - 2026-06-25_
 - **[6] Documentation Status: TrueVow_Documentation is Stale** - TrueVow_Documentation/ contains older documentation (Word docs, markdown exports) including TrueVow_PRD.md, Complete System Technical Documentation, Financial Management guides, and Billing Service updates. These are outdated - they reflect the old architecture with DRAFT naming, CONNECT active, and...
   _by user - 2026-06-25_
+- **[5] Dispatch: Continue diagnosing LiveKit Meet browser UI error; patch human QA launcher to av** - Dispatched to skill='prototype' phase='build' personas=[] tool=
+  _by Admin - 2026-08-17_
 - **[5] Dispatch: TV-INTAKE-HUMAN-QA-HARNESS-10B implement self-verifying launch gate so nontechni** - Dispatched to skill='implement' phase='build' personas=[] tool=
   _by Admin - 2026-08-17_
 - **[5] Dispatch: TV-INTAKE-HUMAN-QA-FAILCLOSE-10A forensic only pre-core fail-closed call August** - Dispatched to skill='code-review' phase='review' personas=['code-reviewer'] tool=
