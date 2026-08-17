@@ -3,8 +3,8 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-17T18:54:08.464246+00:00
-- Total memories: 623
+- Generated: 2026-08-17T19:12:37.887329+00:00
+- Total memories: 625
 
 ## High-importance decisions (8+, routine noise excluded) - 288
 
@@ -1177,7 +1177,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (310)
+## context (312)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1241,6 +1241,10 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: INTAKE: regenerated and displayed audio-only human QA URL | outcome: launch gate PASS for qa-1786993** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: regenerated and displayed audio-only human QA URL | outcome: launch gate PASS for qa-1786993931 | learned: tokenized URL explicitly requested by user | next: user opens link and reports whether mic/...
+  _by user - 2026-08-17_
+- **[7] [ACTIVE] START: INTAKE: regenerate human QA URL | resuming from audio-only launcher gate PASS | goal: display explic** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "start", "status": "ACTIVE", "message": "INTAKE: regenerate human QA URL | resuming from audio-only launcher gate PASS | goal: display explicit tokenized URL per user request", "timestamp": "2026-08-17T19:12:11.690286+00:00", "working_dir": "C:...
+  _by user - 2026-08-17_
 - **[7] [DONE] DONE: INTAKE: patched human QA launcher to mint microphone-only LiveKit tokens | outcome: focused tests 9** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: patched human QA launcher to mint microphone-only LiveKit tokens | outcome: focused tests 9 passed and fresh exact-room launch gate PASS for qa-1786992763 | learned: prior Meet issue reached Benjami...
   _by user - 2026-08-17_
 - **[7] [ACTIVE] START: INTAKE: continue LiveKit human QA audio path | resuming from Meet visual error with zero STT audio |** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "start", "status": "ACTIVE", "message": "INTAKE: continue LiveKit human QA audio path | resuming from Meet visual error with zero STT audio | goal: audio-only verified launcher URL", "timestamp": "2026-08-17T18:50:17.841861+00:00", "working_dir...
