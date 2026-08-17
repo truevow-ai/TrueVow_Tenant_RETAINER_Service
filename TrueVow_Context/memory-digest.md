@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-17T17:47:42.484094+00:00
-- Total memories: 616
+- Generated: 2026-08-17T17:59:40.843859+00:00
+- Total memories: 619
 
-## High-importance decisions (8+, routine noise excluded) - 287
+## High-importance decisions (8+, routine noise excluded) - 288
 
 - **[10][architecture] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Lifecycle shrinks to ~6 states (BOOTSTRAP/SCREENING/INTAKE/RESOLUTION/AWAITING_EFFECT/COMPLETE + HANDOFF/TERMINATED). LLM = conversation conductor within code-determined agenda; code = agenda authority. LiveKit = voice runtime only, TrueVow Core consumes provider-neutral CoreTurn. First Call Readiness Certificate requires all policy branches have outcomes + effect fallbacks; external integrations NOT required for first call. Prototype-first: challenger (Car Accident + OPI) vs current 22-state FSM, measure task completion/false commits/repeats/turns. SaaS Admin Builder implication: NOT a flowchart editor — firm configures facts, routing policy, destinations; previews generated sample conversations.
   _by Admin - 2026-08-12 - tags: -_
@@ -520,6 +520,8 @@
   _by Admin - 2026-07-31 - tags: -_
 - **[8][convention] Golden Fixture Cross-Repository Testing** - Created app/shared/contracts.py with frozen contract versions and deterministic golden fixture (make_golden_envelope, make_golden_fixture_json, compute_golden_hmac). Every TrueVow product must deserialize the same 18-field EventEnvelope and compute the same HMAC over the exact raw fixture. Tests at tests/test_golden_fixtures.py validate envelope serialization, roundtrip deserialization, HMAC determinism, evidence manifest completeness (9 refs), and jurisdiction separation (global vs tenant).
   _by Admin - 2026-07-31 - tags: -_
+- **[8][decision] INTAKE 10B self-verifying human QA launch gate** - INTAKE: implemented HUMAN-QA-HARNESS-10B self-verifying launch gate | result: scripts/human_qa_launch.py --launch now withholds human_join_url until exact lk-<room> durable pin exists after dispatch start and validates truevow-production v1.2.0/bc1cf3c1 readiness; tests/scripts/test_human_qa_launch.py 9 passed | learned: nontechnical human QA must never receive a join URL before backend readiness is proven for that exact room | next: run python scripts/human_qa_launch.py --launch for the next human QA attempt; if it prints human_join_url null, do not call
+  _by Admin - 2026-08-17 - tags: -_
 - **[8][decision] Human QA launcher live: tenant-aware dispatch path proven** - scripts/human_qa_launch.py --launch/--preflight; explicit tenant metadata; join token; preflight PASS (pin truevow-production v1.2.0 bc1cf3c1, bootstrap 200, consent greeting, unavailable 0); console Playground confirmed fail-closed by design
   _by Admin - 2026-08-16 - tags: -_
 - **[8][decision] G13 refresh dispositions: truevow_auth = REQUIRED (A); provisioning ops = shared service + fly-ssh CLI** - truevow_auth blocks 4 security suites protecting tenant-facing HTTP auth; endpoints fail-closed by absence; voice-path bearer key unenforced (finding). scripts/provision_config.py + provisioning_service.py = one transaction, two boundaries (HMAC/trusted-runtime)
@@ -845,7 +847,7 @@
 - **[6] xai_cloud bridge test suite** - Created tests/test_xai_cloud_bridge.py (34 tests) for XaiCloudBridge. Mirrors test_xai_bridge.py but adapts for cloud bridge: dual registration (xai_cloud + xai_cloud_voice_agent), default voice rex (male-only), end_session returns {bridge,session_id,status} without had_audio, double-start early-ret...
   _by Admin - 2026-07-08_
 
-## decision (89)
+## decision (90)
 
 - **[10] Frozen Commercial Contract Gate deployed — drift is now impossible to merge** - PLG-BILL-02 gate: frozen_catalogue.py (v2.0.0) is the single machine-readable source of finalized commercial state. 3 layers: (1) CI gate tests/unit/test_frozen_contract.py + fail-hard CI step, (2) CLI python scripts/check_catalogue_drift.py (exit 1 on drift), (3) runtime catalogue_guard.validate_ca...
   _by Admin - 2026-08-16_
@@ -979,6 +981,8 @@
   _by Admin - 2026-07-03_
 - **[9] CONNECT Service Deleted** - TrueVow_Tenant_CONNECT_Service directory deleted. Removed from config.yaml services block and .gitignore. Was archived June 2026 — attorney referral network, no longer on TrueVow's agenda.
   _by user - 2026-07-01_
+- **[8] INTAKE 10B self-verifying human QA launch gate** - INTAKE: implemented HUMAN-QA-HARNESS-10B self-verifying launch gate | result: scripts/human_qa_launch.py --launch now withholds human_join_url until exact lk-<room> durable pin exists after dispatch start and validates truevow-production v1.2.0/bc1cf3c1 readiness; tests/scripts/test_human_qa_launch....
+  _by Admin - 2026-08-17_
 - **[8] Human QA launcher live: tenant-aware dispatch path proven** - scripts/human_qa_launch.py --launch/--preflight; explicit tenant metadata; join token; preflight PASS (pin truevow-production v1.2.0 bc1cf3c1, bootstrap 200, consent greeting, unavailable 0); console Playground confirmed fail-closed by design
   _by Admin - 2026-08-16_
 - **[8] G13 refresh dispositions: truevow_auth = REQUIRED (A); provisioning ops = shared service + fly-ssh CLI** - truevow_auth blocks 4 security suites protecting tenant-facing HTTP auth; endpoints fail-closed by absence; voice-path bearer key unenforced (finding). scripts/provision_config.py + provisioning_service.py = one transaction, two boundaries (HMAC/trusted-runtime)
@@ -1171,7 +1175,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (305)
+## context (307)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1235,6 +1239,8 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: INTAKE: HUMAN-QA-HARNESS-10B self-verifying launch gate implemented | outcome: --launch now withhold** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: HUMAN-QA-HARNESS-10B self-verifying launch gate implemented | outcome: --launch now withholds human URL until exact room pin and v1.2.0/bc1cf3c1 readiness pass; focused tests 9 passed | learned: fix...
+  _by user - 2026-08-17_
 - **[7] [DONE] DONE: INTAKE: TV-INTAKE-HUMAN-QA-FAILCLOSE-10A forensics completed | outcome: no Aug 17 durable pin/sessio** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: TV-INTAKE-HUMAN-QA-FAILCLOSE-10A forensics completed | outcome: no Aug 17 durable pin/session; current auth/bootstrap pass for truevow-production v1.2.0/bc1cf3c1; exact historical dispatch metadata ...
   _by user - 2026-08-17_
 - **[7] [ACTIVE] START: INTAKE: TV-INTAKE-HUMAN-QA-FAILCLOSE-10A forensic only | resuming from AUTH-08/VOICE-AUTH-09 and v1.** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "start", "status": "ACTIVE", "message": "INTAKE: TV-INTAKE-HUMAN-QA-FAILCLOSE-10A forensic only | resuming from AUTH-08/VOICE-AUTH-09 and v1.2.0 state | goal: identify first divergence for 2026-08-17 07:27 Riyadh fail-closed call without core/c...
@@ -1625,6 +1631,8 @@
   _by user - 2026-06-25_
 - **[6] Documentation Status: TrueVow_Documentation is Stale** - TrueVow_Documentation/ contains older documentation (Word docs, markdown exports) including TrueVow_PRD.md, Complete System Technical Documentation, Financial Management guides, and Billing Service updates. These are outdated - they reflect the old architecture with DRAFT naming, CONNECT active, and...
   _by user - 2026-06-25_
+- **[5] Dispatch: TV-INTAKE-HUMAN-QA-HARNESS-10B implement self-verifying launch gate so nontechni** - Dispatched to skill='implement' phase='build' personas=[] tool=
+  _by Admin - 2026-08-17_
 - **[5] Dispatch: TV-INTAKE-HUMAN-QA-FAILCLOSE-10A forensic only pre-core fail-closed call August** - Dispatched to skill='code-review' phase='review' personas=['code-reviewer'] tool=
   _by Admin - 2026-08-17_
 - **[5] 04M CLOSED: metadata-less lk agent simulate smoke PASS - two jobs pinned truevow-production v1.1.0 + representation greeting, deployment-default repoint EFFECTIVE. RECORD CORRECTION (owned): pin evidence proves pre-wipe default WAS truevow-production (call #2 00:04Z pin; secret updated 08-14 16:08:59Z); my 00:27Z restore set Oakwood from stale SESSION_STATE and INTRODUCED the 05:05 regression - not a latent defect. NEW FINDING: curly apostrophe U+2019 in 'No, I haven't' misses the negation family (extractor strips only straight quotes) - 1-line normalization fix awaiting authorization.** - --importance
