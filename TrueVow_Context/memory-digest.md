@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-16T20:50:21.471440+00:00
-- Total memories: 611
+- Generated: 2026-08-17T17:47:42.484094+00:00
+- Total memories: 616
 
-## High-importance decisions (8+, routine noise excluded) - 286
+## High-importance decisions (8+, routine noise excluded) - 287
 
 - **[10][architecture] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Lifecycle shrinks to ~6 states (BOOTSTRAP/SCREENING/INTAKE/RESOLUTION/AWAITING_EFFECT/COMPLETE + HANDOFF/TERMINATED). LLM = conversation conductor within code-determined agenda; code = agenda authority. LiveKit = voice runtime only, TrueVow Core consumes provider-neutral CoreTurn. First Call Readiness Certificate requires all policy branches have outcomes + effect fallbacks; external integrations NOT required for first call. Prototype-first: challenger (Car Accident + OPI) vs current 22-state FSM, measure task completion/false commits/repeats/turns. SaaS Admin Builder implication: NOT a flowchart editor — firm configures facts, routing policy, destinations; previews generated sample conversations.
   _by Admin - 2026-08-12 - tags: -_
@@ -450,6 +450,8 @@
   _by user - 2026-06-25 - tags: analytics, events, warehouse, dashboards, star-schema, platform_
 - **[8][architecture] Tenant Application Service (INTAKE) - Voice + NLP Pipeline** - Phase I intake services. Stack: Python/FastAPI backend, FSM-based deterministic NLP engine, voice pipeline. Purpose: Legal AI intake for personal injury attorneys - captures client information via voice/NLP. Separated from website code (Nov 2025). Technology: Finite State Machine, deterministic NLP (not LLM-based for compliance). Voice pipeline components integrated. Ports: API backend. Depends on: SaaS Admin (tenant management, auth). Related: Benjamin voice agent (STT/TTS), Dialogflow Intake (alternative intake path).
   _by user - 2026-06-25 - tags: intake, nlp, fsm, voice, fastapi, python, tenant-application_
+- **[8][bug] INTAKE 10A pre-core fail-close forensics** - INTAKE: TV-INTAKE-HUMAN-QA-FAILCLOSE-10A captured forensic evidence for Aug 17 07:27 Riyadh fail-closed call | result: no session_fsm_versions pins or intake_sessions in target/broader windows; current AUTH-09 and bootstrap pass for truevow-production v1.2.0/bc1cf3c1; historical dispatch metadata/logs not recoverable from current buffers | learned: first proven divergence is before durable pin creation; need original harness output or historical LiveKit job logs to distinguish raw Playground/no metadata from historical auth/bootstrap failure | next: do not call again until dispatch/job evidence capture is available
+  _by Admin - 2026-08-17 - tags: -_
 - **[8][bug] lk update-secrets comma parsing trap** - lk agent update-secrets --secrets 'A=true,B=...' parses as ONE key-value pair (A='true,B=...'), NOT two. Setting ALLOW_DEPLOYMENT_TENANT_FALLBACK this way produced a garbage value -> falsy -> fallback disabled -> 400s. Always use separate --secrets flags per pair.
   _by Admin - 2026-08-13 - tags: -_
 - **[8][bug] R5 llm_node messages() root cause** - Call #2 silent turns root-caused: ChatContext.messages is a METHOD in livekit-agents 1.6.6 AND 1.6.9 (not a property). TrueVowSchemaGoalAgent.llm_node iterates chat_ctx.messages -> TypeError 'method' object is not iterable -> _llm_inference_task dies instantly -> silent turns (49ms/29ms thinking, zero /process, no replies). Reproduced in isolated 1.6.9 venv. Fix: callable-guard accessor + unit tests with real ChatContext. Awaiting CTO authorization (directive: no code changes yet).
@@ -1056,7 +1058,7 @@
 - **[8] Golden Fixture Cross-Repository Testing** - Created app/shared/contracts.py with frozen contract versions and deterministic golden fixture (make_golden_envelope, make_golden_fixture_json, compute_golden_hmac). Every TrueVow product must deserialize the same 18-field EventEnvelope and compute the same HMAC over the exact raw fixture. Tests at ...
   _by Admin - 2026-07-31_
 
-## bug (54)
+## bug (55)
 
 - **[10] F1 FALSE representation commit from 'engineers'** - Call #3: 'I spoke to a couple of engineers.' -> extractor consulted_phrases includes 'spoke to' -> representation.status=consulted_only committed (0.85, deterministic, validator passed). FALSE LEGAL-SAFETY FACT (engineers != attorneys). None of the 'retained' policy triggered this time, but false fa...
   _by Admin - 2026-08-14_
@@ -1102,6 +1104,8 @@
   _by Admin - 2026-07-31_
 - **[9] contact_info_sequence dropped phone+email** - Root cause: routing INTO a sequence node used _execute_node, which returned the sequence's own intro prompt and left current_node=contact_info_sequence WITHOUT priming the first sub-node. Next turn the C10 terminal guard (workflow_engine.py:518) saw no next/branches/options and returned _build_compl...
   _by Admin - 2026-07-14_
+- **[8] INTAKE 10A pre-core fail-close forensics** - INTAKE: TV-INTAKE-HUMAN-QA-FAILCLOSE-10A captured forensic evidence for Aug 17 07:27 Riyadh fail-closed call | result: no session_fsm_versions pins or intake_sessions in target/broader windows; current AUTH-09 and bootstrap pass for truevow-production v1.2.0/bc1cf3c1; historical dispatch metadata/lo...
+  _by Admin - 2026-08-17_
 - **[8] lk update-secrets comma parsing trap** - lk agent update-secrets --secrets 'A=true,B=...' parses as ONE key-value pair (A='true,B=...'), NOT two. Setting ALLOW_DEPLOYMENT_TENANT_FALLBACK this way produced a garbage value -> falsy -> fallback disabled -> 400s. Always use separate --secrets flags per pair.
   _by Admin - 2026-08-13_
 - **[8] R5 llm_node messages() root cause** - Call #2 silent turns root-caused: ChatContext.messages is a METHOD in livekit-agents 1.6.6 AND 1.6.9 (not a property). TrueVowSchemaGoalAgent.llm_node iterates chat_ctx.messages -> TypeError 'method' object is not iterable -> _llm_inference_task dies instantly -> silent turns (49ms/29ms thinking, ze...
@@ -1167,7 +1171,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (301)
+## context (305)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1189,6 +1193,8 @@
   _by Admin - 2026-08-11_
 - **[9] G10 Canary Status** - Lead 1763aee9-52ca-4418-abb8-a60e7f90d847 at HANDOFF_PENDING. T020 passed, T022 passed. Handoff to SaaS Admin deployed and ready for retry. SaaS Admin webhook at truevow-saas-admin-staging.fly.dev with HMAC key tv-sales-ops-to-saas-admin-v1. PIPELINE_SECRET and TRUEVOW_DEPLOYMENT_ENV=staging set.
   _by Admin - 2026-08-10_
+- **[8] Git Scan: 2026-08-17T17:33:02** - { "summary": { "timestamp": "2026-08-17T17:33:02.759200+00:00", "total": 14, "clean": 6, "dirty": 6, "missing": 2, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 8, "NEGLECTED": 6, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY":...
+  _by Admin - 2026-08-17_
 - **[8] R6 fix deployed PcFm5bmpNk75** - 04G-R6: fail-closed path now calls JobContext.shutdown via attach_job_shutdown (session aclose alone never terminated the job - call #4 lingered with 60s aclose timeout). Deployed agent PcFm5bmpNk75 16:01:30Z. Unit test proves shutdown callback invoked after wait_for_playout. Non-human room-level ve...
   _by Admin - 2026-08-14_
 - **[8] Call #3 REAL SG PIPELINE PASS** - Human call 2026-08-14 05:25Z: core greeting audible, 7+ real multi-turns, /process per turn (llmNodeTtft 0.30-0.40s), Cartesia audible (ttfb 0.11-0.12s, e2e 1.9-3.9s), pin 5138d957-73c8-565c-9851-c37838d40b93 v1.0.0. REAL_WEBRTC/STT/SCHEMA_GOAL/TTS/MULTI_TURN all PASS. Core-quality observations: con...
@@ -1229,6 +1235,10 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: INTAKE: TV-INTAKE-HUMAN-QA-FAILCLOSE-10A forensics completed | outcome: no Aug 17 durable pin/sessio** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: TV-INTAKE-HUMAN-QA-FAILCLOSE-10A forensics completed | outcome: no Aug 17 durable pin/session; current auth/bootstrap pass for truevow-production v1.2.0/bc1cf3c1; exact historical dispatch metadata ...
+  _by user - 2026-08-17_
+- **[7] [ACTIVE] START: INTAKE: TV-INTAKE-HUMAN-QA-FAILCLOSE-10A forensic only | resuming from AUTH-08/VOICE-AUTH-09 and v1.** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "start", "status": "ACTIVE", "message": "INTAKE: TV-INTAKE-HUMAN-QA-FAILCLOSE-10A forensic only | resuming from AUTH-08/VOICE-AUTH-09 and v1.2.0 state | goal: identify first divergence for 2026-08-17 07:27 Riyadh fail-closed call without core/c...
+  _by user - 2026-08-17_
 - **[7] [DONE] DONE: INTAKE: HUMAN-QA-HARNESS-10 built + live preflight PASS | outcome: tenant-aware launcher (dispatch m** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: HUMAN-QA-HARNESS-10 built + live preflight PASS | outcome: tenant-aware launcher (dispatch metadata tenant_id) + machine preflight gate proven on the deployed path (pin v1.2.0/bc1cf3c1, bootstrap 20...
   _by user - 2026-08-16_
 - **[7] [DONE] DONE: INTAKE: AUTH-08 + VOICE-AUTH-09 executed+deployed | outcome: G13 PASS bar fully evidenced (1400/0/0/** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: AUTH-08 + VOICE-AUTH-09 executed+deployed | outcome: G13 PASS bar fully evidenced (1400/0/0/16-skip; 4 auth suites unskipped 122 green; /process 401-negatives with Core=0; valid+unknown 422; valid 2...
@@ -1615,6 +1625,8 @@
   _by user - 2026-06-25_
 - **[6] Documentation Status: TrueVow_Documentation is Stale** - TrueVow_Documentation/ contains older documentation (Word docs, markdown exports) including TrueVow_PRD.md, Complete System Technical Documentation, Financial Management guides, and Billing Service updates. These are outdated - they reflect the old architecture with DRAFT naming, CONNECT active, and...
   _by user - 2026-06-25_
+- **[5] Dispatch: TV-INTAKE-HUMAN-QA-FAILCLOSE-10A forensic only pre-core fail-closed call August** - Dispatched to skill='code-review' phase='review' personas=['code-reviewer'] tool=
+  _by Admin - 2026-08-17_
 - **[5] 04M CLOSED: metadata-less lk agent simulate smoke PASS - two jobs pinned truevow-production v1.1.0 + representation greeting, deployment-default repoint EFFECTIVE. RECORD CORRECTION (owned): pin evidence proves pre-wipe default WAS truevow-production (call #2 00:04Z pin; secret updated 08-14 16:08:59Z); my 00:27Z restore set Oakwood from stale SESSION_STATE and INTRODUCED the 05:05 regression - not a latent defect. NEW FINDING: curly apostrophe U+2019 in 'No, I haven't' misses the negation family (extractor strips only straight quotes) - 1-line normalization fix awaiting authorization.** - --importance
   _by Admin - 2026-08-15_
 - **[5] [ACTIVE] BLOCKED: INTAKE: 05:05Z call fail-closed - transient outage window | attempted: tenant curl NOW x4 = ready/v1** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "blocked", "status": "ACTIVE", "message": "INTAKE: 05:05Z call fail-closed - transient outage window | attempted: tenant curl NOW x4 = ready/v1.1.0 (healthy); DB shows two SUCCESSFUL bootstrap pins at 23:08Z and 00:04Z Aug 14 (prior calls) but ...
