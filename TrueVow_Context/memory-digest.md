@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-18T02:48:53.066707+00:00
-- Total memories: 635
+- Generated: 2026-08-18T04:35:17.369457+00:00
+- Total memories: 640
 
-## High-importance decisions (8+, routine noise excluded) - 291
+## High-importance decisions (8+, routine noise excluded) - 292
 
 - **[10][architecture] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Lifecycle shrinks to ~6 states (BOOTSTRAP/SCREENING/INTAKE/RESOLUTION/AWAITING_EFFECT/COMPLETE + HANDOFF/TERMINATED). LLM = conversation conductor within code-determined agenda; code = agenda authority. LiveKit = voice runtime only, TrueVow Core consumes provider-neutral CoreTurn. First Call Readiness Certificate requires all policy branches have outcomes + effect fallbacks; external integrations NOT required for first call. Prototype-first: challenger (Car Accident + OPI) vs current 22-state FSM, measure task completion/false commits/repeats/turns. SaaS Admin Builder implication: NOT a flowchart editor — firm configures facts, routing policy, destinations; previews generated sample conversations.
   _by Admin - 2026-08-12 - tags: -_
@@ -450,6 +450,8 @@
   _by user - 2026-06-25 - tags: analytics, events, warehouse, dashboards, star-schema, platform_
 - **[8][architecture] Tenant Application Service (INTAKE) - Voice + NLP Pipeline** - Phase I intake services. Stack: Python/FastAPI backend, FSM-based deterministic NLP engine, voice pipeline. Purpose: Legal AI intake for personal injury attorneys - captures client information via voice/NLP. Separated from website code (Nov 2025). Technology: Finite State Machine, deterministic NLP (not LLM-based for compliance). Voice pipeline components integrated. Ports: API backend. Depends on: SaaS Admin (tenant management, auth). Related: Benjamin voice agent (STT/TTS), Dialogflow Intake (alternative intake path).
   _by user - 2026-06-25 - tags: intake, nlp, fsm, voice, fastapi, python, tenant-application_
+- **[8][bug] INTAKE 06F1 LiveKit endpointing latency** - INTAKE: qa-1787022630 logs isolated ~2.9s speech-end to CoreTurn delay matching fixed endpointing max 3.5s; changed LiveKit QA endpointing to documented audio-turn-detector defaults dynamic 0.3/2.5 and added TURN_CONFIG startup log; no semantic or phrase patching.
+  _by Admin - 2026-08-18 - tags: -_
 - **[8][bug] INTAKE 06F LiveKit turn-capture boundary instrumentation** - INTAKE: deployed TURN_CAPTURE logs in deploy/livekit/agent.py for STT interim/final, LiveKit completed turn, agent core input, core response, and user/agent state transitions | result: LiveKit agent CA_UxWtcHqLEUTp version axMARyaBbr5o deployed | learned: existing lk agent simulate protocol is text-only and cannot prove WebRTC/STT/VAD; audio machine proof blocked without fixture/driver | next: run one instrumented audio room or add audio fixture harness before any endpointing patch
   _by Admin - 2026-08-18 - tags: -_
 - **[8][bug] INTAKE LiveKit QA route plus vehicle damage resolution** - INTAKE: route/highway fragments plus vehicle damage such as crumpled trunk now compose into car_accident; implemented session story_evidence accumulation and vehicle.damage extraction; deployed truevow-tenant-public image deployment-01M08XE4AG7FNJTHMWDZ7WSZPJ; verified 47/47 06A tests, 9/9 launcher tests, deployed replay advances to jurisdiction.
@@ -1068,7 +1070,7 @@
 - **[8] Golden Fixture Cross-Repository Testing** - Created app/shared/contracts.py with frozen contract versions and deterministic golden fixture (make_golden_envelope, make_golden_fixture_json, compute_golden_hmac). Every TrueVow product must deserialize the same 18-field EventEnvelope and compute the same HMAC over the exact raw fixture. Tests at ...
   _by Admin - 2026-07-31_
 
-## bug (59)
+## bug (60)
 
 - **[10] F1 FALSE representation commit from 'engineers'** - Call #3: 'I spoke to a couple of engineers.' -> extractor consulted_phrases includes 'spoke to' -> representation.status=consulted_only committed (0.85, deterministic, validator passed). FALSE LEGAL-SAFETY FACT (engineers != attorneys). None of the 'retained' policy triggered this time, but false fa...
   _by Admin - 2026-08-14_
@@ -1114,6 +1116,8 @@
   _by Admin - 2026-07-31_
 - **[9] contact_info_sequence dropped phone+email** - Root cause: routing INTO a sequence node used _execute_node, which returned the sequence's own intro prompt and left current_node=contact_info_sequence WITHOUT priming the first sub-node. Next turn the C10 terminal guard (workflow_engine.py:518) saw no next/branches/options and returned _build_compl...
   _by Admin - 2026-07-14_
+- **[8] INTAKE 06F1 LiveKit endpointing latency** - INTAKE: qa-1787022630 logs isolated ~2.9s speech-end to CoreTurn delay matching fixed endpointing max 3.5s; changed LiveKit QA endpointing to documented audio-turn-detector defaults dynamic 0.3/2.5 and added TURN_CONFIG startup log; no semantic or phrase patching.
+  _by Admin - 2026-08-18_
 - **[8] INTAKE 06F LiveKit turn-capture boundary instrumentation** - INTAKE: deployed TURN_CAPTURE logs in deploy/livekit/agent.py for STT interim/final, LiveKit completed turn, agent core input, core response, and user/agent state transitions | result: LiveKit agent CA_UxWtcHqLEUTp version axMARyaBbr5o deployed | learned: existing lk agent simulate protocol is text-...
   _by Admin - 2026-08-18_
 - **[8] INTAKE LiveKit QA route plus vehicle damage resolution** - INTAKE: route/highway fragments plus vehicle damage such as crumpled trunk now compose into car_accident; implemented session story_evidence accumulation and vehicle.damage extraction; deployed truevow-tenant-public image deployment-01M08XE4AG7FNJTHMWDZ7WSZPJ; verified 47/47 06A tests, 9/9 launcher ...
@@ -1189,7 +1193,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (319)
+## context (323)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1211,6 +1215,8 @@
   _by Admin - 2026-08-11_
 - **[9] G10 Canary Status** - Lead 1763aee9-52ca-4418-abb8-a60e7f90d847 at HANDOFF_PENDING. T020 passed, T022 passed. Handoff to SaaS Admin deployed and ready for retry. SaaS Admin webhook at truevow-saas-admin-staging.fly.dev with HMAC key tv-sales-ops-to-saas-admin-v1. PIPELINE_SECRET and TRUEVOW_DEPLOYMENT_ENV=staging set.
   _by Admin - 2026-08-10_
+- **[8] Git Scan: 2026-08-18T03:21:09** - { "summary": { "timestamp": "2026-08-18T03:21:09.794520+00:00", "total": 14, "clean": 6, "dirty": 6, "missing": 2, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 8, "NEGLECTED": 6, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY":...
+  _by Admin - 2026-08-18_
 - **[8] Git Scan: 2026-08-17T17:33:02** - { "summary": { "timestamp": "2026-08-17T17:33:02.759200+00:00", "total": 14, "clean": 6, "dirty": 6, "missing": 2, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 8, "NEGLECTED": 6, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY":...
   _by Admin - 2026-08-17_
 - **[8] R6 fix deployed PcFm5bmpNk75** - 04G-R6: fail-closed path now calls JobContext.shutdown via attach_job_shutdown (session aclose alone never terminated the job - call #4 lingered with 60s aclose timeout). Deployed agent PcFm5bmpNk75 16:01:30Z. Unit test proves shutdown callback invoked after wait_for_playout. Non-human room-level ve...
@@ -1253,6 +1259,10 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: INTAKE: 06F1 transport endpointing repair plus 06H read-only completion forensics | outcome: tenant** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: 06F1 transport endpointing repair plus 06H read-only completion forensics | outcome: tenant deployment-01M09J4K5PAXJG4C25K6HRA9G8 healthy, LiveKit C4jMcjrhLrq3 running, fresh room qa-1787027661 PASS...
+  _by user - 2026-08-18_
+- **[7] [ACTIVE] START: INTAKE: continue LiveKit SchemaGoal latency fix | resuming from 06F qa-1787022630 evidence | goal: r** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "start", "status": "ACTIVE", "message": "INTAKE: continue LiveKit SchemaGoal latency fix | resuming from 06F qa-1787022630 evidence | goal: restrict LLM to story/practice path and verify tests", "timestamp": "2026-08-18T03:21:30.859815+00:00", ...
+  _by user - 2026-08-18_
 - **[7] [DONE] DONE: INTAKE: deployed LiveKit QA route plus vehicle-damage resolver fix | outcome: 47/47 06A tests, 9/9 l** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: deployed LiveKit QA route plus vehicle-damage resolver fix | outcome: 47/47 06A tests, 9/9 launcher tests, health 200, deployed replay advances to jurisdiction | learned: story/practice turns need s...
   _by user - 2026-08-17_
 - **[7] [DONE] DONE: INTAKE: completed PRACTICE-RESOLUTION-06C local fix | outcome: 46 experience_06a tests and 9 launche** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: completed PRACTICE-RESOLUTION-06C local fix | outcome: 46 experience_06a tests and 9 launcher tests passed; exact failed transcript replays without generic practice loop | learned: live failure is C...
@@ -1659,6 +1669,8 @@
   _by user - 2026-06-25_
 - **[6] Documentation Status: TrueVow_Documentation is Stale** - TrueVow_Documentation/ contains older documentation (Word docs, markdown exports) including TrueVow_PRD.md, Complete System Technical Documentation, Financial Management guides, and Billing Service updates. These are outdated - they reflect the old architecture with DRAFT naming, CONNECT active, and...
   _by user - 2026-06-25_
+- **[5] Dispatch: Continue latency/noisy observer fix for LiveKit SchemaGoal QA** - Dispatched to skill='diagnosing-bugs' phase='verify' personas=[] tool=
+  _by Admin - 2026-08-18_
 - **[5] [ACTIVE] BLOCKED: INTAKE: 06F machine audio proof blocked | attempted: mapped LiveKit turn path, read LiveKit docs, de** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "blocked", "status": "ACTIVE", "message": "INTAKE: 06F machine audio proof blocked | attempted: mapped LiveKit turn path, read LiveKit docs, deployed TURN_CAPTURE boundary telemetry to agent version axMARyaBbr5o | need: controlled audio fixture...
   _by user - 2026-08-18_
 - **[5] Dispatch: Diagnose live human QA room qa-1787017855 repeating and misunderstanding; use lo** - Dispatched to skill='diagnosing-bugs' phase='verify' personas=[] tool=
