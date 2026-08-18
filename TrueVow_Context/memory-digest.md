@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-18T04:35:17.369457+00:00
-- Total memories: 640
+- Generated: 2026-08-18T10:21:05.125962+00:00
+- Total memories: 645
 
-## High-importance decisions (8+, routine noise excluded) - 292
+## High-importance decisions (8+, routine noise excluded) - 293
 
 - **[10][architecture] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Lifecycle shrinks to ~6 states (BOOTSTRAP/SCREENING/INTAKE/RESOLUTION/AWAITING_EFFECT/COMPLETE + HANDOFF/TERMINATED). LLM = conversation conductor within code-determined agenda; code = agenda authority. LiveKit = voice runtime only, TrueVow Core consumes provider-neutral CoreTurn. First Call Readiness Certificate requires all policy branches have outcomes + effect fallbacks; external integrations NOT required for first call. Prototype-first: challenger (Car Accident + OPI) vs current 22-state FSM, measure task completion/false commits/repeats/turns. SaaS Admin Builder implication: NOT a flowchart editor — firm configures facts, routing policy, destinations; previews generated sample conversations.
   _by Admin - 2026-08-12 - tags: -_
@@ -566,6 +566,8 @@
   _by user - 2026-06-25 - tags: -_
 - **[8][dependency] D-001 Fix: enrichment_pending -> PROFILED** - enrichment_pending maps to canonical PROFILED per CTO frozen decision. Next valid transition: T004 (PROFILED -> CONTACT_ENRICHED). Reason code: legacy_state_migrated. Fixed in contracts.ts, migration 177, website-intake/manager.ts, and leads-repository.ts.
   _by Admin - 2026-08-03 - tags: -_
+- **[8][pattern] INTAKE Core FAQ lane 06H** - INTAKE: added Core-owned deterministic firm-policy FAQ lane after LiveKit human QA showed post-completion consultation/fees/business-hours turns were routed to terminal resolution | result: ResponseIntent firm_faq answers without fact/goal/policy/effect mutation and terminal=False | learned: canonical TrueVowSchemaGoalAgent has no tool FAQ path, so FAQ must live in Core to preserve bridge-as-delivery-layer | next: deploy and run a fresh secured LiveKit Meet QA room
+  _by Admin - 2026-08-18 - tags: -_
 - **[8][pattern] Track-A execution pattern** - All A1 items executed sequentially: SDK verification first, native API preference, bridge-only changes, zero FSM/contract/deployment mutations. Each item closed independently by reviewer before next authorized.
   _by Admin - 2026-08-05 - tags: -_
 - **[8][pattern] SETTLE Authority Gate Pattern** - Every material action in SETTLE passes through a three-layer gate: (1) Authority class check - who can do what (CLIENT_AUTH for settlement decisions, ATTY_AUTH for demand/representation, STAFF_AUTH for disbursements). (2) State transition validation - is this move allowed from the current state (6 transition maps: demand_package, offer, lien, allocation, disbursement, consent). (3) Invariant validation - does this action violate any non-negotiable rule (INV-005 client settlement authority, INV-013 money reconciliation, INV-006 immutable document versions). Failure mode is always fail-closed (TV-CMP-002).
@@ -830,12 +832,14 @@
 - **[5] 04G amendment frozen: obtain_conflict_party REMOVED from Schema/Goal standard qualification goal set (CTO directive). Adverse-party identity = optional tenant policy / spontaneous capture only. OPI responsible.party now conditional clarification. Grading split: CASE PRIORITY vs INTAKE COMPLETENESS vs ROUTING_SAFETY. New semantic checksum 7a7b0495 (v1.1.0 candidate; staging pinned v1.0.0/3c0c130b until republish).** - --importance
   _by Admin - 2026-08-14_
 
-## pattern (11)
+## pattern (12)
 
 - **[10] Per-Service Key Isolation Pattern** - NEVER use one global webhook secret across all services. Each caller-receiver pair gets its own key: tv-intake-to-retainer-v1, tv-retainer-to-saas-admin-v1, tv-saas-admin-to-trace-v1. Key prefixes bound to allowed paths in CANONICAL_PATHS registry. Env vars: TRUEVOW_WEBHOOK_KEY_ID_{SERVICE} + TRUEVO...
   _by Admin - 2026-07-31_
 - **[9] LiveKit Prebuilt Tasks — Beta Boundary** - All three contact tasks (GetNameTask, GetEmailTask, GetPhoneNumberTask) verified AVAILABLE_PUBLIC_BETA in livekit-agents 1.6.6. TaskGroup is EXPERIMENTAL (summarization must be disabled). Prebuilt tasks handle collection conversationally but must NOT commit facts, select states, or mark intake compl...
   _by Admin - 2026-08-06_
+- **[8] INTAKE Core FAQ lane 06H** - INTAKE: added Core-owned deterministic firm-policy FAQ lane after LiveKit human QA showed post-completion consultation/fees/business-hours turns were routed to terminal resolution | result: ResponseIntent firm_faq answers without fact/goal/policy/effect mutation and terminal=False | learned: canonic...
+  _by Admin - 2026-08-18_
 - **[8] Track-A execution pattern** - All A1 items executed sequentially: SDK verification first, native API preference, bridge-only changes, zero FSM/contract/deployment mutations. Each item closed independently by reviewer before next authorized.
   _by Admin - 2026-08-05_
 - **[8] SETTLE Authority Gate Pattern** - Every material action in SETTLE passes through a three-layer gate: (1) Authority class check - who can do what (CLIENT_AUTH for settlement decisions, ATTY_AUTH for demand/representation, STAFF_AUTH for disbursements). (2) State transition validation - is this move allowed from the current state (6 t...
@@ -1193,7 +1197,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (323)
+## context (327)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1215,6 +1219,8 @@
   _by Admin - 2026-08-11_
 - **[9] G10 Canary Status** - Lead 1763aee9-52ca-4418-abb8-a60e7f90d847 at HANDOFF_PENDING. T020 passed, T022 passed. Handoff to SaaS Admin deployed and ready for retry. SaaS Admin webhook at truevow-saas-admin-staging.fly.dev with HMAC key tv-sales-ops-to-saas-admin-v1. PIPELINE_SECRET and TRUEVOW_DEPLOYMENT_ENV=staging set.
   _by Admin - 2026-08-10_
+- **[8] Git Scan: 2026-08-18T09:22:34** - { "summary": { "timestamp": "2026-08-18T09:22:34.079817+00:00", "total": 14, "clean": 6, "dirty": 6, "missing": 2, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 8, "NEGLECTED": 6, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY":...
+  _by Admin - 2026-08-18_
 - **[8] Git Scan: 2026-08-18T03:21:09** - { "summary": { "timestamp": "2026-08-18T03:21:09.794520+00:00", "total": 14, "clean": 6, "dirty": 6, "missing": 2, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 8, "NEGLECTED": 6, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY":...
   _by Admin - 2026-08-18_
 - **[8] Git Scan: 2026-08-17T17:33:02** - { "summary": { "timestamp": "2026-08-17T17:33:02.759200+00:00", "total": 14, "clean": 6, "dirty": 6, "missing": 2, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 8, "NEGLECTED": 6, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY":...
@@ -1259,6 +1265,10 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: INTAKE: implemented 06H Core FAQ/consultation presentation lane | outcome: 51 SchemaGoal tests and 1** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: implemented 06H Core FAQ/consultation presentation lane | outcome: 51 SchemaGoal tests and 11 arch invariant tests passed, not deployed | learned: canonical SchemaGoal agent forwards every turn to C...
+  _by user - 2026-08-18_
+- **[7] [ACTIVE] START: INTAKE: continue 06H completion gap | resuming from human-first LiveKit QA evidence | goal: identify** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "start", "status": "ACTIVE", "message": "INTAKE: continue 06H completion gap | resuming from human-first LiveKit QA evidence | goal: identify evidence-backed Core completion next step", "timestamp": "2026-08-18T09:22:52.058047+00:00", "working_...
+  _by user - 2026-08-18_
 - **[7] [DONE] DONE: INTAKE: 06F1 transport endpointing repair plus 06H read-only completion forensics | outcome: tenant** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: 06F1 transport endpointing repair plus 06H read-only completion forensics | outcome: tenant deployment-01M09J4K5PAXJG4C25K6HRA9G8 healthy, LiveKit C4jMcjrhLrq3 running, fresh room qa-1787027661 PASS...
   _by user - 2026-08-18_
 - **[7] [ACTIVE] START: INTAKE: continue LiveKit SchemaGoal latency fix | resuming from 06F qa-1787022630 evidence | goal: r** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "start", "status": "ACTIVE", "message": "INTAKE: continue LiveKit SchemaGoal latency fix | resuming from 06F qa-1787022630 evidence | goal: restrict LLM to story/practice path and verify tests", "timestamp": "2026-08-18T03:21:30.859815+00:00", ...
@@ -1669,6 +1679,8 @@
   _by user - 2026-06-25_
 - **[6] Documentation Status: TrueVow_Documentation is Stale** - TrueVow_Documentation/ contains older documentation (Word docs, markdown exports) including TrueVow_PRD.md, Complete System Technical Documentation, Financial Management guides, and Billing Service updates. These are outdated - they reflect the old architecture with DRAFT naming, CONNECT active, and...
   _by user - 2026-06-25_
+- **[5] Dispatch: Continue from LiveKit human QA: inspect SchemaGoal early completion/booking cons** - Dispatched to skill='code-review' phase='review' personas=['code-reviewer'] tool=
+  _by Admin - 2026-08-18_
 - **[5] Dispatch: Continue latency/noisy observer fix for LiveKit SchemaGoal QA** - Dispatched to skill='diagnosing-bugs' phase='verify' personas=[] tool=
   _by Admin - 2026-08-18_
 - **[5] [ACTIVE] BLOCKED: INTAKE: 06F machine audio proof blocked | attempted: mapped LiveKit turn path, read LiveKit docs, de** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "blocked", "status": "ACTIVE", "message": "INTAKE: 06F machine audio proof blocked | attempted: mapped LiveKit turn path, read LiveKit docs, deployed TURN_CAPTURE boundary telemetry to agent version axMARyaBbr5o | need: controlled audio fixture...
