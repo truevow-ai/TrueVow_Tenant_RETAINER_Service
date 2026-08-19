@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-19T17:28:53.712161+00:00
-- Total memories: 655
+- Generated: 2026-08-19T20:07:46.960891+00:00
+- Total memories: 658
 
-## High-importance decisions (8+, routine noise excluded) - 297
+## High-importance decisions (8+, routine noise excluded) - 298
 
 - **[10][architecture] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Lifecycle shrinks to ~6 states (BOOTSTRAP/SCREENING/INTAKE/RESOLUTION/AWAITING_EFFECT/COMPLETE + HANDOFF/TERMINATED). LLM = conversation conductor within code-determined agenda; code = agenda authority. LiveKit = voice runtime only, TrueVow Core consumes provider-neutral CoreTurn. First Call Readiness Certificate requires all policy branches have outcomes + effect fallbacks; external integrations NOT required for first call. Prototype-first: challenger (Car Accident + OPI) vs current 22-state FSM, measure task completion/false commits/repeats/turns. SaaS Admin Builder implication: NOT a flowchart editor — firm configures facts, routing policy, destinations; previews generated sample conversations.
   _by Admin - 2026-08-12 - tags: -_
@@ -120,6 +120,8 @@
   _by Admin - 2026-08-10 - tags: -_
 - **[10][convention] zero hardcoded tunable values** - RULE: This is a multi-tenant platform. Never hardcode ANY value that may need adjustment per-tenant, per-firm, or per-environment. All tunables must live in one of: (1) tenant_config, (2) workflow JSON config, or (3) named module-level constants with clear documentation. Bare numbers, strings, or IDs in logic statements are FORBIDDEN. If you need a value that could change — threshold, timeout, limit, firm identifier, VAD setting, confidence score — expose it via config. Test by asking: 'Could a different law firm need this set differently?'
   _by Admin - 2026-07-15 - tags: -_
+- **[10][decision] INTAKE COLLAPSE-07 stages 0-2** - INTAKE: executed LIVEKIT-BRIDGE-COLLAPSE-07 | result: GitHub main checkpointed to deployed tree (0f8954e), time-debounce removed (stable utterance_id dedupe), monitoring off hot path, bridge singleton one-time init, TrueVowCloudAgent/IntakeObserver/agent-FAQ deleted (1892->970 lines), entrypoint fails closed non-schema_goal, turn-counter bug fixed | learned: bridge send_text bypassed GoalSession.process so turn_count stayed 0 and is_first stuck true on non-greeted sessions; 12 unpushed old-engine commits on local main were tagged archive/ not published | next: human QA in fresh room qa-1787159958; if capture fragments use STT_DIAGNOSTIC room
+  _by Admin - 2026-08-19 - tags: -_
 - **[10][decision] Frozen Commercial Contract Gate deployed — drift is now impossible to merge** - PLG-BILL-02 gate: frozen_catalogue.py (v2.0.0) is the single machine-readable source of finalized commercial state. 3 layers: (1) CI gate tests/unit/test_frozen_contract.py + fail-hard CI step, (2) CLI python scripts/check_catalogue_drift.py (exit 1 on drift), (3) runtime catalogue_guard.validate_catalogue() now enforces the contract against the LIVE DB — retired LEVERAGE ACTIVE/purchasable, TRACE mispriced, or founding rows/tables -> catalogue NOT READY -> 503 fail-closed on all commercial endpoints. The CI gate simulates the ENTIRE alembic chain final state (products/plans exact cents, founding tables dropped) so a future migration re-activating a retired product fails the PR. Change procedure: any commercial change = frozen_catalogue + migration + constants + tests in ONE PR + CTO approval. AGENTS.md updated so every agent sees the gate on startup.
   _by Admin - 2026-08-16 - tags: -_
 - **[10][decision] LEVERAGE quarantined, TRACE activated, founding tiers removed — billing migration 1a9b8c7d6e5f** - Billing catalogue aligned with retirement decisions. Migration 1a9b8c7d6e5f: LEVERAGE product+plans -> RETIRED (not purchasable, grandfathered only; surviving components seeded as DRAFT add-ons LEVERAGE_SOL_DEADLINES + LEVERAGE_DAMAGES_CALC, pricing TBD, TRACE-fold candidates). TRACE -> ACTIVE with finalized per-matter pricing: Start / Essential / Complete , intro offer first 12 matters TRACE Complete free for new INTAKE customers (promotion trace_complete_launch_12_v1, 180d). Founding member/council fully removed: FOUNDING_MEMBER constant, founding_council pricing rows, council endpoints, attorney_founding_members/founding_intelligence_members/billing_tenant_council_status tables. Public pricing-catalog endpoint now surfaces trace tiers + addons; LEVERAGE reports true RETIRED status. Unit: 172 pass, 1 pre-existing failure.
@@ -871,8 +873,10 @@
 - **[6] xai_cloud bridge test suite** - Created tests/test_xai_cloud_bridge.py (34 tests) for XaiCloudBridge. Mirrors test_xai_bridge.py but adapts for cloud bridge: dual registration (xai_cloud + xai_cloud_voice_agent), default voice rex (male-only), end_session returns {bridge,session_id,status} without had_audio, double-start early-ret...
   _by Admin - 2026-07-08_
 
-## decision (91)
+## decision (92)
 
+- **[10] INTAKE COLLAPSE-07 stages 0-2** - INTAKE: executed LIVEKIT-BRIDGE-COLLAPSE-07 | result: GitHub main checkpointed to deployed tree (0f8954e), time-debounce removed (stable utterance_id dedupe), monitoring off hot path, bridge singleton one-time init, TrueVowCloudAgent/IntakeObserver/agent-FAQ deleted (1892->970 lines), entrypoint fai...
+  _by Admin - 2026-08-19_
 - **[10] Frozen Commercial Contract Gate deployed — drift is now impossible to merge** - PLG-BILL-02 gate: frozen_catalogue.py (v2.0.0) is the single machine-readable source of finalized commercial state. 3 layers: (1) CI gate tests/unit/test_frozen_contract.py + fail-hard CI step, (2) CLI python scripts/check_catalogue_drift.py (exit 1 on drift), (3) runtime catalogue_guard.validate_ca...
   _by Admin - 2026-08-16_
 - **[10] LEVERAGE quarantined, TRACE activated, founding tiers removed — billing migration 1a9b8c7d6e5f** - Billing catalogue aligned with retirement decisions. Migration 1a9b8c7d6e5f: LEVERAGE product+plans -> RETIRED (not purchasable, grandfathered only; surviving components seeded as DRAFT add-ons LEVERAGE_SOL_DEADLINES + LEVERAGE_DAMAGES_CALC, pricing TBD, TRACE-fold candidates). TRACE -> ACTIVE with ...
@@ -1213,7 +1217,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (333)
+## context (335)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1281,6 +1285,10 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: INTAKE: COLLAPSE-07 stages 0-2 executed and deployed | outcome: all gates green (64+58+33), main=dep** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: COLLAPSE-07 stages 0-2 executed and deployed | outcome: all gates green (64+58+33), main=deployed tree, agent AyF6npzbbRPP | learned: turn-counter bug + time-debounce were real conversation corrupte...
+  _by user - 2026-08-19_
+- **[7] [DONE] DONE: TRACE: FND-001A built + pushed (trace/TRACE-FND-001A f0fa001) | outcome: 3 drift roots + discovered** - {"agent_id": "TrueVow_Tenant_TRACE_Service", "action": "done", "status": "DONE", "message": "TRACE: FND-001A built + pushed (trace/TRACE-FND-001A f0fa001) | outcome: 3 drift roots + discovered 4th (event_nodes.flag_priority) reconciled; full guarded PG suite 95/95 GREEN; Supabase validated (head 002...
+  _by user - 2026-08-19_
 - **[7] [DONE] DONE: Sales Ops: website submission contract implemented end-to-end | outcome: 3 routes built (trial/demo/** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "done", "status": "DONE", "message": "Sales Ops: website submission contract implemented end-to-end | outcome: 3 routes built (trial/demo/waitlist), durable Postgres dedup with 409 contract, migration applied to prod DB, live E2E smoke verified 201...
   _by user - 2026-08-19_
 - **[7] [ACTIVE] START: Sales Ops: implementing website submission contract (server.js -> Sales Ops) | resuming from handoff** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "start", "status": "ACTIVE", "message": "Sales Ops: implementing website submission contract (server.js -> Sales Ops) | resuming from handoff of SALES_OPS_API_CONTRACT.md | goal: durable receiver for /website/application-received, /demo-request, /w...
