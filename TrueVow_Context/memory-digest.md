@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-18T10:21:05.125962+00:00
-- Total memories: 645
+- Generated: 2026-08-19T17:28:53.712161+00:00
+- Total memories: 655
 
-## High-importance decisions (8+, routine noise excluded) - 293
+## High-importance decisions (8+, routine noise excluded) - 297
 
 - **[10][architecture] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Lifecycle shrinks to ~6 states (BOOTSTRAP/SCREENING/INTAKE/RESOLUTION/AWAITING_EFFECT/COMPLETE + HANDOFF/TERMINATED). LLM = conversation conductor within code-determined agenda; code = agenda authority. LiveKit = voice runtime only, TrueVow Core consumes provider-neutral CoreTurn. First Call Readiness Certificate requires all policy branches have outcomes + effect fallbacks; external integrations NOT required for first call. Prototype-first: challenger (Car Accident + OPI) vs current 22-state FSM, measure task completion/false commits/repeats/turns. SaaS Admin Builder implication: NOT a flowchart editor — firm configures facts, routing policy, destinations; previews generated sample conversations.
   _by Admin - 2026-08-12 - tags: -_
@@ -312,6 +312,8 @@
   _by Admin - 2026-08-11 - tags: -_
 - **[9][context] G10 Canary Status** - Lead 1763aee9-52ca-4418-abb8-a60e7f90d847 at HANDOFF_PENDING. T020 passed, T022 passed. Handoff to SaaS Admin deployed and ready for retry. SaaS Admin webhook at truevow-saas-admin-staging.fly.dev with HMAC key tv-sales-ops-to-saas-admin-v1. PIPELINE_SECRET and TRUEVOW_DEPLOYMENT_ENV=staging set.
   _by Admin - 2026-08-10 - tags: -_
+- **[9][decision] TRACE-FND-001 Gate 001 verdict** - CONDITIONAL_PASS on commit 7731600 (trace/TRACE-FND-001). All builder claims verified: SQLite fully excised, fail-closed Postgres-only config, 41/41 DB-free tests pass (15 not 12 cases), Alembic chain coherent (version_num widened to 255, 0004 location-aware), zero scope violations. 25 PG-lane failures confirmed pre-existing drift. BLOCKING before Supabase validation: conftest TRACE_TEST_PG_URL->TRACE_DATABASE_URL fallback (prod truncate risk), unimplemented RLS system role, PHI separate-instance provisioning gap.
+  _by Admin - 2026-08-19 - tags: -_
 - **[9][decision] AUTH-08 + VOICE-AUTH-09 deployed: G13 auth controls enforced** - truevow_auth 1.0.0 vendored (shared-libraries@e64f8b8); 4 security suites unskipped (real scope bug fixed); voice service credential enforced at router level on voice-bridge/tts/contacts; deployed probes 401/401/401/422/200; fingerprint-only logging
   _by Admin - 2026-08-16 - tags: -_
 - **[9][decision] Bounded Challenger Prototype Authorized** - Build bounded parallel prototype: Car Accident + OPI only. Run same scenarios: CURRENT (22-state FSM+QuestionRunner) vs CHALLENGER (small lifecycle + Fact Schema + Goal Engine). Metrics: task completion, false fact commits, irrelevant questions, repeated questions, turns to completion, caller corrections, out-of-order info reuse, digressions, outcome/effect correctness, provider dependence, practice expansion cost. If challenger cannot materially outperform on conversation quality while keeping deterministic safety boundary → DO NOT migrate. Evidence over enthusiasm.
@@ -386,6 +388,8 @@
   _by Admin - 2026-08-10 - tags: -_
 - **[9][todo] xai_cloud NEXT STEPS after C->B conversion** - DONE: C->B force_message conversion, VQM wiring, per-node VAD, missing test helpers (_VOICES/_DEFAULT_VOICE/_build_collected_data_text/_vad_for_node/_VAD_*), frontend rebuild w/ End Call+event log+report download. 40/40 tests pass. NOT YET DONE / NEXT: (1) USER LIVE TEST PENDING on http://127.0.0.1:3023/demo/xai_cloud_test.html — verify no more repetition loop, check transcripts/{sid}-report.json. (2) Add 3-retry-then-escalate guard in WorkflowEngine (industry doc HIGH priority; pushback loops forever currently). (3) 'You mean X?' repair pattern (Dialogflow §2). (4) Preamble/soft-timeout filler on slow LLM-routing nodes (1.5-3.2s classification nodes: conflict_check_prior_rep, opi_jurisdiction). (5) NOT committed yet — commit after successful live test. Ref: docs/VOICE_AI_INDUSTRY_ANALYSIS.md gap table, VOICE_AGENT_CHECKLIST.md §11.
   _by Admin - 2026-07-13 - tags: -_
+- **[8][architecture] website-submission contract — receiving side built** - Sales Ops now owns durable receiver for website forms: /website/application-received (INTAKE_TRIAL), /demo-request (BENJAMIN_DEMO, ~8min callback SLA), /website/waitlist-submission (legacy). website_submissions table = Postgres UNIQUE dedup (trial: email+firm, demo: email); dup = 409 {message: duplicate submission}. Breaking field rename: understands_setup_confirmation_required (legacy understands_approval_required no longer sent). Auth = X-API-Key vs WEBSITE_SUBMISSION_API_KEY (fail-closed 503 in prod). WEBSITE_INTAKE_AUTOPROCESS=false = canary kill-switch. Migration 20260819000001 applied to bpzegquhxnygyxdzluyw 2026-08-19; live E2E verified (201/409/200/401), test rows cleaned.
+  _by Admin - 2026-08-19 - tags: -_
 - **[8][architecture] 05D reconciliation + 06A confirm loop complete: clean test baseline** - full tree 1305/0/0/20-skipped; access_control import repaired; 10 obsolete test assets deleted; truevow_auth blocked 4 security suites via importorskip; spell-first confirm loop (Yes/CONFIRMED, No-retry, 2x-UNCONFIRMED) deployed
   _by Admin - 2026-08-16 - tags: -_
 - **[8][architecture] Experience-06A v1.2.0 deployed: story-first intake, practice-aware agenda, zero internal narration** - semantic bc1cf3c1; 54 facts/17 goals; 6 practices; consent gate; jurisdiction/location split; practice-scoped goals; conductor narration removed; 398 deterministic + 18 REAL_DB RC=0; deployed replay CLEAN
@@ -450,6 +454,8 @@
   _by user - 2026-06-25 - tags: analytics, events, warehouse, dashboards, star-schema, platform_
 - **[8][architecture] Tenant Application Service (INTAKE) - Voice + NLP Pipeline** - Phase I intake services. Stack: Python/FastAPI backend, FSM-based deterministic NLP engine, voice pipeline. Purpose: Legal AI intake for personal injury attorneys - captures client information via voice/NLP. Separated from website code (Nov 2025). Technology: Finite State Machine, deterministic NLP (not LLM-based for compliance). Voice pipeline components integrated. Ports: API backend. Depends on: SaaS Admin (tenant management, auth). Related: Benjamin voice agent (STT/TTS), Dialogflow Intake (alternative intake path).
   _by user - 2026-06-25 - tags: intake, nlp, fsm, voice, fastapi, python, tenant-application_
+- **[8][bug] INTAKE 06J endpointing fragment capture** - INTAKE: live room qa-1787155151 showed practice loop root cause was TRANSPORT capture, not Core | evidence: story finals arrived as fragments (That's it for / I don't), 20s of user speech with zero STT transcripts while agent stuck 27s thinking on first practice question, response generated but never spoken | fix: endpointing min 0.3->0.6s max 2.5->3.0s (defaults env), agent redeployed Qno6SJraUgyZ | learned: halting speakers + 0.3s min endpointing = mid-sentence cuts; agent thinking during user speech can suppress the generated response | next: retest in fresh room qa-1787159456, watch TTS stall
+  _by Admin - 2026-08-19 - tags: -_
 - **[8][bug] INTAKE 06F1 LiveKit endpointing latency** - INTAKE: qa-1787022630 logs isolated ~2.9s speech-end to CoreTurn delay matching fixed endpointing max 3.5s; changed LiveKit QA endpointing to documented audio-turn-detector defaults dynamic 0.3/2.5 and added TURN_CONFIG startup log; no semantic or phrase patching.
   _by Admin - 2026-08-18 - tags: -_
 - **[8][bug] INTAKE 06F LiveKit turn-capture boundary instrumentation** - INTAKE: deployed TURN_CAPTURE logs in deploy/livekit/agent.py for STT interim/final, LiveKit completed turn, agent core input, core response, and user/agent state transitions | result: LiveKit agent CA_UxWtcHqLEUTp version axMARyaBbr5o deployed | learned: existing lk agent simulate protocol is text-only and cannot prove WebRTC/STT/VAD; audio machine proof blocked without fixture/driver | next: run one instrumented audio room or add audio fixture harness before any endpointing patch
@@ -566,6 +572,8 @@
   _by user - 2026-06-25 - tags: -_
 - **[8][dependency] D-001 Fix: enrichment_pending -> PROFILED** - enrichment_pending maps to canonical PROFILED per CTO frozen decision. Next valid transition: T004 (PROFILED -> CONTACT_ENRICHED). Reason code: legacy_state_migrated. Fixed in contracts.ts, migration 177, website-intake/manager.ts, and leads-repository.ts.
   _by Admin - 2026-08-03 - tags: -_
+- **[8][pattern] TRACE FND-001: SQLite removed, Postgres-only runtime enforced** - Branch trace/TRACE-FND-001 (7731600): config/database fail closed, aiosqlite removed, conftest rewritten (TRACE_TEST_PG_URL + alembic upgrade head), 2 migration-chain fixes (version_num width, 0004 location-aware), pure unit lane 41/41, Postgres lane 58 passed/25 pre-existing drift failures
+  _by Admin - 2026-08-18 - tags: -_
 - **[8][pattern] INTAKE Core FAQ lane 06H** - INTAKE: added Core-owned deterministic firm-policy FAQ lane after LiveKit human QA showed post-completion consultation/fees/business-hours turns were routed to terminal resolution | result: ResponseIntent firm_faq answers without fact/goal/policy/effect mutation and terminal=False | learned: canonical TrueVowSchemaGoalAgent has no tool FAQ path, so FAQ must live in Core to preserve bridge-as-delivery-layer | next: deploy and run a fresh secured LiveKit Meet QA room
   _by Admin - 2026-08-18 - tags: -_
 - **[8][pattern] Track-A execution pattern** - All A1 items executed sequentially: SDK verification first, native API preference, bridge-only changes, zero FSM/contract/deployment mutations. Each item closed independently by reviewer before next authorized.
@@ -595,7 +603,7 @@
 - **[8][todo] FIX gitignore source-leak: TrueVow-Tenant_Billing-Service** - ASSIGNED to the TrueVow-Tenant_Billing-Service agent. Real lib/ source is currently hidden from git (confirmed). Run the playbook: TrueVow_SaaS_Administration_Service/docs/01-main/ECOSYSTEM_ADVISORY_GITIGNORE_SOURCE_LEAK.md (fix .gitignore: anchor/remove stray lib/ + logs/; secrets-scan; commit recovered source in reviewed batches by explicit path; verify clean-clone build). REPORT RESULT via memory.py remember category=bug title='TrueVow-Tenant_Billing-Service gitignore RESULT' content='FIXED n files | CLEAN | BLOCKED + reason; secrets found?'. NOTE: reporting.py agent-checkin is broken — report via memory.
   _by user - 2026-06-25 - tags: gitignore, todo, assigned_
 
-## architecture (117)
+## architecture (118)
 
 - **[10] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Li...
   _by Admin - 2026-08-12_
@@ -747,6 +755,8 @@
   _by user - 2026-06-25_
 - **[9] FM Service Wired to Ecosystem** - TrueVow_Financial_Management_Service is registered in the agent ecosystem with 13 domain agents (orchestrator, code-agent, search-agent, gl-agent, ar-agent, ap-agent, payroll-agent, treasury-agent, intercompany-agent, reporting-agent, affiliates-agent, benjamin-agent, fintech-patterns). Auto-dispatc...
   _by user - 2026-06-25_
+- **[8] website-submission contract — receiving side built** - Sales Ops now owns durable receiver for website forms: /website/application-received (INTAKE_TRIAL), /demo-request (BENJAMIN_DEMO, ~8min callback SLA), /website/waitlist-submission (legacy). website_submissions table = Postgres UNIQUE dedup (trial: email+firm, demo: email); dup = 409 {message: dupli...
+  _by Admin - 2026-08-19_
 - **[8] 05D reconciliation + 06A confirm loop complete: clean test baseline** - full tree 1305/0/0/20-skipped; access_control import repaired; 10 obsolete test assets deleted; truevow_auth blocked 4 security suites via importorskip; spell-first confirm loop (Yes/CONFIRMED, No-retry, 2x-UNCONFIRMED) deployed
   _by Admin - 2026-08-16_
 - **[8] Experience-06A v1.2.0 deployed: story-first intake, practice-aware agenda, zero internal narration** - semantic bc1cf3c1; 54 facts/17 goals; 6 practices; consent gate; jurisdiction/location split; practice-scoped goals; conductor narration removed; 398 deterministic + 18 REAL_DB RC=0; deployed replay CLEAN
@@ -832,12 +842,14 @@
 - **[5] 04G amendment frozen: obtain_conflict_party REMOVED from Schema/Goal standard qualification goal set (CTO directive). Adverse-party identity = optional tenant policy / spontaneous capture only. OPI responsible.party now conditional clarification. Grading split: CASE PRIORITY vs INTAKE COMPLETENESS vs ROUTING_SAFETY. New semantic checksum 7a7b0495 (v1.1.0 candidate; staging pinned v1.0.0/3c0c130b until republish).** - --importance
   _by Admin - 2026-08-14_
 
-## pattern (12)
+## pattern (13)
 
 - **[10] Per-Service Key Isolation Pattern** - NEVER use one global webhook secret across all services. Each caller-receiver pair gets its own key: tv-intake-to-retainer-v1, tv-retainer-to-saas-admin-v1, tv-saas-admin-to-trace-v1. Key prefixes bound to allowed paths in CANONICAL_PATHS registry. Env vars: TRUEVOW_WEBHOOK_KEY_ID_{SERVICE} + TRUEVO...
   _by Admin - 2026-07-31_
 - **[9] LiveKit Prebuilt Tasks — Beta Boundary** - All three contact tasks (GetNameTask, GetEmailTask, GetPhoneNumberTask) verified AVAILABLE_PUBLIC_BETA in livekit-agents 1.6.6. TaskGroup is EXPERIMENTAL (summarization must be disabled). Prebuilt tasks handle collection conversationally but must NOT commit facts, select states, or mark intake compl...
   _by Admin - 2026-08-06_
+- **[8] TRACE FND-001: SQLite removed, Postgres-only runtime enforced** - Branch trace/TRACE-FND-001 (7731600): config/database fail closed, aiosqlite removed, conftest rewritten (TRACE_TEST_PG_URL + alembic upgrade head), 2 migration-chain fixes (version_num width, 0004 location-aware), pure unit lane 41/41, Postgres lane 58 passed/25 pre-existing drift failures
+  _by Admin - 2026-08-18_
 - **[8] INTAKE Core FAQ lane 06H** - INTAKE: added Core-owned deterministic firm-policy FAQ lane after LiveKit human QA showed post-completion consultation/fees/business-hours turns were routed to terminal resolution | result: ResponseIntent firm_faq answers without fact/goal/policy/effect mutation and terminal=False | learned: canonic...
   _by Admin - 2026-08-18_
 - **[8] Track-A execution pattern** - All A1 items executed sequentially: SDK verification first, native API preference, bridge-only changes, zero FSM/contract/deployment mutations. Each item closed independently by reviewer before next authorized.
@@ -859,7 +871,7 @@
 - **[6] xai_cloud bridge test suite** - Created tests/test_xai_cloud_bridge.py (34 tests) for XaiCloudBridge. Mirrors test_xai_bridge.py but adapts for cloud bridge: dual registration (xai_cloud + xai_cloud_voice_agent), default voice rex (male-only), end_session returns {bridge,session_id,status} without had_audio, double-start early-ret...
   _by Admin - 2026-07-08_
 
-## decision (90)
+## decision (91)
 
 - **[10] Frozen Commercial Contract Gate deployed — drift is now impossible to merge** - PLG-BILL-02 gate: frozen_catalogue.py (v2.0.0) is the single machine-readable source of finalized commercial state. 3 layers: (1) CI gate tests/unit/test_frozen_contract.py + fail-hard CI step, (2) CLI python scripts/check_catalogue_drift.py (exit 1 on drift), (3) runtime catalogue_guard.validate_ca...
   _by Admin - 2026-08-16_
@@ -937,6 +949,8 @@
   _by user - 2026-06-25_
 - **[10] CONNECT Archived - DRAFT Renamed to LEVERAGE - INTAKE Updated** - CONNECT (attorney referral network) is decommissioned and archived from the ecosystem permanently - no longer on TrueVow agenda. DRAFT has been completely replaced by LEVERAGE everywhere (same service, renamed). INTAKE (Tenant Application Service) is no longer just FSM NLP - it is now FSM applied to...
   _by user - 2026-06-25_
+- **[9] TRACE-FND-001 Gate 001 verdict** - CONDITIONAL_PASS on commit 7731600 (trace/TRACE-FND-001). All builder claims verified: SQLite fully excised, fail-closed Postgres-only config, 41/41 DB-free tests pass (15 not 12 cases), Alembic chain coherent (version_num widened to 255, 0004 location-aware), zero scope violations. 25 PG-lane failu...
+  _by Admin - 2026-08-19_
 - **[9] AUTH-08 + VOICE-AUTH-09 deployed: G13 auth controls enforced** - truevow_auth 1.0.0 vendored (shared-libraries@e64f8b8); 4 security suites unskipped (real scope bug fixed); voice service credential enforced at router level on voice-bridge/tts/contacts; deployed probes 401/401/401/422/200; fingerprint-only logging
   _by Admin - 2026-08-16_
 - **[9] Bounded Challenger Prototype Authorized** - Build bounded parallel prototype: Car Accident + OPI only. Run same scenarios: CURRENT (22-state FSM+QuestionRunner) vs CHALLENGER (small lifecycle + Fact Schema + Goal Engine). Metrics: task completion, false fact commits, irrelevant questions, repeated questions, turns to completion, caller correc...
@@ -1074,7 +1088,7 @@
 - **[8] Golden Fixture Cross-Repository Testing** - Created app/shared/contracts.py with frozen contract versions and deterministic golden fixture (make_golden_envelope, make_golden_fixture_json, compute_golden_hmac). Every TrueVow product must deserialize the same 18-field EventEnvelope and compute the same HMAC over the exact raw fixture. Tests at ...
   _by Admin - 2026-07-31_
 
-## bug (60)
+## bug (61)
 
 - **[10] F1 FALSE representation commit from 'engineers'** - Call #3: 'I spoke to a couple of engineers.' -> extractor consulted_phrases includes 'spoke to' -> representation.status=consulted_only committed (0.85, deterministic, validator passed). FALSE LEGAL-SAFETY FACT (engineers != attorneys). None of the 'retained' policy triggered this time, but false fa...
   _by Admin - 2026-08-14_
@@ -1120,6 +1134,8 @@
   _by Admin - 2026-07-31_
 - **[9] contact_info_sequence dropped phone+email** - Root cause: routing INTO a sequence node used _execute_node, which returned the sequence's own intro prompt and left current_node=contact_info_sequence WITHOUT priming the first sub-node. Next turn the C10 terminal guard (workflow_engine.py:518) saw no next/branches/options and returned _build_compl...
   _by Admin - 2026-07-14_
+- **[8] INTAKE 06J endpointing fragment capture** - INTAKE: live room qa-1787155151 showed practice loop root cause was TRANSPORT capture, not Core | evidence: story finals arrived as fragments (That's it for / I don't), 20s of user speech with zero STT transcripts while agent stuck 27s thinking on first practice question, response generated but neve...
+  _by Admin - 2026-08-19_
 - **[8] INTAKE 06F1 LiveKit endpointing latency** - INTAKE: qa-1787022630 logs isolated ~2.9s speech-end to CoreTurn delay matching fixed endpointing max 3.5s; changed LiveKit QA endpointing to documented audio-turn-detector defaults dynamic 0.3/2.5 and added TURN_CONFIG startup log; no semantic or phrase patching.
   _by Admin - 2026-08-18_
 - **[8] INTAKE 06F LiveKit turn-capture boundary instrumentation** - INTAKE: deployed TURN_CAPTURE logs in deploy/livekit/agent.py for STT interim/final, LiveKit completed turn, agent core input, core response, and user/agent state transitions | result: LiveKit agent CA_UxWtcHqLEUTp version axMARyaBbr5o deployed | learned: existing lk agent simulate protocol is text-...
@@ -1197,7 +1213,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (327)
+## context (333)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1265,6 +1281,18 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: Sales Ops: website submission contract implemented end-to-end | outcome: 3 routes built (trial/demo/** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "done", "status": "DONE", "message": "Sales Ops: website submission contract implemented end-to-end | outcome: 3 routes built (trial/demo/waitlist), durable Postgres dedup with 409 contract, migration applied to prod DB, live E2E smoke verified 201...
+  _by user - 2026-08-19_
+- **[7] [ACTIVE] START: Sales Ops: implementing website submission contract (server.js -> Sales Ops) | resuming from handoff** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "start", "status": "ACTIVE", "message": "Sales Ops: implementing website submission contract (server.js -> Sales Ops) | resuming from handoff of SALES_OPS_API_CONTRACT.md | goal: durable receiver for /website/application-received, /demo-request, /w...
+  _by user - 2026-08-19_
+- **[7] [DONE] DONE: TRACE: FND-001-V1 Supabase validation COMPLETE on designated project cnbzuiuyppzrygxllgxj (owner-des** - {"agent_id": "TrueVow_Tenant_TRACE_Service", "action": "done", "status": "DONE", "message": "TRACE: FND-001-V1 Supabase validation COMPLETE on designated project cnbzuiuyppzrygxllgxj (owner-designated non-launched) | outcome: PG 17.6, version_num=0018=head, /ready=ready, /health=healthy, dialect pos...
+  _by user - 2026-08-19_
+- **[7] [DONE] DONE: TRACE: FND-001-R1 gate repair pushed (trace/TRACE-FND-001 ef1f4f3) | outcome: test-DB safety latch (** - {"agent_id": "TrueVow_Tenant_TRACE_Service", "action": "done", "status": "DONE", "message": "TRACE: FND-001-R1 gate repair pushed (trace/TRACE-FND-001 ef1f4f3) | outcome: test-DB safety latch (TRACE_TEST_PG_URL + TRACE_TEST_ALLOW_DESTRUCTIVE), scripts guarded, 4 subprocess safety proofs pass, 62 pas...
+  _by user - 2026-08-19_
+- **[7] [DONE] DONE: TRACE: FND-001 built and pushed (trace/TRACE-FND-001 7731600) | outcome: SQLite removed entirely, fa** - {"agent_id": "TrueVow_Tenant_TRACE_Service", "action": "done", "status": "DONE", "message": "TRACE: FND-001 built and pushed (trace/TRACE-FND-001 7731600) | outcome: SQLite removed entirely, fail-closed Postgres config, Alembic acceptance path, 41/41 pure unit + 58 pass on Postgres (25 pre-existing ...
+  _by user - 2026-08-18_
+- **[7] [ACTIVE] START: TRACE: Gate 0 security/authority remediation from 2026-08-18 as-built audit | resuming from audit ac** - {"agent_id": "TrueVow_Tenant_TRACE_Service", "action": "start", "status": "ACTIVE", "message": "TRACE: Gate 0 security/authority remediation from 2026-08-18 as-built audit | resuming from audit acceptance | goal: all 14 Gate 0 items green", "timestamp": "2026-08-18T18:12:41.455589+00:00", "working_d...
+  _by user - 2026-08-18_
 - **[7] [DONE] DONE: INTAKE: implemented 06H Core FAQ/consultation presentation lane | outcome: 51 SchemaGoal tests and 1** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: implemented 06H Core FAQ/consultation presentation lane | outcome: 51 SchemaGoal tests and 11 arch invariant tests passed, not deployed | learned: canonical SchemaGoal agent forwards every turn to C...
   _by user - 2026-08-18_
 - **[7] [ACTIVE] START: INTAKE: continue 06H completion gap | resuming from human-first LiveKit QA evidence | goal: identify** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "start", "status": "ACTIVE", "message": "INTAKE: continue 06H completion gap | resuming from human-first LiveKit QA evidence | goal: identify evidence-backed Core completion next step", "timestamp": "2026-08-18T09:22:52.058047+00:00", "working_...
