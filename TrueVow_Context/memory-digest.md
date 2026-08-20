@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-19T22:02:07.046502+00:00
-- Total memories: 660
+- Generated: 2026-08-20T00:00:21.279543+00:00
+- Total memories: 663
 
-## High-importance decisions (8+, routine noise excluded) - 299
+## High-importance decisions (8+, routine noise excluded) - 300
 
 - **[10][architecture] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Lifecycle shrinks to ~6 states (BOOTSTRAP/SCREENING/INTAKE/RESOLUTION/AWAITING_EFFECT/COMPLETE + HANDOFF/TERMINATED). LLM = conversation conductor within code-determined agenda; code = agenda authority. LiveKit = voice runtime only, TrueVow Core consumes provider-neutral CoreTurn. First Call Readiness Certificate requires all policy branches have outcomes + effect fallbacks; external integrations NOT required for first call. Prototype-first: challenger (Car Accident + OPI) vs current 22-state FSM, measure task completion/false commits/repeats/turns. SaaS Admin Builder implication: NOT a flowchart editor — firm configures facts, routing policy, destinations; previews generated sample conversations.
   _by Admin - 2026-08-12 - tags: -_
@@ -314,6 +314,8 @@
   _by Admin - 2026-08-11 - tags: -_
 - **[9][context] G10 Canary Status** - Lead 1763aee9-52ca-4418-abb8-a60e7f90d847 at HANDOFF_PENDING. T020 passed, T022 passed. Handoff to SaaS Admin deployed and ready for retry. SaaS Admin webhook at truevow-saas-admin-staging.fly.dev with HMAC key tv-sales-ops-to-saas-admin-v1. PIPELINE_SECRET and TRUEVOW_DEPLOYMENT_ENV=staging set.
   _by Admin - 2026-08-10 - tags: -_
+- **[9][decision] INTAKE 06I-R executed** - INTAKE: executed 06I-R expected-fact bounded fallback | result: non-story LLM gate keys on asked fact (last_asked_fact_id) unresolved, candidate universe restricted to asked fact ids, 1.5s hard budget (SCHEMA_GOAL_LLM_NON_STORY_BUDGET_S), ASSISTANT_IDENTITY scope guard (prompt + commit), control turns skip model, LLM_EXTRACTOR_METRICS ids-only | outcome: 10 new tests + 64 + 58 gates green, deployed (tenant + ASSISTANT_IDENTITY=Benjamin secret), bootstrap ready | learned: 06I full-schema fallback manufactured caller.first_name=Benjamin from agent address; unrelated deterministic hit (medical.care_setting=clinic) suppressed treatment interpretation | practice forensic: deterministic resolver correctly refuses to guess (None -> asks); OPI came from story-lane LLM on mechanism-less story — OPEN classification choice, not a defect | next: human acceptance call, then booking capability design
+  _by Admin - 2026-08-20 - tags: -_
 - **[9][decision] INTAKE COLLAPSE-07R executed** - INTAKE: executed 07R corrective order | result: 07R-1 deterministic terminal shutdown (session.shutdown(drain=True)+ctx.shutdown on speaking->listening after terminal), 07R-2 per-session tenant identity with zero bridge-global tenant state, 07R-3 utterance_id from ChatMessage.id (retry-stable), 07R-4 PREEMPTIVE_TTS parse fixed | outcome: 12 new tests + full gates 113 passed, deployed tenant+agent, bootstrap ready 1.2.0 bc1cf3c1 | learned: EndCallTool was dead weight without an LLM; agent_state speaking->listening is the deterministic playout-done signal | next: human QA call in room qa-1787176894
   _by Admin - 2026-08-19 - tags: -_
 - **[9][decision] TRACE-FND-001 Gate 001 verdict** - CONDITIONAL_PASS on commit 7731600 (trace/TRACE-FND-001). All builder claims verified: SQLite fully excised, fail-closed Postgres-only config, 41/41 DB-free tests pass (15 not 12 cases), Alembic chain coherent (version_num widened to 255, 0004 location-aware), zero scope violations. 25 PG-lane failures confirmed pre-existing drift. BLOCKING before Supabase validation: conftest TRACE_TEST_PG_URL->TRACE_DATABASE_URL fallback (prod truncate risk), unimplemented RLS system role, PHI separate-instance provisioning gap.
@@ -875,7 +877,7 @@
 - **[6] xai_cloud bridge test suite** - Created tests/test_xai_cloud_bridge.py (34 tests) for XaiCloudBridge. Mirrors test_xai_bridge.py but adapts for cloud bridge: dual registration (xai_cloud + xai_cloud_voice_agent), default voice rex (male-only), end_session returns {bridge,session_id,status} without had_audio, double-start early-ret...
   _by Admin - 2026-07-08_
 
-## decision (93)
+## decision (94)
 
 - **[10] INTAKE COLLAPSE-07 stages 0-2** - INTAKE: executed LIVEKIT-BRIDGE-COLLAPSE-07 | result: GitHub main checkpointed to deployed tree (0f8954e), time-debounce removed (stable utterance_id dedupe), monitoring off hot path, bridge singleton one-time init, TrueVowCloudAgent/IntakeObserver/agent-FAQ deleted (1892->970 lines), entrypoint fai...
   _by Admin - 2026-08-19_
@@ -955,6 +957,8 @@
   _by user - 2026-06-25_
 - **[10] CONNECT Archived - DRAFT Renamed to LEVERAGE - INTAKE Updated** - CONNECT (attorney referral network) is decommissioned and archived from the ecosystem permanently - no longer on TrueVow agenda. DRAFT has been completely replaced by LEVERAGE everywhere (same service, renamed). INTAKE (Tenant Application Service) is no longer just FSM NLP - it is now FSM applied to...
   _by user - 2026-06-25_
+- **[9] INTAKE 06I-R executed** - INTAKE: executed 06I-R expected-fact bounded fallback | result: non-story LLM gate keys on asked fact (last_asked_fact_id) unresolved, candidate universe restricted to asked fact ids, 1.5s hard budget (SCHEMA_GOAL_LLM_NON_STORY_BUDGET_S), ASSISTANT_IDENTITY scope guard (prompt + commit), control tur...
+  _by Admin - 2026-08-20_
 - **[9] INTAKE COLLAPSE-07R executed** - INTAKE: executed 07R corrective order | result: 07R-1 deterministic terminal shutdown (session.shutdown(drain=True)+ctx.shutdown on speaking->listening after terminal), 07R-2 per-session tenant identity with zero bridge-global tenant state, 07R-3 utterance_id from ChatMessage.id (retry-stable), 07R-...
   _by Admin - 2026-08-19_
 - **[9] TRACE-FND-001 Gate 001 verdict** - CONDITIONAL_PASS on commit 7731600 (trace/TRACE-FND-001). All builder claims verified: SQLite fully excised, fail-closed Postgres-only config, 41/41 DB-free tests pass (15 not 12 cases), Alembic chain coherent (version_num widened to 255, 0004 location-aware), zero scope violations. 25 PG-lane failu...
@@ -1221,7 +1225,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (336)
+## context (338)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1289,6 +1293,10 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: INTAKE: 06I-R deployed, practice forensic done | outcome: all gates green, bootstrap ready | next: h** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: 06I-R deployed, practice forensic done | outcome: all gates green, bootstrap ready | next: human acceptance call", "timestamp": "2026-08-20T00:00:19.143741+00:00", "working_dir": "C:\\Users\\yasha\\...
+  _by user - 2026-08-20_
+- **[7] [DONE] DONE: TRACE: FND-001A-R1 pushed (trace/TRACE-FND-001A 3dca1b8) | outcome: dotenv override=False + subproce** - {"agent_id": "TrueVow_Tenant_TRACE_Service", "action": "done", "status": "DONE", "message": "TRACE: FND-001A-R1 pushed (trace/TRACE-FND-001A 3dca1b8) | outcome: dotenv override=False + subprocess precedence proof; 0021_flag_priority_guard aligns NOT NULL + check constraint; full PG suite 102/102 GRE...
+  _by user - 2026-08-19_
 - **[7] [DONE] DONE: INTAKE: 07R executed and deployed | outcome: 113 tests green, bootstrap ready, fresh room qa-1787176** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: 07R executed and deployed | outcome: 113 tests green, bootstrap ready, fresh room qa-1787176894 | next: human call", "timestamp": "2026-08-19T22:02:03.251720+00:00", "working_dir": "C:\\Users\\yasha...
   _by user - 2026-08-19_
 - **[7] [DONE] DONE: INTAKE: COLLAPSE-07 stages 0-2 executed and deployed | outcome: all gates green (64+58+33), main=dep** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: COLLAPSE-07 stages 0-2 executed and deployed | outcome: all gates green (64+58+33), main=deployed tree, agent AyF6npzbbRPP | learned: turn-counter bug + time-debounce were real conversation corrupte...
