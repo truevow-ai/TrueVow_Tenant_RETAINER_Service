@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-20T00:00:21.279543+00:00
-- Total memories: 663
+- Generated: 2026-08-20T01:52:04.836039+00:00
+- Total memories: 667
 
-## High-importance decisions (8+, routine noise excluded) - 300
+## High-importance decisions (8+, routine noise excluded) - 301
 
 - **[10][architecture] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Lifecycle shrinks to ~6 states (BOOTSTRAP/SCREENING/INTAKE/RESOLUTION/AWAITING_EFFECT/COMPLETE + HANDOFF/TERMINATED). LLM = conversation conductor within code-determined agenda; code = agenda authority. LiveKit = voice runtime only, TrueVow Core consumes provider-neutral CoreTurn. First Call Readiness Certificate requires all policy branches have outcomes + effect fallbacks; external integrations NOT required for first call. Prototype-first: challenger (Car Accident + OPI) vs current 22-state FSM, measure task completion/false commits/repeats/turns. SaaS Admin Builder implication: NOT a flowchart editor — firm configures facts, routing policy, destinations; previews generated sample conversations.
   _by Admin - 2026-08-12 - tags: -_
@@ -314,6 +314,8 @@
   _by Admin - 2026-08-11 - tags: -_
 - **[9][context] G10 Canary Status** - Lead 1763aee9-52ca-4418-abb8-a60e7f90d847 at HANDOFF_PENDING. T020 passed, T022 passed. Handoff to SaaS Admin deployed and ready for retry. SaaS Admin webhook at truevow-saas-admin-staging.fly.dev with HMAC key tv-sales-ops-to-saas-admin-v1. PIPELINE_SECRET and TRUEVOW_DEPLOYMENT_ENV=staging set.
   _by Admin - 2026-08-10 - tags: -_
+- **[9][decision] INTAKE 06P/08B executed + deployed replay PASS** - INTAKE: 06P practice abstention + 08B booking capability executed | result: catalog v1.3.0 (246719a5) provisioned; deployed machine replay proves: story-lane LLM abstains on mechanism-less story (practice question asked), assistant-address does NOT manufacture caller.first_name (1512ms, 0 candidates), treatment fallback resolves (1 candidate), booking effect executes durably (callback_requested=true + contact, ledger pending-retry idempotent), terminal effect intent plays confirmation | open: story-lane latency 6.3-7.0s remains a voice-UX blocker; slot-booking provider adapter is 08B step 2 | next: final human product-acceptance call
+  _by Admin - 2026-08-20 - tags: -_
 - **[9][decision] INTAKE 06I-R executed** - INTAKE: executed 06I-R expected-fact bounded fallback | result: non-story LLM gate keys on asked fact (last_asked_fact_id) unresolved, candidate universe restricted to asked fact ids, 1.5s hard budget (SCHEMA_GOAL_LLM_NON_STORY_BUDGET_S), ASSISTANT_IDENTITY scope guard (prompt + commit), control turns skip model, LLM_EXTRACTOR_METRICS ids-only | outcome: 10 new tests + 64 + 58 gates green, deployed (tenant + ASSISTANT_IDENTITY=Benjamin secret), bootstrap ready | learned: 06I full-schema fallback manufactured caller.first_name=Benjamin from agent address; unrelated deterministic hit (medical.care_setting=clinic) suppressed treatment interpretation | practice forensic: deterministic resolver correctly refuses to guess (None -> asks); OPI came from story-lane LLM on mechanism-less story — OPEN classification choice, not a defect | next: human acceptance call, then booking capability design
   _by Admin - 2026-08-20 - tags: -_
 - **[9][decision] INTAKE COLLAPSE-07R executed** - INTAKE: executed 07R corrective order | result: 07R-1 deterministic terminal shutdown (session.shutdown(drain=True)+ctx.shutdown on speaking->listening after terminal), 07R-2 per-session tenant identity with zero bridge-global tenant state, 07R-3 utterance_id from ChatMessage.id (retry-stable), 07R-4 PREEMPTIVE_TTS parse fixed | outcome: 12 new tests + full gates 113 passed, deployed tenant+agent, bootstrap ready 1.2.0 bc1cf3c1 | learned: EndCallTool was dead weight without an LLM; agent_state speaking->listening is the deterministic playout-done signal | next: human QA call in room qa-1787176894
@@ -877,7 +879,7 @@
 - **[6] xai_cloud bridge test suite** - Created tests/test_xai_cloud_bridge.py (34 tests) for XaiCloudBridge. Mirrors test_xai_bridge.py but adapts for cloud bridge: dual registration (xai_cloud + xai_cloud_voice_agent), default voice rex (male-only), end_session returns {bridge,session_id,status} without had_audio, double-start early-ret...
   _by Admin - 2026-07-08_
 
-## decision (94)
+## decision (95)
 
 - **[10] INTAKE COLLAPSE-07 stages 0-2** - INTAKE: executed LIVEKIT-BRIDGE-COLLAPSE-07 | result: GitHub main checkpointed to deployed tree (0f8954e), time-debounce removed (stable utterance_id dedupe), monitoring off hot path, bridge singleton one-time init, TrueVowCloudAgent/IntakeObserver/agent-FAQ deleted (1892->970 lines), entrypoint fai...
   _by Admin - 2026-08-19_
@@ -957,6 +959,8 @@
   _by user - 2026-06-25_
 - **[10] CONNECT Archived - DRAFT Renamed to LEVERAGE - INTAKE Updated** - CONNECT (attorney referral network) is decommissioned and archived from the ecosystem permanently - no longer on TrueVow agenda. DRAFT has been completely replaced by LEVERAGE everywhere (same service, renamed). INTAKE (Tenant Application Service) is no longer just FSM NLP - it is now FSM applied to...
   _by user - 2026-06-25_
+- **[9] INTAKE 06P/08B executed + deployed replay PASS** - INTAKE: 06P practice abstention + 08B booking capability executed | result: catalog v1.3.0 (246719a5) provisioned; deployed machine replay proves: story-lane LLM abstains on mechanism-less story (practice question asked), assistant-address does NOT manufacture caller.first_name (1512ms, 0 candidates...
+  _by Admin - 2026-08-20_
 - **[9] INTAKE 06I-R executed** - INTAKE: executed 06I-R expected-fact bounded fallback | result: non-story LLM gate keys on asked fact (last_asked_fact_id) unresolved, candidate universe restricted to asked fact ids, 1.5s hard budget (SCHEMA_GOAL_LLM_NON_STORY_BUDGET_S), ASSISTANT_IDENTITY scope guard (prompt + commit), control tur...
   _by Admin - 2026-08-20_
 - **[9] INTAKE COLLAPSE-07R executed** - INTAKE: executed 07R corrective order | result: 07R-1 deterministic terminal shutdown (session.shutdown(drain=True)+ctx.shutdown on speaking->listening after terminal), 07R-2 per-session tenant identity with zero bridge-global tenant state, 07R-3 utterance_id from ChatMessage.id (retry-stable), 07R-...
@@ -1225,7 +1229,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (338)
+## context (341)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1293,6 +1297,10 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: INTAKE: 06P/08B deployed, replay PASS | outcome: booking effect + abstention + scope guards proven l** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: 06P/08B deployed, replay PASS | outcome: booking effect + abstention + scope guards proven live | next: human acceptance call", "timestamp": "2026-08-20T01:52:01.881612+00:00", "working_dir": "C:\\U...
+  _by user - 2026-08-20_
+- **[7] [DONE] DONE: TRACE: FND-002 pushed (trace/TRACE-FND-002 7ef6dbf) | outcome: dev key removed, strict 32-byte key c** - {"agent_id": "TrueVow_Tenant_TRACE_Service", "action": "done", "status": "DONE", "message": "TRACE: FND-002 pushed (trace/TRACE-FND-002 7ef6dbf) | outcome: dev key removed, strict 32-byte key contract (base64-32 or raw-32), phi_store no-partial-row + controlled decrypt failure, /ready phi_key check,...
+  _by user - 2026-08-20_
 - **[7] [DONE] DONE: INTAKE: 06I-R deployed, practice forensic done | outcome: all gates green, bootstrap ready | next: h** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: 06I-R deployed, practice forensic done | outcome: all gates green, bootstrap ready | next: human acceptance call", "timestamp": "2026-08-20T00:00:19.143741+00:00", "working_dir": "C:\\Users\\yasha\\...
   _by user - 2026-08-20_
 - **[7] [DONE] DONE: TRACE: FND-001A-R1 pushed (trace/TRACE-FND-001A 3dca1b8) | outcome: dotenv override=False + subproce** - {"agent_id": "TrueVow_Tenant_TRACE_Service", "action": "done", "status": "DONE", "message": "TRACE: FND-001A-R1 pushed (trace/TRACE-FND-001A 3dca1b8) | outcome: dotenv override=False + subprocess precedence proof; 0021_flag_priority_guard aligns NOT NULL + check constraint; full PG suite 102/102 GRE...
@@ -1729,6 +1737,8 @@
   _by user - 2026-06-25_
 - **[6] Documentation Status: TrueVow_Documentation is Stale** - TrueVow_Documentation/ contains older documentation (Word docs, markdown exports) including TrueVow_PRD.md, Complete System Technical Documentation, Financial Management guides, and Billing Service updates. These are outdated - they reflect the old architecture with DRAFT naming, CONNECT active, and...
   _by user - 2026-06-25_
+- **[5] [ACTIVE] BLOCKED: TRACE: FND-002-R1 pushed (trace/TRACE-FND-002 f388b2a) | attempted: legacy re-key of historical PHI** - {"agent_id": "TrueVow_Tenant_TRACE_Service", "action": "blocked", "status": "ACTIVE", "message": "TRACE: FND-002-R1 pushed (trace/TRACE-FND-002 f388b2a) | attempted: legacy re-key of historical PHI rows on designated Supabase | need: correct legacy key (or designation decision) for row e2969c07-d33c...
+  _by user - 2026-08-20_
 - **[5] Dispatch: Continue from LiveKit human QA: inspect SchemaGoal early completion/booking cons** - Dispatched to skill='code-review' phase='review' personas=['code-reviewer'] tool=
   _by Admin - 2026-08-18_
 - **[5] Dispatch: Continue latency/noisy observer fix for LiveKit SchemaGoal QA** - Dispatched to skill='diagnosing-bugs' phase='verify' personas=[] tool=
