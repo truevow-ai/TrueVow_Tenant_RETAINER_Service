@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-20T20:34:23.976642+00:00
-- Total memories: 677
+- Generated: 2026-08-20T22:53:36.321494+00:00
+- Total memories: 680
 
-## High-importance decisions (8+, routine noise excluded) - 304
+## High-importance decisions (8+, routine noise excluded) - 305
 
 - **[10][architecture] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Lifecycle shrinks to ~6 states (BOOTSTRAP/SCREENING/INTAKE/RESOLUTION/AWAITING_EFFECT/COMPLETE + HANDOFF/TERMINATED). LLM = conversation conductor within code-determined agenda; code = agenda authority. LiveKit = voice runtime only, TrueVow Core consumes provider-neutral CoreTurn. First Call Readiness Certificate requires all policy branches have outcomes + effect fallbacks; external integrations NOT required for first call. Prototype-first: challenger (Car Accident + OPI) vs current 22-state FSM, measure task completion/false commits/repeats/turns. SaaS Admin Builder implication: NOT a flowchart editor — firm configures facts, routing policy, destinations; previews generated sample conversations.
   _by Admin - 2026-08-12 - tags: -_
@@ -548,6 +548,8 @@
   _by Admin - 2026-07-31 - tags: -_
 - **[8][convention] Golden Fixture Cross-Repository Testing** - Created app/shared/contracts.py with frozen contract versions and deterministic golden fixture (make_golden_envelope, make_golden_fixture_json, compute_golden_hmac). Every TrueVow product must deserialize the same 18-field EventEnvelope and compute the same HMAC over the exact raw fixture. Tests at tests/test_golden_fixtures.py validate envelope serialization, roundtrip deserialization, HMAC determinism, evidence manifest completeness (9 refs), and jurisdiction separation (global vs tenant).
   _by Admin - 2026-07-31 - tags: -_
+- **[8][decision] INTAKE 08C booking mannerisms adopted** - INTAKE: adopted natural booking mannerisms from the researched playbook | result: explicit slot confirm read-back ('To confirm, you'd like Friday at 9:00 AM. Is that correct?'), booked confirmation reiterates the actual time, weekends excluded from availability, truthful copy (no unsupported email/text send promises until SMS/email integration is wired) | discarded as unnatural/duplicative: two-slot rule (user's 3-spread instruction wins), 'One Pee Em' reading style, holiday calendar (needs real holiday feed), reschedule flow (post-acceptance), in-person/video questioning | deployed probe: summary -> spread weekday slots -> confirm read-back -> 'Your appointment is set for Friday at 9:00 AM' -> real Google event | next: final human acceptance room qa-1787266390
+  _by Admin - 2026-08-20 - tags: -_
 - **[8][decision] INTAKE 10B self-verifying human QA launch gate** - INTAKE: implemented HUMAN-QA-HARNESS-10B self-verifying launch gate | result: scripts/human_qa_launch.py --launch now withholds human_join_url until exact lk-<room> durable pin exists after dispatch start and validates truevow-production v1.2.0/bc1cf3c1 readiness; tests/scripts/test_human_qa_launch.py 9 passed | learned: nontechnical human QA must never receive a join URL before backend readiness is proven for that exact room | next: run python scripts/human_qa_launch.py --launch for the next human QA attempt; if it prints human_join_url null, do not call
   _by Admin - 2026-08-17 - tags: -_
 - **[8][decision] Human QA launcher live: tenant-aware dispatch path proven** - scripts/human_qa_launch.py --launch/--preflight; explicit tenant metadata; join token; preflight PASS (pin truevow-production v1.2.0 bc1cf3c1, bootstrap 200, consent greeting, unavailable 0); console Playground confirmed fail-closed by design
@@ -885,7 +887,7 @@
 - **[6] xai_cloud bridge test suite** - Created tests/test_xai_cloud_bridge.py (34 tests) for XaiCloudBridge. Mirrors test_xai_bridge.py but adapts for cloud bridge: dual registration (xai_cloud + xai_cloud_voice_agent), default voice rex (male-only), end_session returns {bridge,session_id,status} without had_audio, double-start early-ret...
   _by Admin - 2026-07-08_
 
-## decision (98)
+## decision (99)
 
 - **[10] INTAKE COLLAPSE-07 stages 0-2** - INTAKE: executed LIVEKIT-BRIDGE-COLLAPSE-07 | result: GitHub main checkpointed to deployed tree (0f8954e), time-debounce removed (stable utterance_id dedupe), monitoring off hot path, bridge singleton one-time init, TrueVowCloudAgent/IntakeObserver/agent-FAQ deleted (1892->970 lines), entrypoint fai...
   _by Admin - 2026-08-19_
@@ -1035,6 +1037,8 @@
   _by Admin - 2026-07-03_
 - **[9] CONNECT Service Deleted** - TrueVow_Tenant_CONNECT_Service directory deleted. Removed from config.yaml services block and .gitignore. Was archived June 2026 — attorney referral network, no longer on TrueVow's agenda.
   _by user - 2026-07-01_
+- **[8] INTAKE 08C booking mannerisms adopted** - INTAKE: adopted natural booking mannerisms from the researched playbook | result: explicit slot confirm read-back ('To confirm, you'd like Friday at 9:00 AM. Is that correct?'), booked confirmation reiterates the actual time, weekends excluded from availability, truthful copy (no unsupported email/t...
+  _by Admin - 2026-08-20_
 - **[8] INTAKE 10B self-verifying human QA launch gate** - INTAKE: implemented HUMAN-QA-HARNESS-10B self-verifying launch gate | result: scripts/human_qa_launch.py --launch now withholds human_join_url until exact lk-<room> durable pin exists after dispatch start and validates truevow-production v1.2.0/bc1cf3c1 readiness; tests/scripts/test_human_qa_launch....
   _by Admin - 2026-08-17_
 - **[8] Human QA launcher live: tenant-aware dispatch path proven** - scripts/human_qa_launch.py --launch/--preflight; explicit tenant metadata; join token; preflight PASS (pin truevow-production v1.2.0 bc1cf3c1, bootstrap 200, consent greeting, unavailable 0); console Playground confirmed fail-closed by design
@@ -1241,7 +1245,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (348)
+## context (350)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1309,6 +1313,10 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: INTAKE: booking mannerisms adopted + probe PASS | next: final human acceptance** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: booking mannerisms adopted + probe PASS | next: final human acceptance", "timestamp": "2026-08-20T22:53:34.041763+00:00", "working_dir": "C:\\Users\\yasha\\OneDrive\\Documents\\TrueVow\\Cursor\\True...
+  _by user - 2026-08-20_
+- **[7] [ACTIVE] START: TRACE: FND-002 merged to main (2fba499), FND-003 branch created from exact tip | goal: Phase-2 RLS r** - {"agent_id": "TrueVow_Tenant_TRACE_Service", "action": "start", "status": "ACTIVE", "message": "TRACE: FND-002 merged to main (2fba499), FND-003 branch created from exact tip | goal: Phase-2 RLS reconciliation awaiting CTO work order (table-map grounded inventory)", "timestamp": "2026-08-20T21:41:24...
+  _by user - 2026-08-20_
 - **[7] [DONE] DONE: INTAKE: 08C1 commissioned, real Google E2E PASS | next: final human acceptance** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: 08C1 commissioned, real Google E2E PASS | next: final human acceptance", "timestamp": "2026-08-20T20:34:22.277623+00:00", "working_dir": "C:\\Users\\yasha\\OneDrive\\Documents\\TrueVow\\Cursor\\True...
   _by user - 2026-08-20_
 - **[7] [DONE] DONE: TRACE: FND-002 commissioning COMPLETE | outcome: historical key recovered from CREDENTIAL_VAULT_MAST** - {"agent_id": "TrueVow_Tenant_TRACE_Service", "action": "done", "status": "DONE", "message": "TRACE: FND-002 commissioning COMPLETE | outcome: historical key recovered from CREDENTIAL_VAULT_MASTER_KEY (old derivation, value never exposed); targeted re-key 1 row/4 fields + bulk re-key 48 rows/192 fiel...
