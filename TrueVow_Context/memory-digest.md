@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-23T07:01:59.874764+00:00
-- Total memories: 697
+- Generated: 2026-08-23T07:43:40.968249+00:00
+- Total memories: 699
 
-## High-importance decisions (8+, routine noise excluded) - 308
+## High-importance decisions (8+, routine noise excluded) - 309
 
 - **[10][architecture] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Lifecycle shrinks to ~6 states (BOOTSTRAP/SCREENING/INTAKE/RESOLUTION/AWAITING_EFFECT/COMPLETE + HANDOFF/TERMINATED). LLM = conversation conductor within code-determined agenda; code = agenda authority. LiveKit = voice runtime only, TrueVow Core consumes provider-neutral CoreTurn. First Call Readiness Certificate requires all policy branches have outcomes + effect fallbacks; external integrations NOT required for first call. Prototype-first: challenger (Car Accident + OPI) vs current 22-state FSM, measure task completion/false commits/repeats/turns. SaaS Admin Builder implication: NOT a flowchart editor — firm configures facts, routing policy, destinations; previews generated sample conversations.
   _by Admin - 2026-08-12 - tags: -_
@@ -594,6 +594,8 @@
   _by user - 2026-06-25 - tags: -_
 - **[8][dependency] D-001 Fix: enrichment_pending -> PROFILED** - enrichment_pending maps to canonical PROFILED per CTO frozen decision. Next valid transition: T004 (PROFILED -> CONTACT_ENRICHED). Reason code: legacy_state_migrated. Fixed in contracts.ts, migration 177, website-intake/manager.ts, and leads-repository.ts.
   _by Admin - 2026-08-03 - tags: -_
+- **[8][pattern] Maturity-first entry protocol (Sales Ops learning applied to TRACE)** - No Pocock skill before maturity classification: A built-proven=protect, B awaiting-proof=verify, C defect=repair tickets (spec only if blast radius warrants), D defined=to-tickets/to-spec, E unresolved=wayfinder. Ledger: docs/TRACE-MATURITY-LEDGER.md v1.0 (truth v1.3). FND-003-R1 classified C wide/security - proceeds at IMPLEMENT stage, frontier 01/03/04, awaiting implement authorization
+  _by Admin - 2026-08-23 - tags: -_
 - **[8][pattern] TRACE FND-001: SQLite removed, Postgres-only runtime enforced** - Branch trace/TRACE-FND-001 (7731600): config/database fail closed, aiosqlite removed, conftest rewritten (TRACE_TEST_PG_URL + alembic upgrade head), 2 migration-chain fixes (version_num width, 0004 location-aware), pure unit lane 41/41, Postgres lane 58 passed/25 pre-existing drift failures
   _by Admin - 2026-08-18 - tags: -_
 - **[8][pattern] INTAKE Core FAQ lane 06H** - INTAKE: added Core-owned deterministic firm-policy FAQ lane after LiveKit human QA showed post-completion consultation/fees/business-hours turns were routed to terminal resolution | result: ResponseIntent firm_faq answers without fact/goal/policy/effect mutation and terminal=False | learned: canonical TrueVowSchemaGoalAgent has no tool FAQ path, so FAQ must live in Core to preserve bridge-as-delivery-layer | next: deploy and run a fresh secured LiveKit Meet QA room
@@ -864,12 +866,14 @@
 - **[5] 04G amendment frozen: obtain_conflict_party REMOVED from Schema/Goal standard qualification goal set (CTO directive). Adverse-party identity = optional tenant policy / spontaneous capture only. OPI responsible.party now conditional clarification. Grading split: CASE PRIORITY vs INTAKE COMPLETENESS vs ROUTING_SAFETY. New semantic checksum 7a7b0495 (v1.1.0 candidate; staging pinned v1.0.0/3c0c130b until republish).** - --importance
   _by Admin - 2026-08-14_
 
-## pattern (16)
+## pattern (17)
 
 - **[10] Per-Service Key Isolation Pattern** - NEVER use one global webhook secret across all services. Each caller-receiver pair gets its own key: tv-intake-to-retainer-v1, tv-retainer-to-saas-admin-v1, tv-saas-admin-to-trace-v1. Key prefixes bound to allowed paths in CANONICAL_PATHS registry. Env vars: TRUEVOW_WEBHOOK_KEY_ID_{SERVICE} + TRUEVO...
   _by Admin - 2026-07-31_
 - **[9] LiveKit Prebuilt Tasks — Beta Boundary** - All three contact tasks (GetNameTask, GetEmailTask, GetPhoneNumberTask) verified AVAILABLE_PUBLIC_BETA in livekit-agents 1.6.6. TaskGroup is EXPERIMENTAL (summarization must be disabled). Prebuilt tasks handle collection conversationally but must NOT commit facts, select states, or mark intake compl...
   _by Admin - 2026-08-06_
+- **[8] Maturity-first entry protocol (Sales Ops learning applied to TRACE)** - No Pocock skill before maturity classification: A built-proven=protect, B awaiting-proof=verify, C defect=repair tickets (spec only if blast radius warrants), D defined=to-tickets/to-spec, E unresolved=wayfinder. Ledger: docs/TRACE-MATURITY-LEDGER.md v1.0 (truth v1.3). FND-003-R1 classified C wide/s...
+  _by Admin - 2026-08-23_
 - **[8] TRACE FND-001: SQLite removed, Postgres-only runtime enforced** - Branch trace/TRACE-FND-001 (7731600): config/database fail closed, aiosqlite removed, conftest rewritten (TRACE_TEST_PG_URL + alembic upgrade head), 2 migration-chain fixes (version_num width, 0004 location-aware), pure unit lane 41/41, Postgres lane 58 passed/25 pre-existing drift failures
   _by Admin - 2026-08-18_
 - **[8] INTAKE Core FAQ lane 06H** - INTAKE: added Core-owned deterministic firm-policy FAQ lane after LiveKit human QA showed post-completion consultation/fees/business-hours turns were routed to terminal resolution | result: ResponseIntent firm_faq answers without fact/goal/policy/effect mutation and terminal=False | learned: canonic...
@@ -1273,7 +1277,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (356)
+## context (357)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1341,6 +1345,8 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: Sales Ops: produced Completion Ledger (docs/plg/COMPLETION_LEDGER.md) per control-layer directive |** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "done", "status": "DONE", "message": "Sales Ops: produced Completion Ledger (docs/plg/COMPLETION_LEDGER.md) per control-layer directive | outcome: 18 workstreams classified A-E with evidence; PLG-SO-01/02/02C = B (staging pending), living-docs = D ...
+  _by user - 2026-08-23_
 - **[7] FND-003-R1 spec published for gate review** - Spec docs/slices/TRACE-FND-003-R1-SPEC.md committed 55878ef on docs/TRACE-CANONICAL-TRUTH-v1 after owner spec-review repairs: multi-caller seam migration (~57 direct session opens found), blocking session inventory with INVALID_BYPASS_PATH=0, tenant-context source matrix, BLOCKED_INTERNAL_TENANT_CON...
   _by Admin - 2026-08-23_
 - **[7] [DONE] DONE: TRACE: canonical-truth reconciliation complete | outcome: docs/TRACE-CANONICAL-TRUTH.md v1.0 written** - {"agent_id": "TrueVow_Tenant_TRACE_Service", "action": "done", "status": "DONE", "message": "TRACE: canonical-truth reconciliation complete | outcome: docs/TRACE-CANONICAL-TRUTH.md v1.0 written (statuses evidence-backed, settled-paths appendix, GAP-1/2 recorded HIGH); docs restructured (adr/ + archi...
