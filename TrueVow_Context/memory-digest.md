@@ -3,8 +3,8 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-23T06:23:00.399459+00:00
-- Total memories: 696
+- Generated: 2026-08-23T07:01:59.874764+00:00
+- Total memories: 697
 
 ## High-importance decisions (8+, routine noise excluded) - 308
 
@@ -1273,7 +1273,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (355)
+## context (356)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1341,6 +1341,8 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] FND-003-R1 spec published for gate review** - Spec docs/slices/TRACE-FND-003-R1-SPEC.md committed 55878ef on docs/TRACE-CANONICAL-TRUTH-v1 after owner spec-review repairs: multi-caller seam migration (~57 direct session opens found), blocking session inventory with INVALID_BYPASS_PATH=0, tenant-context source matrix, BLOCKED_INTERNAL_TENANT_CON...
+  _by Admin - 2026-08-23_
 - **[7] [DONE] DONE: TRACE: canonical-truth reconciliation complete | outcome: docs/TRACE-CANONICAL-TRUTH.md v1.0 written** - {"agent_id": "TrueVow_Tenant_TRACE_Service", "action": "done", "status": "DONE", "message": "TRACE: canonical-truth reconciliation complete | outcome: docs/TRACE-CANONICAL-TRUTH.md v1.0 written (statuses evidence-backed, settled-paths appendix, GAP-1/2 recorded HIGH); docs restructured (adr/ + archi...
   _by user - 2026-08-23_
 - **[7] [ACTIVE] START: TRACE: Canonical-truth documentation reconciliation | resuming from FND-003 cc36a8d + 3 grill rounds** - {"agent_id": "TrueVow_Tenant_TRACE_Service", "action": "start", "status": "ACTIVE", "message": "TRACE: Canonical-truth documentation reconciliation | resuming from FND-003 cc36a8d + 3 grill rounds ruled | goal: docs/TRACE-CANONICAL-TRUTH.md v1 + docs/adr/ + archive restructure + slimmed coding guide...
