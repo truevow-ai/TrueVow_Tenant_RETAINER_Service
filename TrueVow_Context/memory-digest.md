@@ -3,8 +3,8 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-23T07:43:40.968249+00:00
-- Total memories: 699
+- Generated: 2026-08-23T21:17:44.384963+00:00
+- Total memories: 701
 
 ## High-importance decisions (8+, routine noise excluded) - 309
 
@@ -1277,7 +1277,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (357)
+## context (359)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1345,6 +1345,8 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] FND-003-R1 frontier 01/03/04 implemented** - T01 0023_fnd003_runtime_role migration + guarded tests @18745cb; T03 internal_tenant_session seam + BlockedInternalTenantContext @787f6a4 on trace/TRACE-FND-003; T04 inventory ledger 57 sites committed to docs branch (INVALID_BYPASS_PATH baseline=2, ticket05 stays whole, batch07 watch-item). Local s...
+  _by Admin - 2026-08-23_
 - **[7] [DONE] DONE: Sales Ops: produced Completion Ledger (docs/plg/COMPLETION_LEDGER.md) per control-layer directive |** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "done", "status": "DONE", "message": "Sales Ops: produced Completion Ledger (docs/plg/COMPLETION_LEDGER.md) per control-layer directive | outcome: 18 workstreams classified A-E with evidence; PLG-SO-01/02/02C = B (staging pending), living-docs = D ...
   _by user - 2026-08-23_
 - **[7] FND-003-R1 spec published for gate review** - Spec docs/slices/TRACE-FND-003-R1-SPEC.md committed 55878ef on docs/TRACE-CANONICAL-TRUTH-v1 after owner spec-review repairs: multi-caller seam migration (~57 direct session opens found), blocking session inventory with INVALID_BYPASS_PATH=0, tenant-context source matrix, BLOCKED_INTERNAL_TENANT_CON...
@@ -1811,6 +1813,8 @@
   _by user - 2026-06-25_
 - **[6] Documentation Status: TrueVow_Documentation is Stale** - TrueVow_Documentation/ contains older documentation (Word docs, markdown exports) including TrueVow_PRD.md, Complete System Technical Documentation, Financial Management guides, and Billing Service updates. These are outdated - they reflect the old architecture with DRAFT naming, CONNECT active, and...
   _by user - 2026-06-25_
+- **[5] [ACTIVE] BLOCKED: Sales Ops: refreeze executed, gate FAILED on pre-existing defects (82 tsc errors, 18 jest suites red** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "blocked", "status": "ACTIVE", "message": "Sales Ops: refreeze executed, gate FAILED on pre-existing defects (82 tsc errors, 18 jest suites red at HEAD vs clean 677 at c31c233) | attempted: full dirty-path classification + 4 separated commits + tru...
+  _by user - 2026-08-23_
 - **[5] [ACTIVE] BLOCKED: TRACE: FND-002 data recovery — local historical-key search EXHAUSTED (PS/WSL histories, all env file** - {"agent_id": "TrueVow_Tenant_TRACE_Service", "action": "blocked", "status": "ACTIVE", "message": "TRACE: FND-002 data recovery \u2014 local historical-key search EXHAUSTED (PS/WSL histories, all env files, git history, editor local-history, memory vaults, credential manager, docker volumes, infisica...
   _by user - 2026-08-20_
 - **[5] [ACTIVE] BLOCKED: TRACE: FND-002-R3 pushed (trace/TRACE-FND-002 2fba499) | outcome: field-level mixed re-key fix + exa** - {"agent_id": "TrueVow_Tenant_TRACE_Service", "action": "blocked", "status": "ACTIVE", "message": "TRACE: FND-002-R3 pushed (trace/TRACE-FND-002 2fba499) | outcome: field-level mixed re-key fix + exact project identity; 148/148 guarded PG green; zero Supabase writes this round | need: correct histori...
