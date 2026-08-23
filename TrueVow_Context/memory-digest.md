@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-20T22:53:36.321494+00:00
-- Total memories: 680
+- Generated: 2026-08-23T06:10:40.245290+00:00
+- Total memories: 695
 
-## High-importance decisions (8+, routine noise excluded) - 305
+## High-importance decisions (8+, routine noise excluded) - 307
 
 - **[10][architecture] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Lifecycle shrinks to ~6 states (BOOTSTRAP/SCREENING/INTAKE/RESOLUTION/AWAITING_EFFECT/COMPLETE + HANDOFF/TERMINATED). LLM = conversation conductor within code-determined agenda; code = agenda authority. LiveKit = voice runtime only, TrueVow Core consumes provider-neutral CoreTurn. First Call Readiness Certificate requires all policy branches have outcomes + effect fallbacks; external integrations NOT required for first call. Prototype-first: challenger (Car Accident + OPI) vs current 22-state FSM, measure task completion/false commits/repeats/turns. SaaS Admin Builder implication: NOT a flowchart editor — firm configures facts, routing policy, destinations; previews generated sample conversations.
   _by Admin - 2026-08-12 - tags: -_
@@ -80,6 +80,8 @@
   _by user - 2026-06-25 - tags: intake, voice-bridge, gemini, dograh, assemblyai, pipecat, xai, fsm, workflow, orchestration_
 - **[10][architecture] LEVERAGE (ex-DRAFT) — 3-Tier Rules Engine, NO AI** - LEVERAGE is a 3-tier legal rule validation system: TIER 1: State/Jurisdiction rules (mandatory, cannot be disabled). TIER 2: Practice Area rules (customizable). TIER 3: Firm/Attorney/Client-specific rules. CORE PRINCIPLE: NO AI — no machine learning, no neural networks, no LLM. Uses peer benchmarking (real firm data) and FSM engine analysis. Features: citation checking, server-side validation, customer portal UI (4 tabs: Validate, History, Rules, Downloads), SaaS Admin compliance reports (React), template browser. v2.0 with global templates from SaaS Admin + tenant-specific rules. 98.25% complete. Stack: Python/FastAPI + Next.js frontend. Was previously called DRAFT — fully renamed to LEVERAGE.
   _by user - 2026-06-25 - tags: leverage, rules-engine, no-ai, peer-benchmarking, fsm, 3-tier, citation, compliance_
+- **[10][bug] TRACE inbound webhook auth fail-open x2 (GAP-1/GAP-2)** - _verify_hmac returns True when secret OR header absent (inbound.py:56); inbound fax secret hardcoded empty (inbound.py:220); recorded HIGH open security gaps in truth doc section 8; must be fail-closed before any production commissioning
+  _by Admin - 2026-08-23 - tags: -_
 - **[10][bug] F1 FALSE representation commit from 'engineers'** - Call #3: 'I spoke to a couple of engineers.' -> extractor consulted_phrases includes 'spoke to' -> representation.status=consulted_only committed (0.85, deterministic, validator passed). FALSE LEGAL-SAFETY FACT (engineers != attorneys). None of the 'retained' policy triggered this time, but false fact is durable + flows downstream. F2: conductor combinable_with + identity ask_hint bundles 4 facts per spoken turn, repeated verbatim. Core-owner repairs required; bridge authority boundary held (0 files).
   _by Admin - 2026-08-14 - tags: -_
 - **[10][bug] Engine: ca_police/medical loop + email empty + jurisdiction hardcode** - Three critical bugs from Aug 1 call: (1) ca_police and ca_medical_treatment nodes cycle infinitely on 'no' answers — the ca workflow ladder has a next-pointer loop. (2) Email verify prompt shows empty '{contact_email}' — email extraction stores raw text instead of parsed email address. (3) conflict_check_prior_rep routes 'no' to ca_jurisdiction regardless of practice area — should route to identify_practice_area when practice area unknown. Also: Gemini STOP errors after long calls suggesting context overflow.
@@ -548,6 +550,8 @@
   _by Admin - 2026-07-31 - tags: -_
 - **[8][convention] Golden Fixture Cross-Repository Testing** - Created app/shared/contracts.py with frozen contract versions and deterministic golden fixture (make_golden_envelope, make_golden_fixture_json, compute_golden_hmac). Every TrueVow product must deserialize the same 18-field EventEnvelope and compute the same HMAC over the exact raw fixture. Tests at tests/test_golden_fixtures.py validate envelope serialization, roundtrip deserialization, HMAC determinism, evidence manifest completeness (9 refs), and jurisdiction separation (global vs tenant).
   _by Admin - 2026-07-31 - tags: -_
+- **[8][decision] TRACE canonical truth doc v1.0 created** - docs/TRACE-CANONICAL-TRUTH.md now controls on conflict; 3 grill rounds ruled name (Pre-Litigation Matter Development & Readiness), Matter-vs-Case identity split, SaaS Admin activation authority, // per activated Matter, shipped 15-value FLAG_TYPES registry canonical, PRODUCTION-PROVEN reserved; ADRs moved to docs/adr/ superseded, planning corpus archived with banners
+  _by Admin - 2026-08-23 - tags: -_
 - **[8][decision] INTAKE 08C booking mannerisms adopted** - INTAKE: adopted natural booking mannerisms from the researched playbook | result: explicit slot confirm read-back ('To confirm, you'd like Friday at 9:00 AM. Is that correct?'), booked confirmation reiterates the actual time, weekends excluded from availability, truthful copy (no unsupported email/text send promises until SMS/email integration is wired) | discarded as unnatural/duplicative: two-slot rule (user's 3-spread instruction wins), 'One Pee Em' reading style, holiday calendar (needs real holiday feed), reschedule flow (post-acceptance), in-person/video questioning | deployed probe: summary -> spread weekday slots -> confirm read-back -> 'Your appointment is set for Friday at 9:00 AM' -> real Google event | next: final human acceptance room qa-1787266390
   _by Admin - 2026-08-20 - tags: -_
 - **[8][decision] INTAKE 10B self-verifying human QA launch gate** - INTAKE: implemented HUMAN-QA-HARNESS-10B self-verifying launch gate | result: scripts/human_qa_launch.py --launch now withholds human_join_url until exact lk-<room> durable pin exists after dispatch start and validates truevow-production v1.2.0/bc1cf3c1 readiness; tests/scripts/test_human_qa_launch.py 9 passed | learned: nontechnical human QA must never receive a join URL before backend readiness is proven for that exact room | next: run python scripts/human_qa_launch.py --launch for the next human QA attempt; if it prints human_join_url null, do not call
@@ -858,7 +862,7 @@
 - **[5] 04G amendment frozen: obtain_conflict_party REMOVED from Schema/Goal standard qualification goal set (CTO directive). Adverse-party identity = optional tenant policy / spontaneous capture only. OPI responsible.party now conditional clarification. Grading split: CASE PRIORITY vs INTAKE COMPLETENESS vs ROUTING_SAFETY. New semantic checksum 7a7b0495 (v1.1.0 candidate; staging pinned v1.0.0/3c0c130b until republish).** - --importance
   _by Admin - 2026-08-14_
 
-## pattern (13)
+## pattern (16)
 
 - **[10] Per-Service Key Isolation Pattern** - NEVER use one global webhook secret across all services. Each caller-receiver pair gets its own key: tv-intake-to-retainer-v1, tv-retainer-to-saas-admin-v1, tv-saas-admin-to-trace-v1. Key prefixes bound to allowed paths in CANONICAL_PATHS registry. Env vars: TRUEVOW_WEBHOOK_KEY_ID_{SERVICE} + TRUEVO...
   _by Admin - 2026-07-31_
@@ -886,8 +890,14 @@
   _by user - 2026-06-25_
 - **[6] xai_cloud bridge test suite** - Created tests/test_xai_cloud_bridge.py (34 tests) for XaiCloudBridge. Mirrors test_xai_bridge.py but adapts for cloud bridge: dual registration (xai_cloud + xai_cloud_voice_agent), default voice rex (male-only), end_session returns {bridge,session_id,status} without had_audio, double-start early-ret...
   _by Admin - 2026-07-08_
+- **[5] Windows/Docker Desktop: OneDrive bind-mount wedges the daemon under heavy pytest I/O — run tests from a container-local repo copy (/app2 tar extraction), refresh via docker cp** - --importance
+  _by Admin - 2026-08-21_
+- **[5] Key-recovery lesson: test local candidate secret values against ciphertext FIRST (seconds) before name-directed history searches (days). Historical key was CREDENTIAL_VAULT_MASTER_KEY via old pad/truncate derivation** - --importance
+  _by Admin - 2026-08-21_
+- **[5] RLS canonical policy design: one tenant_isolation_fnd003 policy (ALL) per tenant table, legacy permissive policies dropped (OR semantics), hybrid predicates for audit_log/consent_records, case-derived EXISTS chains** - --importance
+  _by Admin - 2026-08-21_
 
-## decision (99)
+## decision (101)
 
 - **[10] INTAKE COLLAPSE-07 stages 0-2** - INTAKE: executed LIVEKIT-BRIDGE-COLLAPSE-07 | result: GitHub main checkpointed to deployed tree (0f8954e), time-debounce removed (stable utterance_id dedupe), monitoring off hot path, bridge singleton one-time init, TrueVowCloudAgent/IntakeObserver/agent-FAQ deleted (1892->970 lines), entrypoint fai...
   _by Admin - 2026-08-19_
@@ -1037,6 +1047,8 @@
   _by Admin - 2026-07-03_
 - **[9] CONNECT Service Deleted** - TrueVow_Tenant_CONNECT_Service directory deleted. Removed from config.yaml services block and .gitignore. Was archived June 2026 — attorney referral network, no longer on TrueVow's agenda.
   _by user - 2026-07-01_
+- **[8] TRACE canonical truth doc v1.0 created** - docs/TRACE-CANONICAL-TRUTH.md now controls on conflict; 3 grill rounds ruled name (Pre-Litigation Matter Development & Readiness), Matter-vs-Case identity split, SaaS Admin activation authority, // per activated Matter, shipped 15-value FLAG_TYPES registry canonical, PRODUCTION-PROVEN reserved; ADRs...
+  _by Admin - 2026-08-23_
 - **[8] INTAKE 08C booking mannerisms adopted** - INTAKE: adopted natural booking mannerisms from the researched playbook | result: explicit slot confirm read-back ('To confirm, you'd like Friday at 9:00 AM. Is that correct?'), booked confirmation reiterates the actual time, weekends excluded from availability, truthful copy (no unsupported email/t...
   _by Admin - 2026-08-20_
 - **[8] INTAKE 10B self-verifying human QA launch gate** - INTAKE: implemented HUMAN-QA-HARNESS-10B self-verifying launch gate | result: scripts/human_qa_launch.py --launch now withholds human_join_url until exact lk-<room> durable pin exists after dispatch start and validates truevow-production v1.2.0/bc1cf3c1 readiness; tests/scripts/test_human_qa_launch....
@@ -1077,6 +1089,8 @@
   _by user - 2026-06-25_
 - **[7] Website Copy - No Payment Before Trial** - FAQ clarification: No payment collected on application page. Trial activates automatically after onboarding. Customer chooses paid plan from Portal during trial. Remaining trial continues unchanged. Paid plan begins automatically when trial ends. Customer does not need to choose a paid plan before s...
   _by Admin - 2026-08-10_
+- **[5] Supabase runtime role postgres has rolbypassrls=true (rolsuper=false): FORCE RLS cannot constrain it — FND-003 is CODE_COMPLETE_BLOCKED_RUNTIME_ROLE; role commissioning is a separate bounded unit, no credential rotation** - --importance
+  _by Admin - 2026-08-21_
 - **[5] Checkpoint commit 16f2b97 pushed to origin/review/tv-intake-engine-p1-02e-r1: curated canonical snapshot (benjamin_goal + catalog + schema_goal bridge + tests + simulation battery + audit evidence + SESSION_STATE/PROGRESS_LOG). Deployed tenant image 01M021CS5HTB (Fly truevow-tenant-public, tenant-only; agent secrets unchanged since 04M repoint). Gate state: sim loop continues to 0 semantic safety failures, then ONE human acceptance, then curated freeze tag + Retirement A-B-C. G13 HOLD, G14 HARD HOLD, production default NO.** - --importance
   _by Admin - 2026-08-15_
 - **[5] Benjamin Conversation Experience v1.2 principles FROZEN: open story first (after required consent). Flow: CONSENT - BOUNDED STORY - silent multi-fact extraction - early hard gates (emergency/practice/jurisdiction-if-unresolved/representation) - ask only what remains. Trust funnel over questionnaire funnel; trust = conversion mechanism, no pressure. ConversationLoadProfile (observable signals only, no prosody inference) changes delivery ONLY - never qualification/policy/case value. Conversation Experience Policy layer between AllowedAgenda and Conductor. Work order 06 after legacy retirement + v1.1.0 human baseline. Spec: docs/benjamin_goal/CONVERSATION_EXPERIENCE_V12_FROZEN_PRINCIPLES.md. Evidence-informed hypothesis, test against 20 personas before freeze.** - --importance
@@ -1101,7 +1115,7 @@
 - **[8] D-001 Fix: enrichment_pending -> PROFILED** - enrichment_pending maps to canonical PROFILED per CTO frozen decision. Next valid transition: T004 (PROFILED -> CONTACT_ENRICHED). Reason code: legacy_state_migrated. Fixed in contracts.ts, migration 177, website-intake/manager.ts, and leads-repository.ts.
   _by Admin - 2026-08-03_
 
-## convention (8)
+## convention (10)
 
 - **[10] Protected Characteristic Inference** - The Sales Ops architecture doc describes special_cohort_leads and community_signals for ethnicity-based segmentation. This MUST be frozen for compliance review before real prospecting at scale. Protected characteristics must NOT automatically determine outreach eligibility, pricing, approval, or pro...
   _by Admin - 2026-08-10_
@@ -1119,9 +1133,15 @@
   _by Admin - 2026-07-31_
 - **[8] Golden Fixture Cross-Repository Testing** - Created app/shared/contracts.py with frozen contract versions and deterministic golden fixture (make_golden_envelope, make_golden_fixture_json, compute_golden_hmac). Every TrueVow product must deserialize the same 18-field EventEnvelope and compute the same HMAC over the exact raw fixture. Tests at ...
   _by Admin - 2026-07-31_
+- **[5] Installed mattpocock/skills into Sales Ops** - Shallow-cloned github.com/mattpocock/skills @5b15a47 and copied 25 skills (18 engineering + 7 productivity) into .opencode/skills/. Skipped deprecated/, in-progress/, misc/. Manual copy replaces hung npx skills CLI; identical end state.
+  _by Admin - 2026-08-23_
+- **[5] Pocock skills installed in INTAKE** - Installed 25 Matt Pocock agent skills (18 engineering + 7 productivity) from github.com/mattpocock/skills into .opencode/skills/ (the dir opencode.json skills.paths points to). Covers AGENTS.md table refs: /code-review, /tdd, /diagnosing-bugs. Manual security scan clean; skillspector hangs on this m...
+  _by Admin - 2026-08-23_
 
-## bug (61)
+## bug (64)
 
+- **[10] TRACE inbound webhook auth fail-open x2 (GAP-1/GAP-2)** - _verify_hmac returns True when secret OR header absent (inbound.py:56); inbound fax secret hardcoded empty (inbound.py:220); recorded HIGH open security gaps in truth doc section 8; must be fail-closed before any production commissioning
+  _by Admin - 2026-08-23_
 - **[10] F1 FALSE representation commit from 'engineers'** - Call #3: 'I spoke to a couple of engineers.' -> extractor consulted_phrases includes 'spoke to' -> representation.status=consulted_only committed (0.85, deterministic, validator passed). FALSE LEGAL-SAFETY FACT (engineers != attorneys). None of the 'retained' policy triggered this time, but false fa...
   _by Admin - 2026-08-14_
 - **[10] Engine: ca_police/medical loop + email empty + jurisdiction hardcode** - Three critical bugs from Aug 1 call: (1) ca_police and ca_medical_treatment nodes cycle infinitely on 'no' answers — the ca workflow ladder has a next-pointer loop. (2) Email verify prompt shows empty '{contact_email}' — email extraction stores raw text instead of parsed email address. (3) conflict_...
@@ -1234,6 +1254,10 @@
   _by Admin - 2026-08-17_
 - **[6] vNext E2E QA - TEST DEFECTS x2** - 1) Oakwood scanner flags comment in config_resolver.py (not code). 2) Legacy-import scanner includes its own test file which contains 'intake_engine'/'workflow_engine' assertion strings. Both scanners need exclusions.
   _by Admin - 2026-08-12_
+- **[5] Phase-2 tables (0017) have no server-default PKs — raw SQL seeds must supply gen_random_uuid() ids; firm_users column is clerk_user_id in DB vs auth_user_sub in model (drift)** - --importance
+  _by Admin - 2026-08-21_
+- **[5] SET LOCAL ROLE + set_config(...,true) are transaction-local: after rollback/commit the role and GUC revert — re-establish in test sessions; un-awaited conn.execute() coroutines fail silently (rows vanish)** - --importance
+  _by Admin - 2026-08-21_
 - **[5] 04M bootstrap recovery PASS. 05:05 call failed closed pre-Core: console dispatch has no tenant metadata - agent used DEPLOYMENT_DEFAULT_TENANT_ID=Oakwood(4f797776) which has been fail-closed since the 04G catalog freeze (3c0c130b vs 7a7b0495) - 422 - static unavailable. Proven: 0 pin rows in call window; tenant-side direct bootstrap truevow-production = 200 ready v1.1.0 greeting. FIX: DEPLOYMENT_DEFAULT_TENANT_ID=truevow-production (overdue repoint; config only). Fail-closed behavior under failure = correct. Final human call GO.** - --importance
   _by Admin - 2026-08-15_
 - **[5] Human confirmation call #2: CONDITIONAL. PASS: real chain, 04K-F3 live-verified ('My first name is Yashar Ulla.' captured), rep resolved by 'I have not retained any attorney.' FOUR new reproduced extractor gaps: D1 'Yes. I've spoken to a couple of attorneys.' repeats rep (participle 'spoken to' missing); D2 'I did not give you my last name.' ignored - false last_name persists; D3 'Last name is Afghan.' skipped (no re-statement override); D4 spelled phone digits + triple/double never captured - phone asked 3x. Proposed 04L bounded repair awaiting authorization.** - --importance
@@ -1245,7 +1269,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (350)
+## context (355)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1313,6 +1337,16 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [DONE] DONE: TRACE: canonical-truth reconciliation complete | outcome: docs/TRACE-CANONICAL-TRUTH.md v1.0 written** - {"agent_id": "TrueVow_Tenant_TRACE_Service", "action": "done", "status": "DONE", "message": "TRACE: canonical-truth reconciliation complete | outcome: docs/TRACE-CANONICAL-TRUTH.md v1.0 written (statuses evidence-backed, settled-paths appendix, GAP-1/2 recorded HIGH); docs restructured (adr/ + archi...
+  _by user - 2026-08-23_
+- **[7] [ACTIVE] START: TRACE: Canonical-truth documentation reconciliation | resuming from FND-003 cc36a8d + 3 grill rounds** - {"agent_id": "TrueVow_Tenant_TRACE_Service", "action": "start", "status": "ACTIVE", "message": "TRACE: Canonical-truth documentation reconciliation | resuming from FND-003 cc36a8d + 3 grill rounds ruled | goal: docs/TRACE-CANONICAL-TRUTH.md v1 + docs/adr/ + archive restructure + slimmed coding guide...
+  _by user - 2026-08-23_
+- **[7] [DONE] DONE: Sales Ops: translated living PRD into spec via /to-spec | outcome: .scratch/living-docs-system/spec.** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "done", "status": "DONE", "message": "Sales Ops: translated living PRD into spec via /to-spec | outcome: .scratch/living-docs-system/spec.md published ready-for-agent (docs verifier seam, 12 user stories) | learned: local .scratch tracker conventio...
+  _by user - 2026-08-23_
+- **[7] [DONE] DONE: Sales Ops: authored living PRD (docs/prd/PRD.md) + CONTEXT.md glossary + living-doc protocol in AGEN** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "done", "status": "DONE", "message": "Sales Ops: authored living PRD (docs/prd/PRD.md) + CONTEXT.md glossary + living-doc protocol in AGENTS.md + README rewrite + stale banners on 5 outdated guides | outcome: canonical onboarding path for junior de...
+  _by user - 2026-08-23_
+- **[7] [DONE] DONE: TRACE: FND-003 pushed (trace/TRACE-FND-003 cc36a8d) | outcome: 43/43 tenant tables FORCE RLS + canon** - {"agent_id": "TrueVow_Tenant_TRACE_Service", "action": "done", "status": "DONE", "message": "TRACE: FND-003 pushed (trace/TRACE-FND-003 cc36a8d) | outcome: 43/43 tenant tables FORCE RLS + canonical tenant_isolation_fnd003 USING/WITH CHECK policies; set_config parameterized GUCs; 15 adversarial tests...
+  _by user - 2026-08-21_
 - **[7] [DONE] DONE: INTAKE: booking mannerisms adopted + probe PASS | next: final human acceptance** - {"agent_id": "TrueVow_Tenant_INTAKE_Service", "action": "done", "status": "DONE", "message": "INTAKE: booking mannerisms adopted + probe PASS | next: final human acceptance", "timestamp": "2026-08-20T22:53:34.041763+00:00", "working_dir": "C:\\Users\\yasha\\OneDrive\\Documents\\TrueVow\\Cursor\\True...
   _by user - 2026-08-20_
 - **[7] [ACTIVE] START: TRACE: FND-002 merged to main (2fba499), FND-003 branch created from exact tip | goal: Phase-2 RLS r** - {"agent_id": "TrueVow_Tenant_TRACE_Service", "action": "start", "status": "ACTIVE", "message": "TRACE: FND-002 merged to main (2fba499), FND-003 branch created from exact tip | goal: Phase-2 RLS reconciliation awaiting CTO work order (table-map grounded inventory)", "timestamp": "2026-08-20T21:41:24...
