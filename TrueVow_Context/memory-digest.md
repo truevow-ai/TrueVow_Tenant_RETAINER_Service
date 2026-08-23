@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-23T06:10:40.245290+00:00
-- Total memories: 695
+- Generated: 2026-08-23T06:23:00.399459+00:00
+- Total memories: 696
 
-## High-importance decisions (8+, routine noise excluded) - 307
+## High-importance decisions (8+, routine noise excluded) - 308
 
 - **[10][architecture] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Lifecycle shrinks to ~6 states (BOOTSTRAP/SCREENING/INTAKE/RESOLUTION/AWAITING_EFFECT/COMPLETE + HANDOFF/TERMINATED). LLM = conversation conductor within code-determined agenda; code = agenda authority. LiveKit = voice runtime only, TrueVow Core consumes provider-neutral CoreTurn. First Call Readiness Certificate requires all policy branches have outcomes + effect fallbacks; external integrations NOT required for first call. Prototype-first: challenger (Car Accident + OPI) vs current 22-state FSM, measure task completion/false commits/repeats/turns. SaaS Admin Builder implication: NOT a flowchart editor — firm configures facts, routing policy, destinations; previews generated sample conversations.
   _by Admin - 2026-08-12 - tags: -_
@@ -550,6 +550,8 @@
   _by Admin - 2026-07-31 - tags: -_
 - **[8][convention] Golden Fixture Cross-Repository Testing** - Created app/shared/contracts.py with frozen contract versions and deterministic golden fixture (make_golden_envelope, make_golden_fixture_json, compute_golden_hmac). Every TrueVow product must deserialize the same 18-field EventEnvelope and compute the same HMAC over the exact raw fixture. Tests at tests/test_golden_fixtures.py validate envelope serialization, roundtrip deserialization, HMAC determinism, evidence manifest completeness (9 refs), and jurisdiction separation (global vs tenant).
   _by Admin - 2026-07-31 - tags: -_
+- **[8][decision] TRACE operating model ratified: frozen architecture + Pocock slice machinery** - Architecture blessed as DEFAULT-FROZEN (not hands-off): all change via to-spec -> to-tickets -> implement -> code-review -> independent TrueVow gate -> truth writeback. to-spec gets exactly 3 inputs (truth doc, base SHA, one authorized roadmap item). Architecture changes need seam-insufficiency evidence + ADR + bounded migration; expand-migrate-contract for wide changes; no restarts. Recorded in TRACE-CANONICAL-TRUTH.md v1.1 section 11 + AGENTS.md Change Management section. First slice designated: TRACE-FND-003-R1 non-bypass runtime role commissioning
+  _by Admin - 2026-08-23 - tags: -_
 - **[8][decision] TRACE canonical truth doc v1.0 created** - docs/TRACE-CANONICAL-TRUTH.md now controls on conflict; 3 grill rounds ruled name (Pre-Litigation Matter Development & Readiness), Matter-vs-Case identity split, SaaS Admin activation authority, // per activated Matter, shipped 15-value FLAG_TYPES registry canonical, PRODUCTION-PROVEN reserved; ADRs moved to docs/adr/ superseded, planning corpus archived with banners
   _by Admin - 2026-08-23 - tags: -_
 - **[8][decision] INTAKE 08C booking mannerisms adopted** - INTAKE: adopted natural booking mannerisms from the researched playbook | result: explicit slot confirm read-back ('To confirm, you'd like Friday at 9:00 AM. Is that correct?'), booked confirmation reiterates the actual time, weekends excluded from availability, truthful copy (no unsupported email/text send promises until SMS/email integration is wired) | discarded as unnatural/duplicative: two-slot rule (user's 3-spread instruction wins), 'One Pee Em' reading style, holiday calendar (needs real holiday feed), reschedule flow (post-acceptance), in-person/video questioning | deployed probe: summary -> spread weekday slots -> confirm read-back -> 'Your appointment is set for Friday at 9:00 AM' -> real Google event | next: final human acceptance room qa-1787266390
@@ -897,7 +899,7 @@
 - **[5] RLS canonical policy design: one tenant_isolation_fnd003 policy (ALL) per tenant table, legacy permissive policies dropped (OR semantics), hybrid predicates for audit_log/consent_records, case-derived EXISTS chains** - --importance
   _by Admin - 2026-08-21_
 
-## decision (101)
+## decision (102)
 
 - **[10] INTAKE COLLAPSE-07 stages 0-2** - INTAKE: executed LIVEKIT-BRIDGE-COLLAPSE-07 | result: GitHub main checkpointed to deployed tree (0f8954e), time-debounce removed (stable utterance_id dedupe), monitoring off hot path, bridge singleton one-time init, TrueVowCloudAgent/IntakeObserver/agent-FAQ deleted (1892->970 lines), entrypoint fai...
   _by Admin - 2026-08-19_
@@ -1047,6 +1049,8 @@
   _by Admin - 2026-07-03_
 - **[9] CONNECT Service Deleted** - TrueVow_Tenant_CONNECT_Service directory deleted. Removed from config.yaml services block and .gitignore. Was archived June 2026 — attorney referral network, no longer on TrueVow's agenda.
   _by user - 2026-07-01_
+- **[8] TRACE operating model ratified: frozen architecture + Pocock slice machinery** - Architecture blessed as DEFAULT-FROZEN (not hands-off): all change via to-spec -> to-tickets -> implement -> code-review -> independent TrueVow gate -> truth writeback. to-spec gets exactly 3 inputs (truth doc, base SHA, one authorized roadmap item). Architecture changes need seam-insufficiency evid...
+  _by Admin - 2026-08-23_
 - **[8] TRACE canonical truth doc v1.0 created** - docs/TRACE-CANONICAL-TRUTH.md now controls on conflict; 3 grill rounds ruled name (Pre-Litigation Matter Development & Readiness), Matter-vs-Case identity split, SaaS Admin activation authority, // per activated Matter, shipped 15-value FLAG_TYPES registry canonical, PRODUCTION-PROVEN reserved; ADRs...
   _by Admin - 2026-08-23_
 - **[8] INTAKE 08C booking mannerisms adopted** - INTAKE: adopted natural booking mannerisms from the researched playbook | result: explicit slot confirm read-back ('To confirm, you'd like Friday at 9:00 AM. Is that correct?'), booked confirmation reiterates the actual time, weekends excluded from availability, truthful copy (no unsupported email/t...
