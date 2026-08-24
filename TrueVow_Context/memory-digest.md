@@ -3,8 +3,8 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-24T05:59:06.410788+00:00
-- Total memories: 706
+- Generated: 2026-08-24T06:18:33.640193+00:00
+- Total memories: 707
 
 ## High-importance decisions (8+, routine noise excluded) - 314
 
@@ -1295,7 +1295,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (360)
+## context (361)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1365,6 +1365,8 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] FND-003-R1: T01-R1 repair + T02 + T05 landed** - T01-R1 0a52a14 removed blanket default-ACL, added alembic_version SELECT (owner review repair); T02 6b3c058 two-URL split (privileged migration URL fail-loud, /ready requires 0023, runtime-isolation scan test); T05 173f597 migrated 12 attorney-route sites to internal_tenant_session with shrinking se...
+  _by Admin - 2026-08-24_
 - **[7] FND-003-R1 frontier 01/03/04 implemented** - T01 0023_fnd003_runtime_role migration + guarded tests @18745cb; T03 internal_tenant_session seam + BlockedInternalTenantContext @787f6a4 on trace/TRACE-FND-003; T04 inventory ledger 57 sites committed to docs branch (INVALID_BYPASS_PATH baseline=2, ticket05 stays whole, batch07 watch-item). Local s...
   _by Admin - 2026-08-23_
 - **[7] [DONE] DONE: Sales Ops: produced Completion Ledger (docs/plg/COMPLETION_LEDGER.md) per control-layer directive |** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "done", "status": "DONE", "message": "Sales Ops: produced Completion Ledger (docs/plg/COMPLETION_LEDGER.md) per control-layer directive | outcome: 18 workstreams classified A-E with evidence; PLG-SO-01/02/02C = B (staging pending), living-docs = D ...
