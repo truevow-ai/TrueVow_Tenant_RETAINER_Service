@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-23T21:17:44.384963+00:00
-- Total memories: 701
+- Generated: 2026-08-24T05:07:39.280955+00:00
+- Total memories: 705
 
-## High-importance decisions (8+, routine noise excluded) - 309
+## High-importance decisions (8+, routine noise excluded) - 313
 
 - **[10][architecture] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Lifecycle shrinks to ~6 states (BOOTSTRAP/SCREENING/INTAKE/RESOLUTION/AWAITING_EFFECT/COMPLETE + HANDOFF/TERMINATED). LLM = conversation conductor within code-determined agenda; code = agenda authority. LiveKit = voice runtime only, TrueVow Core consumes provider-neutral CoreTurn. First Call Readiness Certificate requires all policy branches have outcomes + effect fallbacks; external integrations NOT required for first call. Prototype-first: challenger (Car Accident + OPI) vs current 22-state FSM, measure task completion/false commits/repeats/turns. SaaS Admin Builder implication: NOT a flowchart editor — firm configures facts, routing policy, destinations; previews generated sample conversations.
   _by Admin - 2026-08-12 - tags: -_
@@ -122,6 +122,8 @@
   _by Admin - 2026-08-10 - tags: -_
 - **[10][convention] zero hardcoded tunable values** - RULE: This is a multi-tenant platform. Never hardcode ANY value that may need adjustment per-tenant, per-firm, or per-environment. All tunables must live in one of: (1) tenant_config, (2) workflow JSON config, or (3) named module-level constants with clear documentation. Bare numbers, strings, or IDs in logic statements are FORBIDDEN. If you need a value that could change — threshold, timeout, limit, firm identifier, VAD setting, confidence score — expose it via config. Test by asking: 'Could a different law firm need this set differently?'
   _by Admin - 2026-07-15 - tags: -_
+- **[10][decision] CTO Orchestrator V2 SPEC WRITTEN - awaiting founder approval** - Spec at TrueVow_CTO_Knowledge_Orchestrator/CTO-ORCHESTRATOR-V2-SPEC.md defines the orchestrator as ticket-driven dependency-aware control layer over all repos: Decision-Map + Tickets/ + briefs dropped into target repos, works AFK or on-schedule identically, HITL gates = dangerous ops + platform-clarity questions, hygiene rule freezes dirty repos until COMMIT/PARK/DISCARD classified, discard needs explicit founder verb. Builds on existing assets (orchestrator.py, .triage.yaml policies carried forward, memory.db, TrueVow_Context). Build order: docs approved first, then implement.
+  _by Admin - 2026-08-24 - tags: -_
 - **[10][decision] INTAKE COLLAPSE-07 stages 0-2** - INTAKE: executed LIVEKIT-BRIDGE-COLLAPSE-07 | result: GitHub main checkpointed to deployed tree (0f8954e), time-debounce removed (stable utterance_id dedupe), monitoring off hot path, bridge singleton one-time init, TrueVowCloudAgent/IntakeObserver/agent-FAQ deleted (1892->970 lines), entrypoint fails closed non-schema_goal, turn-counter bug fixed | learned: bridge send_text bypassed GoalSession.process so turn_count stayed 0 and is_first stuck true on non-greeted sessions; 12 unpushed old-engine commits on local main were tagged archive/ not published | next: human QA in fresh room qa-1787159958; if capture fragments use STT_DIAGNOSTIC room
   _by Admin - 2026-08-19 - tags: -_
 - **[10][decision] Frozen Commercial Contract Gate deployed — drift is now impossible to merge** - PLG-BILL-02 gate: frozen_catalogue.py (v2.0.0) is the single machine-readable source of finalized commercial state. 3 layers: (1) CI gate tests/unit/test_frozen_contract.py + fail-hard CI step, (2) CLI python scripts/check_catalogue_drift.py (exit 1 on drift), (3) runtime catalogue_guard.validate_catalogue() now enforces the contract against the LIVE DB — retired LEVERAGE ACTIVE/purchasable, TRACE mispriced, or founding rows/tables -> catalogue NOT READY -> 503 fail-closed on all commercial endpoints. The CI gate simulates the ENTIRE alembic chain final state (products/plans exact cents, founding tables dropped) so a future migration re-activating a retired product fails the PR. Change procedure: any commercial change = frozen_catalogue + migration + constants + tests in ONE PR + CTO approval. AGENTS.md updated so every agent sees the gate on startup.
@@ -310,12 +312,18 @@
   _by Admin - 2026-07-31 - tags: -_
 - **[9][bug] contact_info_sequence dropped phone+email** - Root cause: routing INTO a sequence node used _execute_node, which returned the sequence's own intro prompt and left current_node=contact_info_sequence WITHOUT priming the first sub-node. Next turn the C10 terminal guard (workflow_engine.py:518) saw no next/branches/options and returned _build_complete_response — so name-only leads jumped to 'complete', losing phone+email. FIX: _execute_node now delegates type==sequence to _execute_sequence (primes contact_name, prepends intro to first question); terminal guards treat nodes/type==sequence as a valid exit. Verified: name->phone->email chain now runs.
   _by Admin - 2026-07-14 - tags: -_
+- **[9][context] G13 = HOLD pending manual testing as of 2026-08-21** - Founder confirmed: G13 was held off because testing continued in the Tenant INTAKE engine repo and complete manual testing had not been reached as of two days before Aug 23. Earlier memory claims of 'G13 RUNTIME READINESS PASS' (Aug 11-12) refer to runtime readiness evidence only, NOT the gate. QA mandate bar stands: P1-P5 real proofs + fresh-context qualification. G14 HARD HOLD unchanged.
+  _by Admin - 2026-08-24 - tags: -_
 - **[9][context] 04B Safety Clearance Findings** - INTAKE truevow-tenant-public: fly-tenant.toml ENVIRONMENT=production, Fly owner=personal, DB is production Supabase flhnyyreaxkmwmexchla. 2 active sessions both explicitly synthetic smoke tests (smoke-sg-2 Schema/Goal, smoke-vnext-1 vNext). Schema/Goal canary tenant 4f797776 has firm_name Oakwood Law Firm (payload contains oakwood) — demo identity reused, not hardcoded code routing, created via canonical command 0ca3b6ba. Live SENDGRID+TWILIO credentials deployed — email/SMS side effects POSSIBLE. Calendar NOT connected — booking BLOCKED.
   _by Admin - 2026-08-13 - tags: -_
 - **[9][context] G10 Handoff Evidence** - Execution ID: f47ac10b-58cc-4372-a567-0e02b2c3d479. Lead ID: 1763aee9-52ca-4418-abb8-a60e7f90d847. Pre-state: HANDOFF_PENDING. Handoff package: 455be7f3-84fc-463d-a5ba-bde4c45455d9. SaaS Admin tenant: ec105c72-31ff-4030-9bc4-413ff4f58b5b. Status: ACCEPTED_NEW_CUSTOMER. T023: PASS. Final state: HANDED_OFF / converted. Duplicate tenants: 0. Direct CSM calls: 0. Manual DB repair: 0.
   _by Admin - 2026-08-11 - tags: -_
 - **[9][context] G10 Canary Status** - Lead 1763aee9-52ca-4418-abb8-a60e7f90d847 at HANDOFF_PENDING. T020 passed, T022 passed. Handoff to SaaS Admin deployed and ready for retry. SaaS Admin webhook at truevow-saas-admin-staging.fly.dev with HMAC key tv-sales-ops-to-saas-admin-v1. PIPELINE_SECRET and TRUEVOW_DEPLOYMENT_ENV=staging set.
   _by Admin - 2026-08-10 - tags: -_
+- **[9][convention] Three living documents rule + truth arbitration order** - Exactly three canonical living docs, edited in place, never forked: (1) TrueVow_Context/2026-08-10-TRUEVOW-DEVELOPER-START-HERE.md v4.0 (canonical guide; DEVELOPER-QUICKSTART.md is now a redirect banner), (2) CTO-ORCHESTRATOR-V2-SPEC.md, (3) TrueVow_CTO_Knowledge_Orchestrator/CONTEXT.md glossary. Truth arbitration when sources conflict: runtime/git state > memory.db > canonical guide > everything else. Conflicts found during scans become tickets. Registry corrections: Tenant Application Service repo renamed to TrueVow_Tenant_INTAKE_Service; RETAINER and COMMAND repos exist and were missing from all registries.
+  _by Admin - 2026-08-24 - tags: -_
+- **[9][decision] AUTH GROUND TRUTH: Supabase Auth is sole human IdP platform-wide - Clerk retired** - Founder confirmed 2026-08-24: every repo should be on Supabase Auth by now. IAM completion report (2026-08-03) recorded Clerk removal across 10 repos. The v3.1 guide invariant 'Auth = Clerk, no Supabase migration' was STALE and is corrected in Developer Start Here v4.0. Any Clerk reference in docs predating Aug 3 IAM work must be treated as stale; Billing/FM Clerk mentions need verification during hygiene passes.
+  _by Admin - 2026-08-24 - tags: -_
 - **[9][decision] INTAKE 08C1 Google staging commissioned** - INTAKE: 08C1 staging Google connection commissioned (real OAuth consent -> refresh token -> tenant_calendar_connections row) | result: capability probe READY via calendarList, deployed E2E machine booking created a REAL Google event at 2026-08-21T09:00+03:00 Asia/Riyadh matching the spoken slot, event_id persisted in ledger done, retry produced 0 duplicates (1 matching event), QA event deleted | learned: availability must use the connected calendar's own timezone (UTC default mislabeled slots by the offset); OAuth consent = the production CSM onboarding pattern | next: final human acceptance room staged (qa-1787258045)
   _by Admin - 2026-08-20 - tags: -_
 - **[9][decision] INTAKE 08C Google Calendar booking deployed** - INTAKE: 08C Google Calendar direct booking path deployed (v1.5.0 9cde5c0b) | result: Application-Plane gateway with real credential validation (calendarList probe), free/busy availability, deterministic slot matching, ledger-first event creation with events.get crash-window recovery + base32hex deterministic id; callback mode skips the slot question and executes the durable callback at offer time; staging honestly fails closed to callback (0 calendar connection rows) | learned: expected-fact context must follow last_asked (bare answers on optional questions were binding consultation.requested and terminating mid-dialog); free-text facts need explicit prompt rules or the model returns 0 candidates; flash-lite occasionally times out at 2.0s budget | outcome: 192 tests green, deployed probe proves terminal booking confirmation + durable callback record | next: final human acceptance call, room qa-1787252114 staged
@@ -903,8 +911,10 @@
 - **[5] RLS canonical policy design: one tenant_isolation_fnd003 policy (ALL) per tenant table, legacy permissive policies dropped (OR semantics), hybrid predicates for audit_log/consent_records, case-derived EXISTS chains** - --importance
   _by Admin - 2026-08-21_
 
-## decision (102)
+## decision (104)
 
+- **[10] CTO Orchestrator V2 SPEC WRITTEN - awaiting founder approval** - Spec at TrueVow_CTO_Knowledge_Orchestrator/CTO-ORCHESTRATOR-V2-SPEC.md defines the orchestrator as ticket-driven dependency-aware control layer over all repos: Decision-Map + Tickets/ + briefs dropped into target repos, works AFK or on-schedule identically, HITL gates = dangerous ops + platform-clar...
+  _by Admin - 2026-08-24_
 - **[10] INTAKE COLLAPSE-07 stages 0-2** - INTAKE: executed LIVEKIT-BRIDGE-COLLAPSE-07 | result: GitHub main checkpointed to deployed tree (0f8954e), time-debounce removed (stable utterance_id dedupe), monitoring off hot path, bridge singleton one-time init, TrueVowCloudAgent/IntakeObserver/agent-FAQ deleted (1892->970 lines), entrypoint fai...
   _by Admin - 2026-08-19_
 - **[10] Frozen Commercial Contract Gate deployed — drift is now impossible to merge** - PLG-BILL-02 gate: frozen_catalogue.py (v2.0.0) is the single machine-readable source of finalized commercial state. 3 layers: (1) CI gate tests/unit/test_frozen_contract.py + fail-hard CI step, (2) CLI python scripts/check_catalogue_drift.py (exit 1 on drift), (3) runtime catalogue_guard.validate_ca...
@@ -983,6 +993,8 @@
   _by user - 2026-06-25_
 - **[10] CONNECT Archived - DRAFT Renamed to LEVERAGE - INTAKE Updated** - CONNECT (attorney referral network) is decommissioned and archived from the ecosystem permanently - no longer on TrueVow agenda. DRAFT has been completely replaced by LEVERAGE everywhere (same service, renamed). INTAKE (Tenant Application Service) is no longer just FSM NLP - it is now FSM applied to...
   _by user - 2026-06-25_
+- **[9] AUTH GROUND TRUTH: Supabase Auth is sole human IdP platform-wide - Clerk retired** - Founder confirmed 2026-08-24: every repo should be on Supabase Auth by now. IAM completion report (2026-08-03) recorded Clerk removal across 10 repos. The v3.1 guide invariant 'Auth = Clerk, no Supabase migration' was STALE and is corrected in Developer Start Here v4.0. Any Clerk reference in docs p...
+  _by Admin - 2026-08-24_
 - **[9] INTAKE 08C1 Google staging commissioned** - INTAKE: 08C1 staging Google connection commissioned (real OAuth consent -> refresh token -> tenant_calendar_connections row) | result: capability probe READY via calendarList, deployed E2E machine booking created a REAL Google event at 2026-08-21T09:00+03:00 Asia/Riyadh matching the spoken slot, eve...
   _by Admin - 2026-08-20_
 - **[9] INTAKE 08C Google Calendar booking deployed** - INTAKE: 08C Google Calendar direct booking path deployed (v1.5.0 9cde5c0b) | result: Application-Plane gateway with real credential validation (calendarList probe), free/busy availability, deterministic slot matching, ledger-first event creation with events.get crash-window recovery + base32hex dete...
@@ -1123,12 +1135,14 @@
 - **[8] D-001 Fix: enrichment_pending -> PROFILED** - enrichment_pending maps to canonical PROFILED per CTO frozen decision. Next valid transition: T004 (PROFILED -> CONTACT_ENRICHED). Reason code: legacy_state_migrated. Fixed in contracts.ts, migration 177, website-intake/manager.ts, and leads-repository.ts.
   _by Admin - 2026-08-03_
 
-## convention (10)
+## convention (11)
 
 - **[10] Protected Characteristic Inference** - The Sales Ops architecture doc describes special_cohort_leads and community_signals for ethnicity-based segmentation. This MUST be frozen for compliance review before real prospecting at scale. Protected characteristics must NOT automatically determine outreach eligibility, pricing, approval, or pro...
   _by Admin - 2026-08-10_
 - **[10] zero hardcoded tunable values** - RULE: This is a multi-tenant platform. Never hardcode ANY value that may need adjustment per-tenant, per-firm, or per-environment. All tunables must live in one of: (1) tenant_config, (2) workflow JSON config, or (3) named module-level constants with clear documentation. Bare numbers, strings, or ID...
   _by Admin - 2026-07-15_
+- **[9] Three living documents rule + truth arbitration order** - Exactly three canonical living docs, edited in place, never forked: (1) TrueVow_Context/2026-08-10-TRUEVOW-DEVELOPER-START-HERE.md v4.0 (canonical guide; DEVELOPER-QUICKSTART.md is now a redirect banner), (2) CTO-ORCHESTRATOR-V2-SPEC.md, (3) TrueVow_CTO_Knowledge_Orchestrator/CONTEXT.md glossary. Tr...
+  _by Admin - 2026-08-24_
 - **[8] Score, segment, lifecycle are separate dimensions** - Per PLG-SO-01: lead_score is quality/eligibility factor, segment_code is routing key (STANDARD/SPECIAL_COHORT), canonical_pipeline_stage is lifecycle state. None replaces the others. High-scoring special-cohort lead stays special — never auto-promoted to standard. Classification_status=REVIEW_REQUIR...
   _by Admin - 2026-08-05_
 - **[8] Score, segment, lifecycle are separate dimensions** - Per PLG-SO-01: lead_score is quality factor, segment_code is routing key, canonical_pipeline_stage is lifecycle. None replaces the others. High-scoring special-cohort lead stays special — never auto-promoted to standard.
@@ -1277,7 +1291,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (359)
+## context (360)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1293,6 +1307,8 @@
   _by Admin - 2026-07-27_
 - **[10] TRACE documentation and memory updated July 24 2026** - All documentation updated: AGENTS.md (250+ lines with full service reference), README.md (updated stack/status), TRACE-Agent-Coding-Instructions.md (300+ line Appendix A with architecture, API reference, data flow, troubleshooting). Platform map updated (TRACE: port 3036, active). DEVELOPERS.md upda...
   _by Admin - 2026-07-24_
+- **[9] G13 = HOLD pending manual testing as of 2026-08-21** - Founder confirmed: G13 was held off because testing continued in the Tenant INTAKE engine repo and complete manual testing had not been reached as of two days before Aug 23. Earlier memory claims of 'G13 RUNTIME READINESS PASS' (Aug 11-12) refer to runtime readiness evidence only, NOT the gate. QA m...
+  _by Admin - 2026-08-24_
 - **[9] 04B Safety Clearance Findings** - INTAKE truevow-tenant-public: fly-tenant.toml ENVIRONMENT=production, Fly owner=personal, DB is production Supabase flhnyyreaxkmwmexchla. 2 active sessions both explicitly synthetic smoke tests (smoke-sg-2 Schema/Goal, smoke-vnext-1 vNext). Schema/Goal canary tenant 4f797776 has firm_name Oakwood La...
   _by Admin - 2026-08-13_
 - **[9] G10 Handoff Evidence** - Execution ID: f47ac10b-58cc-4372-a567-0e02b2c3d479. Lead ID: 1763aee9-52ca-4418-abb8-a60e7f90d847. Pre-state: HANDOFF_PENDING. Handoff package: 455be7f3-84fc-463d-a5ba-bde4c45455d9. SaaS Admin tenant: ec105c72-31ff-4030-9bc4-413ff4f58b5b. Status: ACCEPTED_NEW_CUSTOMER. T023: PASS. Final state: HANDE...
