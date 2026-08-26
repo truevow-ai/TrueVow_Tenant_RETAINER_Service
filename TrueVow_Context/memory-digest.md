@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-26T05:52:53.733257+00:00
-- Total memories: 714
+- Generated: 2026-08-26T06:09:40.318569+00:00
+- Total memories: 716
 
-## High-importance decisions (8+, routine noise excluded) - 317
+## High-importance decisions (8+, routine noise excluded) - 319
 
 - **[10][architecture] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Lifecycle shrinks to ~6 states (BOOTSTRAP/SCREENING/INTAKE/RESOLUTION/AWAITING_EFFECT/COMPLETE + HANDOFF/TERMINATED). LLM = conversation conductor within code-determined agenda; code = agenda authority. LiveKit = voice runtime only, TrueVow Core consumes provider-neutral CoreTurn. First Call Readiness Certificate requires all policy branches have outcomes + effect fallbacks; external integrations NOT required for first call. Prototype-first: challenger (Car Accident + OPI) vs current 22-state FSM, measure task completion/false commits/repeats/turns. SaaS Admin Builder implication: NOT a flowchart editor — firm configures facts, routing policy, destinations; previews generated sample conversations.
   _by Admin - 2026-08-12 - tags: -_
@@ -80,6 +80,8 @@
   _by user - 2026-06-25 - tags: intake, voice-bridge, gemini, dograh, assemblyai, pipecat, xai, fsm, workflow, orchestration_
 - **[10][architecture] LEVERAGE (ex-DRAFT) — 3-Tier Rules Engine, NO AI** - LEVERAGE is a 3-tier legal rule validation system: TIER 1: State/Jurisdiction rules (mandatory, cannot be disabled). TIER 2: Practice Area rules (customizable). TIER 3: Firm/Attorney/Client-specific rules. CORE PRINCIPLE: NO AI — no machine learning, no neural networks, no LLM. Uses peer benchmarking (real firm data) and FSM engine analysis. Features: citation checking, server-side validation, customer portal UI (4 tabs: Validate, History, Rules, Downloads), SaaS Admin compliance reports (React), template browser. v2.0 with global templates from SaaS Admin + tenant-specific rules. 98.25% complete. Stack: Python/FastAPI + Next.js frontend. Was previously called DRAFT — fully renamed to LEVERAGE.
   _by user - 2026-06-25 - tags: leverage, rules-engine, no-ai, peer-benchmarking, fsm, 3-tier, citation, compliance_
+- **[10][bug] CRITICAL: root workspace origin = RETAINER GitHub repo - discovered 2026-08-26** - Cursor root repo origin is truevow-ai/TrueVow_Tenant_RETAINER_Service.git so all push-memory history lands in the RETAINER repo. No data loss locally; pushes paused pending founder decision (TICKET-025): replace/remove origin + whether CTO_Knowledge_Orchestrator gets its own .git. Checkpoint commit 1c0dc14 made LOCALLY only (25 files: cto_v2.py, spec, CONTEXT.md, Decision-Map, 12 tickets, board, Reviews/JUNIOR-001, night-shift.bat, tier-plan session log).
+  _by Admin - 2026-08-26 - tags: -_
 - **[10][bug] TRACE inbound webhook auth fail-open x2 (GAP-1/GAP-2)** - _verify_hmac returns True when secret OR header absent (inbound.py:56); inbound fax secret hardcoded empty (inbound.py:220); recorded HIGH open security gaps in truth doc section 8; must be fail-closed before any production commissioning
   _by Admin - 2026-08-23 - tags: -_
 - **[10][bug] F1 FALSE representation commit from 'engineers'** - Call #3: 'I spoke to a couple of engineers.' -> extractor consulted_phrases includes 'spoke to' -> representation.status=consulted_only committed (0.85, deterministic, validator passed). FALSE LEGAL-SAFETY FACT (engineers != attorneys). None of the 'retained' policy triggered this time, but false fact is durable + flows downstream. F2: conductor combinable_with + identity ask_hint bundles 4 facts per spoken turn, repeated verbatim. Core-owner repairs required; bridge authority boundary held (0 files).
@@ -542,6 +544,8 @@
   _by Admin - 2026-07-08 - tags: -_
 - **[8][bug] gitignore source-leak ECOSYSTEM AUDIT results (June 25) — which repos still affected** - Audited all sibling git repos for the gitignore source-leak (advisory 64bc43bf). NONE have run the fix yet (advisory just issued). CONFIRMED UNFIXED SOURCE LEAKS (real lib/ source hidden from git): TrueVow_Financial_Management_Service (frontend/lib + frontend/__tests__/lib), TrueVow_Tenant_Application_Service (app/portal/lib, dograh server ui/src/lib, scripts/lib), TrueVow-Tenant_Billing-Service (ui/lib; ALSO its .gitignore has an embedded NULL/control byte — corrupted). LATENT (dangerous unanchored lib/ rule present but no active source leak yet): TrueVow_Internal_Ops_Service, TrueVow_Tenant_SETTLE-Service, TrueVow_Tenant_LEVERAGE_Service. NOT GIT REPOS AT ALL (no version control — separate severe issue): TrueVow_Dialogflow_Intake_Service, TrueVow_Platform_Analytics_Service, TrueVow_Tenant_VERIFY_Service, TrueVow_TWIML_SoftPhone_App. CLEAN: Website, Customer_Success_CORE, First_Line_Support, Sales_Ops, Tenant_CONNECT, Customer_Portal, cartesia_test. SaaS_Admin already fixed. Each affected repo agent: run docs/01-main/ECOSYSTEM_ADVISORY_GITIGNORE_SOURCE_LEAK.md (in SaaS Admin).
   _by user - 2026-06-25 - tags: gitignore, audit, ecosystem, cross-service_
+- **[8][context] FND-003-R1 checkpoint: T06A+T08+T07A landed** - Commits: T06A d4914c1 (matter.activated + signing/send, guard paths FIXED - original allowlist used nonexistent app/api/routes/ so guard silently errored since creation; real inventory 43 sites + 2 seam-impl lines in database.py), repair 0cdae80 (signing.py:131 DocuSeal webhook stays T06B scope), T08 bd88ccf (audit fail-closed w/o firm; webhooks.py fax-status audit wrapped best-effort), T07A e73e094 (14 sites: providers/followup/fact_review/evidence/chronology all take required firm_id kwarg FIRST after self/case_id per module convention - evidence methods are (self, firm_id, case_id); jobs/qa/evidence routes pass firm_uuid=uuid.UUID(ctx.firm_id); client_portal threads existing ctx.tenant_id with comment; main demo + tests updated; BONUS: export endpoint had NO firm filter on Case query - fixed). Ledger e088bb6 on docs branch. GATES STATUS: ruff clean, guard 3/3 via direct python call. PYTEST BLOCKED BY ENVIRONMENT: python imports of app.* take 30-40s each (OneDrive files-on-demand hydration stall) - pytest collection times out; NOT a code failure; resume by retrying pytest after hydration settles or from non-OneDrive checkout. NEXT: T07B shared stores (consent_ledger x3 :162/:213/:237, event_store x3 :80/:116/:153, policy_registry x7 :62/:97/:142/:163/:182/:198/:215 - policy_registry must keep jurisdiction_profiles GLOBAL_READ_ONLY vs tenant rows TENANT_INTERNAL_SCOPED distinction explicit), then T06B DocuSeal trusted routing (fix HMAC to timestamped scheme per current docs, TRACE_SIGNING_ROUTE_V1 in submitter external_id), then thin to-spec TRACE-PORTAL-TRUST-001 (TRUEVOW_PORTAL_GRANT_V1, Shared Platform issues, aud=trace-client-portal), then revised T09 (inbound trio only), T10-T14
+  _by Admin - 2026-08-26 - tags: -_
 - **[8][context] R6 fix deployed PcFm5bmpNk75** - 04G-R6: fail-closed path now calls JobContext.shutdown via attach_job_shutdown (session aclose alone never terminated the job - call #4 lingered with 60s aclose timeout). Deployed agent PcFm5bmpNk75 16:01:30Z. Unit test proves shutdown callback invoked after wait_for_playout. Non-human room-level verification inconclusive from CLI (no job logs access; Fly auth expired). Definitive check = next real call logs or console view.
   _by Admin - 2026-08-14 - tags: -_
 - **[8][context] Call #3 REAL SG PIPELINE PASS** - Human call 2026-08-14 05:25Z: core greeting audible, 7+ real multi-turns, /process per turn (llmNodeTtft 0.30-0.40s), Cartesia audible (ttfb 0.11-0.12s, e2e 1.9-3.9s), pin 5138d957-73c8-565c-9851-c37838d40b93 v1.0.0. REAL_WEBRTC/STT/SCHEMA_GOAL/TTS/MULTI_TURN all PASS. Core-quality observations: conductor combined question phrasing repeats verbatim (caller complaints), negation turn-1 extraction, no anti-repetition empathy - Core owner items.
@@ -1174,8 +1178,10 @@
 - **[5] Pocock skills installed in INTAKE** - Installed 25 Matt Pocock agent skills (18 engineering + 7 productivity) from github.com/mattpocock/skills into .opencode/skills/ (the dir opencode.json skills.paths points to). Covers AGENTS.md table refs: /code-review, /tdd, /diagnosing-bugs. Manual security scan clean; skillspector hangs on this m...
   _by Admin - 2026-08-23_
 
-## bug (64)
+## bug (65)
 
+- **[10] CRITICAL: root workspace origin = RETAINER GitHub repo - discovered 2026-08-26** - Cursor root repo origin is truevow-ai/TrueVow_Tenant_RETAINER_Service.git so all push-memory history lands in the RETAINER repo. No data loss locally; pushes paused pending founder decision (TICKET-025): replace/remove origin + whether CTO_Knowledge_Orchestrator gets its own .git. Checkpoint commit ...
+  _by Admin - 2026-08-26_
 - **[10] TRACE inbound webhook auth fail-open x2 (GAP-1/GAP-2)** - _verify_hmac returns True when secret OR header absent (inbound.py:56); inbound fax secret hardcoded empty (inbound.py:220); recorded HIGH open security gaps in truth doc section 8; must be fail-closed before any production commissioning
   _by Admin - 2026-08-23_
 - **[10] F1 FALSE representation commit from 'engineers'** - Call #3: 'I spoke to a couple of engineers.' -> extractor consulted_phrases includes 'spoke to' -> representation.status=consulted_only committed (0.85, deterministic, validator passed). FALSE LEGAL-SAFETY FACT (engineers != attorneys). None of the 'retained' policy triggered this time, but false fa...
@@ -1305,7 +1311,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (366)
+## context (367)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1331,6 +1337,8 @@
   _by Admin - 2026-08-11_
 - **[9] G10 Canary Status** - Lead 1763aee9-52ca-4418-abb8-a60e7f90d847 at HANDOFF_PENDING. T020 passed, T022 passed. Handoff to SaaS Admin deployed and ready for retry. SaaS Admin webhook at truevow-saas-admin-staging.fly.dev with HMAC key tv-sales-ops-to-saas-admin-v1. PIPELINE_SECRET and TRUEVOW_DEPLOYMENT_ENV=staging set.
   _by Admin - 2026-08-10_
+- **[8] FND-003-R1 checkpoint: T06A+T08+T07A landed** - Commits: T06A d4914c1 (matter.activated + signing/send, guard paths FIXED - original allowlist used nonexistent app/api/routes/ so guard silently errored since creation; real inventory 43 sites + 2 seam-impl lines in database.py), repair 0cdae80 (signing.py:131 DocuSeal webhook stays T06B scope), T0...
+  _by Admin - 2026-08-26_
 - **[8] Git Scan: 2026-08-18T09:22:34** - { "summary": { "timestamp": "2026-08-18T09:22:34.079817+00:00", "total": 14, "clean": 6, "dirty": 6, "missing": 2, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 8, "NEGLECTED": 6, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY":...
   _by Admin - 2026-08-18_
 - **[8] Git Scan: 2026-08-18T03:21:09** - { "summary": { "timestamp": "2026-08-18T03:21:09.794520+00:00", "total": 14, "clean": 6, "dirty": 6, "missing": 2, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 8, "NEGLECTED": 6, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY":...
