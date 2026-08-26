@@ -1,45 +1,44 @@
 # TrueVow Developer Start Here
 
-> **v3.1** — 2026-08-10  
-> The first platform-wide document every developer reads.  
-> Source of truth: `TrueVow_Context/`, `canonical-decisions.md`, `memory.db`, per-service `docs/00-Planning/*-Agent-Coding-Instructions.md`.
+> **v4.0** — 2026-08-24 · THE canonical developer guide. One of exactly three living documents (this guide, `CTO-ORCHESTRATOR-V2-SPEC.md`, `CONTEXT.md`).
+> **Living-document rule:** update THIS file in place every session; never fork it; never create a competing guide. Old overlapping docs get a SUPERSEDED banner pointing here.
+> Source of truth order when sources conflict: runtime/git state → `memory.db` → this guide → everything else.
 >
-> **Principle:** the AI is disposable; this context is the durable asset. Point any agent at `TrueVow_Context/` and it becomes the TrueVow CTO's second brain without re-explaining the platform.
+> **Principle:** the AI is disposable; this context is the durable asset. Point any agent at `TrueVow_Context/` and it becomes the TrueVow CTO's second brain.
 
 ---
 
 ## 1. What TrueVow Is
 
-TrueVow is an AI-native SaaS platform for **personal-injury (PI) law firms**. It runs the pre-litigation intelligence pipeline end to end so a solo attorney — no paralegal, no IT support — can do work that used to take a team.
+TrueVow is an AI-native SaaS platform for **personal-injury (PI) law firms**. It runs the pre-litigation pipeline end to end so a solo attorney — no paralegal, no IT support — can do work that used to take a team.
+
+### Product Doctrine
+
+**INTAKE captures, RETAINER engages, TRACE develops, SETTLE resolves, COMMAND measures.**
+
+| Product | Job |
+|---|---|
+| **INTAKE** | AI voice intake ("Benjamin") captures and qualifies the injured caller |
+| **RETAINER** | Representation review, conflict clearance, engagement packages & signatures |
+| **TRACE** | Medical-record retrieval + source-cited treatment chronology |
+| **SETTLE** | Attorney-owned settlement database — data-backed settlement ranges |
+| **COMMAND** | Measurement layer across the pipeline |
+| Supporting | LEVERAGE (zero-knowledge document validation), VERIFY (blockchain certificates), Customer Portal |
 
 ### The Three-Portal Model
 
 | Portal | Trust | Users | Products |
 |--------|-------|-------|----------|
-| **Tenant** (App 3) | EXTERNAL | Law firms + their clients | INTAKE, Customer Portal, TRACE, SETTLE, LEVERAGE, VERIFY |
+| **Tenant** (App 3) | EXTERNAL | Law firms + their clients | INTAKE, RETAINER, Customer Portal, TRACE, SETTLE, COMMAND, LEVERAGE, VERIFY |
 | **Sales Support** (App 2) | MEDIUM (LLM zone) | Sales operators | Sales Ops |
 | **Platform Operators** (App 1) | HIGH (internal) | TrueVow staff + CSM | SaaS Admin, Billing, Internal Ops, Customer Success CORE, Financial Management |
 
-### The Product Pipeline — Capture → Build → Protect
-
-- **INTAKE** *(Capture)* — AI voice intake captures the injured caller, qualifies and grades the lead, routes it to the firm.
-- **TRACE** *(Build)* — automates medical-record retrieval and builds a demand-ready, source-cited treatment chronology.
-- **SETTLE** *(Protect)* — an ethical, attorney-owned settlement database giving data-backed settlement ranges.
-
-Supporting: **LEVERAGE** (zero-knowledge document validation), **VERIFY** (blockchain certificates), **Customer Portal** (attorney dashboard).
-
-### Who We Serve
-
-The **frightened injured person on a phone** and the **solo PI attorney** who stakes their reputation on our output in front of adjusters, judges, and their own client.
-
 ---
 
-## 2. The Prospect-to-Revenue Golden Journey
-
-The canonical customer lifecycle, end to end:
+## 2. The Golden Journey
 
 ```
-Prospect discovery
+Website submission / prospect discovery
  → normalization / canonical identity
  → enrichment
  → classification
@@ -53,252 +52,180 @@ Prospect discovery
  → SaaS Admin authoritative commissioning (fn_process_handoff)
  → onboarding run
  → CSM customer-success onboarding
- → Billing / INTAKE / Portal provisioning
- → controlled activation
- → product usage
- → revenue assurance
- → support
- → offboarding
+ → Billing / INTAKE / Portal provisioning   [INTAKE provisioning: G11]
+ → controlled activation                    [G14 — HARD HOLD]
+ → product usage: INTAKE captures → RETAINER engages → TRACE develops
+   → SETTLE resolves → COMMAND measures
+ → revenue assurance                        [G15]
 ```
 
-`PLATFORM-E2E-01` is retained as prior commissioning evidence only. The Golden Journey above is the current canonical model.
+`PLATFORM-E2E-01` is retained as prior commissioning evidence only.
 
 ---
 
 ## 3. Authoritative Cross-Service Flow
 
 ```
-PROSPECTING
-══════════════
-Sales Ops
-    │
-    ▼
-Human approval — T020
-    │
-    ▼
-Sales Ops → SaaS Admin (HMAC handoff)
-    │
-    ▼
-
-COMMISSIONING AUTHORITY
-═══════════════════════
-SaaS Admin
-    │ authoritative onboarding assignment
-    ▼
-CSM Core
-    │ customer-success onboarding
-    │ readiness / interventions / evidence
-    ▼
-SaaS Admin (authoritative commissioning)
-    │
-    ▼
-Tenant ACTIVE / TRIAL
+PROSPECTING: Sales Ops ──(HMAC handoff)──▶ COMMISSIONING AUTHORITY: SaaS Admin
+SaaS Admin ──authoritative onboarding assignment──▶ CSM Core
+CSM Core ──readiness evidence──▶ SaaS Admin executes commissioning
+SaaS Admin ──▶ Tenant ACTIVE/TRIAL ──provisioning──▶ INTAKE (G11)
 ```
 
-**No direct Sales Ops → CSM commissioning. No CSM → tenant creation. No CSM → activation.** SaaS Admin owns the authoritative customer identity, tenant lifecycle, and commissioning decisions.
+**No direct Sales Ops → CSM commissioning. No CSM → tenant creation/activation/cancellation.**
+SaaS Admin owns authoritative customer identity, tenant lifecycle, and commissioning decisions.
 
 ---
 
-## 4. Service Ownership (Canonical Writer)
+## 4. Service Registry
 
-| Service | Owns (authoritative minter) | Reads | Never does |
-|---------|---------------------------|-------|------------|
-| **SaaS Admin** | `tenant_id`, `customer_id`, `contact_id`, `case_id`, tenant lifecycle, onboarding state, commissioning decisions | Sales Ops handoff | — |
-| **Sales Ops** | `lead_id`, `application_id`, pipeline stages, handoff packages | — | Create tenants, commission CSM directly |
-| **CSM Core** | CSM-local projection: `crm_contacts`, onboarding workflows, engagement scores, readiness evidence, scheduling state | SaaS Admin (tenant/customer identity) | Create/activate/cancel tenants, mint `tenant_id`, approve custom intake |
-| **Billing** | `subscription_id`, `invoice_id`, payment records | SaaS Admin (tenant identity) | — |
-| **INTAKE** | `intake_session_id`, voice transcripts, lead qualification | — | Bill, activate tenants |
-| **Customer Portal** | Portal UI state (frontend-only) | All tenant products | Store authoritative business state |
-| **TRACE** | `matter_id`, chronology, demand packages | SaaS Admin (case identity) | — |
-| **SETTLE** | Settlement ranges, anonymized comparables | — | — |
-| **LEVERAGE** | Compliance validation results (zero-knowledge) | — | Store document content |
-| **VERIFY** | Blockchain certificates | — | — |
-| **Internal Ops** | HR, payroll, RevOps | — | Touch tenant PHI |
-| **Financial Mgmt** | General ledger, journal entries | Billing | Edit posted entries |
-| **Platform Analytics** | Aggregated metrics, dashboards | All services (read-only) | Mutate business state |
+> ⚠️ Ports rot fast. Treat ports as hints and run
+> `python TrueVow_Shared_Orchestration/orchestrator.py scan-services` for live truth.
+
+| Service | Repo | Owner | Notes |
+|---|---|---|---|
+| SaaS Admin | TrueVow_SaaS_Administration_Service | Ghulam Ghous (ISB) | MDM control plane, frozen at PLG-SA-04A |
+| Sales Ops | TrueVow_Sales_Ops_Service | Ms. Sania | Pipeline + handoff; had uncommitted work Aug 23 |
+| INTAKE | TrueVow_Tenant_INTAKE_Service | Ghulam Ghaus (FSD) | ex-"Tenant Application Service"; Benjamin engine home |
+| RETAINER | TrueVow_Tenant_RETAINER_Service | FSD | v1.0 complete, Fly-deployed |
+| TRACE | TrueVow_Tenant_TRACE_Service | Yasha | FND-001→003 hardening Aug 18–21 |
+| SETTLE | TrueVow_Tenant_SETTLE-Service | Yasha | idle since Aug 12 |
+| Billing | TrueVow-Tenant_Billing-Service | FSD | commercial engine; uncommitted work Aug 23 |
+| COMMAND | TrueVow_Tenant_COMMAND_Service | Yasha | measurement layer — newest service |
+| Customer Portal | Truevow_Tenant_Customer_Portal_Service | Yasha | frontend-only state |
+| Customer Success CORE | TrueVow_Customer_Success_CORE_Service | ISB | orchestrates onboarding evidence |
+| First Line Support | TrueVow_First_Line_Support_Service | ISB | |
+| Financial Mgmt | TrueVow_Financial_Management_Service | Yasha | back-office GL; separated from Billing |
+| Internal Ops / Analytics / LEVERAGE / VERIFY / Website | respective repos | Yasha | supporting |
+| Shared | TrueVow_Shared_Orchestration · TrueVow_Shared_Codebase_Memory · TrueVow_Shared_Agent_Tools · shared-libraries · TrueVow_Context | all | the ecosystem itself |
+
+Archived/dead: CONNECT (deleted), Dialogflow Intake (dead).
 
 ---
 
-## 5. Repository-Reading Method
+## 5. Ownership (Canonical Writer)
 
-1. Read `<Service>/docs/00-Planning/<Service>-Agent-Coding-Instructions.md` first. It opens with "The One Thing That Matters Most" and "What Constitutes Failure."
-2. Read `<Service>/AGENTS.md` for repo-specific rules.
-3. For CSM specifically, read in order:
-   - `TrueVow_Customer_Success_CORE_Service/docs/DEVELOPER_GUIDE.md`
-   - `TrueVow_Customer_Success_CORE_Service/docs/CSM_CORE_ARCHITECTURE.md`
-   - `TrueVow_Customer_Success_CORE_Service/CSM-ONTOLOGY-DELTA.md`
-4. Read `TrueVow_Context/canonical-decisions.md` for binding platform-wide rules.
-5. Run `python TrueVow_Shared_Orchestration/orchestrator.py scan-services` for real-time git state.
+| Service | Owns (authoritative minter) | Never does |
+|---|---|---|
+| **SaaS Admin** | tenant_id, customer_id, contact_id, case_id, tenant lifecycle, commissioning decisions | — |
+| **Sales Ops** | lead_id, application_id, pipeline stages, handoff packages | Create tenants; commission CSM directly |
+| **CSM Core** | CSM-local projections, onboarding workflows, readiness evidence | Create/activate/cancel tenants, mint tenant_id |
+| **Billing** | subscription_id, invoice_id, payment records | — |
+| **INTAKE** | intake_session_id, transcripts, qualification | Bill, activate tenants |
+| **RETAINER** | representation review, engagement packages, signatures | Mint case_id |
+| **TRACE** | matter development, chronology, demand packages | Mint case_id |
+| **COMMAND** | cross-pipeline measurement | Mutate business state |
+| All others | see prior table (unchanged) | — |
+
+No service mints an ID owned by another service. Correlation chain:
+lead_id → application_id → handoff_package_id → handoff_id → customer_id → contact_id → tenant_id → onboarding_run_id → subscription_id → intake_session_id → matter_id.
 
 ---
 
 ## 6. Binding Platform Invariants
 
-### Existing (from canonical-decisions.md)
-
 1. SaaS Admin MDM is the only minter of `case_id`.
-2. Auth = Clerk (3-domain). No Supabase Auth migration.
-3. RULE 0 — no fabrication.
-4. Mandatory orchestrator check-in protocol.
+2. **Auth = Supabase Auth, sole human IdP platform-wide.** Clerk is retired
+   (migration completed across services per IAM completion report, 2026-08-03).
+   Any Clerk reference in older docs is stale.
+3. RULE 0 — no fabrication. Report only what you directly observed. Simulation is
+   not commissioning evidence.
+4. Mandatory orchestrator check-in protocol (§9).
 5. Secrets never touch git; `.env.example` with placeholders only.
 6. Tenant isolation at three layers (firm-scope + API validation + Supabase RLS).
-7. Migrations are permanent (Alembic, reversible `downgrade()`).
+7. Migrations are permanent (Alembic, reversible `downgrade()`); INTAKE migrations go
+   through Platform Operations governance (`platform-operations/intake_migrate.py`),
+   never auto-applied by the app.
 8. Observability = SigNoz + Sentry + OpenTelemetry.
-
-### New (from ontology/canary commissioning, 2026-08-10)
-
-**16. No external command may be recorded as successfully delivered unless its authoritative external effect actually occurred.**  
-Prevents `DELIVERY_MODE=disabled → DELIVERED → SUCCEEDED` defects. Transport suppression is not delivery. Simulation is not commissioning evidence.
-
-**17. Security credentials are purpose-bound.**  
-Do not reuse another service's API key, webhook secret, or signing secret for an unrelated capability. Per-service key isolation with distinct key identities (`tv-sales-ops-to-saas-admin-v1`, etc.).
-
-**18. Requesting an authoritative action does not transfer authority.**  
-A service may recommend or request an authoritative action; calling the authoritative service's API does not make the caller the authority. The canonical owning service retains decision rights.
+9. No external command may be recorded as successfully delivered unless its
+   authoritative external effect actually occurred (v3.1 invariant 16).
+10. Security credentials are purpose-bound — per-link key isolation (v3.1 invariant 17).
+11. Requesting an authoritative action does not transfer authority (v3.1 invariant 18).
+12. **Hygiene Rule:** repos with uncommitted changes are frozen for new assignments
+    until classified COMMIT / PARK / DISCARD; discard requires explicit founder verb.
+13. Commands are intentions; events are facts. A queued command is not a fact.
 
 ---
 
-## 7. Command/Event Semantics
+## 7. The CTO Orchestrator
 
-Commands are intentions; events are facts.
+The orchestrator (`TrueVow_CTO_Knowledge_Orchestrator`) is the standing CTO seat:
+it runs the Decision Map → Tickets → Briefs loop over all repos, works while the
+founder is away, and stops only for HITL gates (dangerous ops, platform questions).
 
-**Extended semantics (v3.1):**
-- A command is not a fact merely because it was queued.
-- A delivery is not successful merely because transport was suppressed.
-- An event must represent an effect that actually occurred.
-- Simulation output is not commissioning evidence.
-
-The canonical service-to-service contract uses:
-```
-key ID + timestamp + HTTP method + canonical path + SHA-256(body) + HMAC + clock-skew guard + replay guard + idempotency
-```
-
----
-
-## 8. Correlation Identifiers (Journey Tracking)
-
-When tracking a customer through the Golden Journey, these IDs form the audit chain:
-
-```
-lead_id
-application_id
-handoff_package_id
-handoff_id
-customer_id
-contact_id
-tenant_id
-onboarding_run_id
-platform_command_id
-csm_contact_id
-```
-
-Then continuing through provisioning:
-```
-subscription_id
-intake_session_id
-matter_id
-portal_session_id
-```
-
-No service mints an ID owned by another service.
+- Spec: `TrueVow_CTO_Knowledge_Orchestrator/CTO-ORCHESTRATOR-V2-SPEC.md`
+- Glossary: `TrueVow_CTO_Knowledge_Orchestrator/CONTEXT.md`
+- Goal tree: `TrueVow_CTO_Knowledge_Orchestrator/Decision-Map.md`; work units in
+  `Tickets/TICKET-*.md` (status lives in each ticket header).
+- **Run the cycle:** `python TrueVow_Shared_Orchestration/cto_v2.py shift`
+  (status → board refresh → ready-tickets → founder report), or schedule
+  `night-shift.bat`. Repo agents receive briefs at `<repo>/docs/work-orders/`;
+  end reports with the cited `TICKET:` id.
+- Gate ladders are distinct — see glossary before using "Gate" or "G13" language.
 
 ---
 
-## 9. Cross-Service Integration Warnings
+## 8. Current Platform State (dated snapshot)
 
-### ACTIVE AND BINDING
+> **This section must be refreshed every session that touches any repo. Stale
+> snapshots are defects. Last updated: 2026-08-24.**
 
-```
-Sales Ops → SaaS Admin
-Canonical path: POST /api/v1/webhooks/sales-ops/application-approved
-Auth: HMAC-SHA256 (tv-sales-ops-to-saas-admin-v1)
-Status: COMMISSIONED (G10 canary in progress)
-```
-
-### PENDING (DO NOT BUILD AGAINST)
-
-```
-SaaS Admin → CSM canonical onboarding contract
-Work order: TV-PR-SAAS-CSM-ONTOLOGY-CONTRACT-01
-Status: PENDING — not yet implemented
-
-Legacy /api/v1/customers/transfer
-Status: NOT CANONICAL
-DO NOT BUILD NEW INTEGRATIONS AGAINST IT
-```
-
----
-
-## 10. Stop Conditions — When to Halt Work
-
-### General
-- A proposed change violates any binding canonical decision.
-- A new cross-service path duplicates an existing canonical contract.
-- A service is asked to mint an ID owned by another service.
-- Secrets, PHI, or raw stack traces would leak to the browser.
-
-### CSM-Specific
-- CSM is asked to mint a `tenant_id`.
-- CSM is asked to create, activate, or cancel a tenant.
-- CSM confidence scoring is being used to grant platform authority.
-- A new Sales Ops → CSM commissioning path appears.
-- New code targets legacy `POST /api/v1/customers/transfer`.
-- A cross-service event/command is being invented outside the ontology registry.
-
-### Domain-Specific
-- **INTAKE:** the voice agent says a dollar amount, case-strength evaluation, or urgency tactic (UPL risk).
-- **TRACE:** a misdirected fax sends PHI to an unauthorized provider.
-- **SETTLE:** a settlement range is presented as a guarantee.
-- **LEVERAGE:** document content leaves the attorney's device.
-- **Billing:** a missing idempotency key double-charges a tenant.
-- **Financial Management:** a posted journal entry is edited in place.
+- **Benjamin engine:** single-path Schema/Goal + LiveKit LIVE ON STAGING
+  (LEGACY-RETIREMENT-05 executed ~Aug 14). Google Calendar booking deployed (v1.5.0,
+  08C/08C1). Story-latency PASS. Simulation semantic safety gate PASS.
+- **G-ladder:** G10 CLOSED · G11 CONDITIONAL/OPEN (5 closure items) · **G13 HOLD**
+  (manual testing incomplete as of 2026-08-21) · G14 HARD HOLD · production default NO.
+- **TRACE:** FND-001→003 fixes Aug 18–21 (Postgres-only, PHI key fail-closed + re-key,
+  RLS reconciliation); 27 uncommitted files at last scan.
+- **Sales Ops:** no commits after Aug 13; **58 uncommitted files** — hygiene-frozen.
+- **Billing:** no commits after Aug 12; **36 uncommitted files** — hygiene-frozen.
+- **SETTLE:** idle since Aug 12, clean.
+- **Website:** doctrine sweep Aug 17–19; compliance noindex pending legal/browser QA;
+  Benjamin ad landing retired.
+- **Staging health:** last measured 4/5 healthy with INTAKE DB connectivity unresolved
+  from Fly "personal" org (TV-PR-PHASE-01E, Aug 5) — re-verify before trusting.
+- **Known doc debts:** incident TV-PR-INTAKE-MIGRATION-RECOVERY-01 reviewer still
+  Pending; Phase-5 commissioning NOT COMMISSIONED.
 
 ---
 
-## 11. Session Bootstrap (Every Agent, Every Session)
+## 9. Session Bootstrap (Every Agent, Every Session)
 
 ```
 python TrueVow_Shared_Orchestration/orchestrator.py sync-memory
 python TrueVow_Shared_Orchestration/orchestrator.py scan-services
+python TrueVow_Shared_Orchestration/cto_v2.py status        # hygiene freeze check
 python TrueVow_Shared_Orchestration/orchestrator.py dispatch "<task>"
-python TrueVow_Shared_Orchestration/orchestrator.py agent-checkin start "<service>: <task> | goal: <what success looks like>"
+python TrueVow_Shared_Orchestration/orchestrator.py agent-checkin start "<service>: <task> | goal: <success>"
 ```
 
 End of session:
+
 ```
-python TrueVow_Shared_Orchestration/orchestrator.py agent-checkin done "<service>: <done> | outcome | learned | next" --status DONE
-python TrueVow_Shared_Orchestration/memory.py remember <category> "<title>" "<content>" --importance N
+agent-checkin done ... ; memory.py remember <category> "<title>" "<content>" --importance N
 python TrueVow_Shared_Orchestration/orchestrator.py push-memory
 ```
 
-**A task is not done until the check-in is posted. Intent is not completion.**
+Then: refresh §8 above if anything changed; update board/tickets if the orchestrator
+spec is active. **A task is not done until the check-in is posted. Intent is not completion.**
+
+## 10. Engineering Standards & Stack
+
+Boring is a feature. Type everything; handle every error path; test before done.
+Attorney-facing UI = plain English, never raw errors. Secrets never touch git.
+RULE 0 always.
+Stack: Python 3.11 + FastAPI + SQLAlchemy + Alembic; Supabase Postgres (+ Auth);
+Next.js/TypeScript; Fly.io; OpenTelemetry → SigNoz + Sentry.
+
+## 11. Stop Conditions
+
+Any binding invariant violated · duplicate cross-service path · minting another
+service's ID · secrets/PHI/raw errors to browser · INTAKE voice saying dollar
+amounts, case-strength evaluations, or urgency tactics (UPL risk) · TRACE faxing PHI
+to an unauthorized provider · SETTLE presenting a range as a guarantee · double-charge
+from missing idempotency key · editing a posted journal entry.
 
 ---
 
-## 12. Engineering Standards
-
-- Boring is a feature. Simple is not simplistic. Write it twice before you abstract.
-- Type everything; handle every error path; write the test before calling it done.
-- Attorney-facing UI = plain English. Never show HTTP codes, stack traces, `null`/`undefined`, or JSON.
-- Loading/empty states are instructions, not spinners.
-- Secrets never touch git. Per-trust-domain scoping. Pre-commit hook catches committed secrets.
-- **RULE 0 — no fabrication.** Report only what you directly observed.
-
----
-
-## 13. Standard Stack
-
-Python 3.11 + FastAPI + async SQLAlchemy + Alembic; Supabase Postgres (+ Storage); Next.js/TypeScript frontends; Fly.io hosting; Clerk auth (3-domain); OpenTelemetry → SigNoz + Sentry observability.
-
----
-
-## 14. Documentation Updates
-
-- Regenerate memory digest: `python TrueVow_Shared_Orchestration/memory.py export`
-- Sync Obsidian vault: `python TrueVow_Shared_Orchestration/obsidian-bridge.py`
-- Recall live detail: `python TrueVow_Shared_Orchestration/memory.py recall "<topic>"`
-
----
-
-_Curated 2026-07-10. Revised v3.1 2026-08-10 — ontology/canary realignment.  
+_Revised v4.0 2026-08-24 — orchestrator realignment, auth correction, registry refresh.
 Maintained by the CTO Knowledge Orchestrator._

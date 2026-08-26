@@ -6,10 +6,11 @@
 
 ## Read in this order
 1. **`about-truevow.md`** — what TrueVow is and the product pipeline (2 min).
-2. **`platform-map.md`** — the services, trust domains, stack, owners, ports.
+2. **`2026-08-10-TRUEVOW-DEVELOPER-START-HERE.md`** — THE canonical developer guide (v4.0): platform, invariants, registry, current state, session protocol.
 3. **`canonical-decisions.md`** — the binding contracts you must not violate.
 4. **`voice-and-standards.md`** — who we build for, how we write, how we code.
 5. **`memory-digest.md`** — the shared brain, auto-generated from `memory.db`.
+6. **Orchestrator repo** (`TrueVow_CTO_Knowledge_Orchestrator/`): `CTO-ORCHESTRATOR-V2-SPEC.md` + `CONTEXT.md` — the CTO control layer spec and platform glossary.
 
 ## This is an index, not a copy
 Each file is a curated summary that points to the **source of truth** (`config.yaml`, the ADRs, `memory.db`, per-service `docs/00-Planning/*-Agent-Coding-Instructions.md`). Follow the source link when in doubt. If a fact here is stale, **fix the source first, then re-derive** — never let this become a 6th drifting copy (that drift is exactly what ADR-005 and the config-note fix were about).

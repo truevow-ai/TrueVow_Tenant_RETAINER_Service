@@ -1,0 +1,19 @@
+{
+ "heads": {
+  "SaaS Admin": "dc6d3e5",
+  "Sales Ops": "723398f",
+  "INTAKE": "e46a6a4",
+  "TRACE": "6b3c058",
+  "SETTLE": "9b83e1b",
+  "Billing": "f55372a",
+  "Customer Portal": "daed558",
+  "CSM CORE": "af15a33",
+  "First Line Support": "79e3d40",
+  "Financial Mgmt": "be3d087",
+  "Internal Ops": "a12315d",
+  "LEVERAGE": "7a65145",
+  "VERIFY": "25278e2",
+  "Website": "74d750c"
+ },
+ "last_report": "2026-08-24 05:54 UTC"
+}
