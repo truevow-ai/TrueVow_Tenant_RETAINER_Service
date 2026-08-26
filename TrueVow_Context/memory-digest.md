@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-26T03:37:49.833622+00:00
-- Total memories: 711
+- Generated: 2026-08-26T05:52:53.733257+00:00
+- Total memories: 714
 
-## High-importance decisions (8+, routine noise excluded) - 316
+## High-importance decisions (8+, routine noise excluded) - 317
 
 - **[10][architecture] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Lifecycle shrinks to ~6 states (BOOTSTRAP/SCREENING/INTAKE/RESOLUTION/AWAITING_EFFECT/COMPLETE + HANDOFF/TERMINATED). LLM = conversation conductor within code-determined agenda; code = agenda authority. LiveKit = voice runtime only, TrueVow Core consumes provider-neutral CoreTurn. First Call Readiness Certificate requires all policy branches have outcomes + effect fallbacks; external integrations NOT required for first call. Prototype-first: challenger (Car Accident + OPI) vs current 22-state FSM, measure task completion/false commits/repeats/turns. SaaS Admin Builder implication: NOT a flowchart editor — firm configures facts, routing policy, destinations; previews generated sample conversations.
   _by Admin - 2026-08-12 - tags: -_
@@ -122,6 +122,8 @@
   _by Admin - 2026-08-10 - tags: -_
 - **[10][convention] zero hardcoded tunable values** - RULE: This is a multi-tenant platform. Never hardcode ANY value that may need adjustment per-tenant, per-firm, or per-environment. All tunables must live in one of: (1) tenant_config, (2) workflow JSON config, or (3) named module-level constants with clear documentation. Bare numbers, strings, or IDs in logic statements are FORBIDDEN. If you need a value that could change — threshold, timeout, limit, firm identifier, VAD setting, confidence score — expose it via config. Test by asking: 'Could a different law firm need this set differently?'
   _by Admin - 2026-07-15 - tags: -_
+- **[10][decision] ADOPTION PLAN: Uncle Bob agentic principles - resume at Tier 1** - Gap analysis of Pocock x Uncle Bob transcript complete; session log TrueVow_CTO_Knowledge_Orchestrator/Session-Logs/2026-08-26-agentic-principles-tier-plan.md is the full checkpoint. TIER 1 next session: (1) verify REPO command running config.yaml truth_commands with PASS/FAIL persisted, (2) integrate gate refuses unless verify PASS + [x] APPROVED, (3) templates get Gherkin acceptance sections + outcome-not-ritual test wording + read-tests-interfaces-first line, (4) verify status in shift report/board. TIER 2: import-linter/dependency-cruiser contracts + radon CRAP in reports. TIER 3 deferred: mutmut hardener pilot on small INTAKE module only. Doctrine locked: persist decisions+acceptance criteria, never big upfront plans - plans are fuel, decisions are law, code+tests are truth.
+  _by Admin - 2026-08-26 - tags: -_
 - **[10][decision] CTO Orchestrator V2 SPEC WRITTEN - awaiting founder approval** - Spec at TrueVow_CTO_Knowledge_Orchestrator/CTO-ORCHESTRATOR-V2-SPEC.md defines the orchestrator as ticket-driven dependency-aware control layer over all repos: Decision-Map + Tickets/ + briefs dropped into target repos, works AFK or on-schedule identically, HITL gates = dangerous ops + platform-clarity questions, hygiene rule freezes dirty repos until COMMIT/PARK/DISCARD classified, discard needs explicit founder verb. Builds on existing assets (orchestrator.py, .triage.yaml policies carried forward, memory.db, TrueVow_Context). Build order: docs approved first, then implement.
   _by Admin - 2026-08-24 - tags: -_
 - **[10][decision] INTAKE COLLAPSE-07 stages 0-2** - INTAKE: executed LIVEKIT-BRIDGE-COLLAPSE-07 | result: GitHub main checkpointed to deployed tree (0f8954e), time-debounce removed (stable utterance_id dedupe), monitoring off hot path, bridge singleton one-time init, TrueVowCloudAgent/IntakeObserver/agent-FAQ deleted (1892->970 lines), entrypoint fails closed non-schema_goal, turn-counter bug fixed | learned: bridge send_text bypassed GoalSession.process so turn_count stayed 0 and is_first stuck true on non-greeted sessions; 12 unpushed old-engine commits on local main were tagged archive/ not published | next: human QA in fresh room qa-1787159958; if capture fragments use STT_DIAGNOSTIC room
@@ -921,8 +923,10 @@
 - **[5] RLS canonical policy design: one tenant_isolation_fnd003 policy (ALL) per tenant table, legacy permissive policies dropped (OR semantics), hybrid predicates for audit_log/consent_records, case-derived EXISTS chains** - --importance
   _by Admin - 2026-08-21_
 
-## decision (104)
+## decision (105)
 
+- **[10] ADOPTION PLAN: Uncle Bob agentic principles - resume at Tier 1** - Gap analysis of Pocock x Uncle Bob transcript complete; session log TrueVow_CTO_Knowledge_Orchestrator/Session-Logs/2026-08-26-agentic-principles-tier-plan.md is the full checkpoint. TIER 1 next session: (1) verify REPO command running config.yaml truth_commands with PASS/FAIL persisted, (2) integra...
+  _by Admin - 2026-08-26_
 - **[10] CTO Orchestrator V2 SPEC WRITTEN - awaiting founder approval** - Spec at TrueVow_CTO_Knowledge_Orchestrator/CTO-ORCHESTRATOR-V2-SPEC.md defines the orchestrator as ticket-driven dependency-aware control layer over all repos: Decision-Map + Tickets/ + briefs dropped into target repos, works AFK or on-schedule identically, HITL gates = dangerous ops + platform-clar...
   _by Admin - 2026-08-24_
 - **[10] INTAKE COLLAPSE-07 stages 0-2** - INTAKE: executed LIVEKIT-BRIDGE-COLLAPSE-07 | result: GitHub main checkpointed to deployed tree (0f8954e), time-debounce removed (stable utterance_id dedupe), monitoring off hot path, bridge singleton one-time init, TrueVowCloudAgent/IntakeObserver/agent-FAQ deleted (1892->970 lines), entrypoint fai...
@@ -1301,7 +1305,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (364)
+## context (366)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1373,6 +1377,10 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [ACTIVE] DONE: Sales Ops: checkpoint saved (c3a6e5a+1) | outcome: C-batch 3/6 PROVEN (tsc 82→31), CHECKPOINT.md in** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "done", "status": "ACTIVE", "message": "Sales Ops: checkpoint saved (c3a6e5a+1) | outcome: C-batch 3/6 PROVEN (tsc 82\u219231), CHECKPOINT.md in .scratch/c-batch-repair with resume path C6\u2192C3\u2192C5\u2192gate\u2192freeze | learned: governance...
+  _by user - 2026-08-26_
+- **[7] [ACTIVE] DONE: Sales Ops: C4 implemented (48b2d07): 5 dotAll regex rewrites, cookies annotation, ambient pg module,** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "done", "status": "ACTIVE", "message": "Sales Ops: C4 implemented (48b2d07): 5 dotAll regex rewrites, cookies annotation, ambient pg module, resend assertion \u2014 tsc 46\u219231 | outcome: 3 of 6 C tickets PROVEN; shared-auth packaging escalated ...
+  _by user - 2026-08-26_
 - **[7] [ACTIVE] DONE: Sales Ops: C2 implemented+reviewed (ce1c5e8): 4 canonical Phase-3 Lead fields + 2 null/undefined bou** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "done", "status": "ACTIVE", "message": "Sales Ops: C2 implemented+reviewed (ce1c5e8): 4 canonical Phase-3 Lead fields + 2 null/undefined boundary coalesces, tsc 60\u219246, tests 1/1+13/13 | outcome: 2 of 6 C tickets PROVEN under new governance; sc...
   _by user - 2026-08-24_
 - **[7] [ACTIVE] DONE: Sales Ops: C1 implemented+reviewed (f3de413): 11 sensitivity_class annotations, tsc 82→60, tests 13/** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "done", "status": "ACTIVE", "message": "Sales Ops: C1 implemented+reviewed (f3de413): 11 sensitivity_class annotations, tsc 82\u219260, tests 13/13+160/160 | outcome: first C ticket PROVEN under new governance; per-site sensitivity matrix recorded ...
