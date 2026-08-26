@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-24T06:18:33.640193+00:00
-- Total memories: 707
+- Generated: 2026-08-26T03:14:12.936300+00:00
+- Total memories: 710
 
-## High-importance decisions (8+, routine noise excluded) - 314
+## High-importance decisions (8+, routine noise excluded) - 315
 
 - **[10][architecture] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Lifecycle shrinks to ~6 states (BOOTSTRAP/SCREENING/INTAKE/RESOLUTION/AWAITING_EFFECT/COMPLETE + HANDOFF/TERMINATED). LLM = conversation conductor within code-determined agenda; code = agenda authority. LiveKit = voice runtime only, TrueVow Core consumes provider-neutral CoreTurn. First Call Readiness Certificate requires all policy branches have outcomes + effect fallbacks; external integrations NOT required for first call. Prototype-first: challenger (Car Accident + OPI) vs current 22-state FSM, measure task completion/false commits/repeats/turns. SaaS Admin Builder implication: NOT a flowchart editor — firm configures facts, routing policy, destinations; previews generated sample conversations.
   _by Admin - 2026-08-12 - tags: -_
@@ -212,6 +212,8 @@
   _by Admin - 2026-07-31 - tags: -_
 - **[10][todo] TX Phase 4 DB connectivity blocker** - db.bpzegquhxnygyxdzluyw.supabase.co only resolves to IPv6, Windows dev box has no IPv6. Supabase pooler not enabled for this project (tenant/user not found). Phase 4 scripts (verify_emails_phones, classify_phone_types, verify_attorney_emails) need psycopg2. Workaround: create REST API versions or enable IPv4 on Supabase.
   _by Admin - 2026-07-27 - tags: -_
+- **[9][architecture] Junior management layer added to cto_v2 - junior/review/integrate/canonical** - New commands verified working: (1) junior REPO TITLE writes bounded assignment to <repo>/docs/work-orders/JUNIOR-nnn.md with scope, Definition of Done checklist, constraints, report-back; refuses hygiene-frozen repos and no-git repos. (2) review JUNIOR-nnn generates review artifact in TrueVow_CTO_Knowledge_Orchestrator/Reviews/ gating integration. (3) integrate JUNIOR-nnn prints merge plan but REFUSES until review checklist is APPROVED - gate proven by smoke test. (4) canonical KEY writes Decisions/Canonical-*.md so solved defects cannot be overwritten and reappear - directly ends the founder-vibecode-vs-Sania overwrite loop. Decision-Map GOAL-4 documents the flow.
+  _by Admin - 2026-08-26 - tags: -_
 - **[9][architecture] CTO Orchestrator v2 IMPLEMENTED - first shift ran** - cto_v2.py live at TrueVow_Shared_Orchestration/cto_v2.py (status/next/board/brief/done/report/shift). Artifacts: Decision-Map.md + Tickets/ (11 tickets) + regenerated KANBAN-BOARD.md in TrueVow_CTO_Knowledge_Orchestrator; night-shift.bat launcher. First shift discoveries: (1) RETAINER, COMMAND, Platform Analytics have NO own .git - absorbed into root workspace repo, history invisible -> TICKET-022; (2) 8 repos hygiene-frozen incl INTAKE/Billing/Sales Ops; (3) tool observed live commit movement between runs minutes apart (TRACE FND-003-R1 6b3c058) proving real-time truth works. Board is auto-generated - edit Tickets/, not the board.
   _by Admin - 2026-08-24 - tags: -_
 - **[9][architecture] vNext Component Disposition** - KEEP: compiler/checksum/versioning, tenant/config resolution, provider-neutral contracts, CandidateValidator, EffectRequest/EffectResult, effect idempotency, provider factories, fact schemas/catalogue. SHRINK: 22-state LifecycleFSM → ~8 states; custom Bridge orchestration substantially. EVOLVE: QuestionRunner → Goal/Agenda Engine; prompts → conversation hints. RETIRE: 133-node engine after proof. Not a rewrite — evolution from FSM-controls-conversation to Schema+Policy control obligations, Goal Engine controls agenda, LLM controls conversational realization.
@@ -637,7 +639,7 @@
 - **[8][todo] FIX gitignore source-leak: TrueVow-Tenant_Billing-Service** - ASSIGNED to the TrueVow-Tenant_Billing-Service agent. Real lib/ source is currently hidden from git (confirmed). Run the playbook: TrueVow_SaaS_Administration_Service/docs/01-main/ECOSYSTEM_ADVISORY_GITIGNORE_SOURCE_LEAK.md (fix .gitignore: anchor/remove stray lib/ + logs/; secrets-scan; commit recovered source in reviewed batches by explicit path; verify clean-clone build). REPORT RESULT via memory.py remember category=bug title='TrueVow-Tenant_Billing-Service gitignore RESULT' content='FIXED n files | CLEAN | BLOCKED + reason; secrets found?'. NOTE: reporting.py agent-checkin is broken — report via memory.
   _by user - 2026-06-25 - tags: gitignore, todo, assigned_
 
-## architecture (119)
+## architecture (120)
 
 - **[10] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Li...
   _by Admin - 2026-08-12_
@@ -711,6 +713,8 @@
   _by user - 2026-06-25_
 - **[10] LEVERAGE (ex-DRAFT) — 3-Tier Rules Engine, NO AI** - LEVERAGE is a 3-tier legal rule validation system: TIER 1: State/Jurisdiction rules (mandatory, cannot be disabled). TIER 2: Practice Area rules (customizable). TIER 3: Firm/Attorney/Client-specific rules. CORE PRINCIPLE: NO AI — no machine learning, no neural networks, no LLM. Uses peer benchmarkin...
   _by user - 2026-06-25_
+- **[9] Junior management layer added to cto_v2 - junior/review/integrate/canonical** - New commands verified working: (1) junior REPO TITLE writes bounded assignment to <repo>/docs/work-orders/JUNIOR-nnn.md with scope, Definition of Done checklist, constraints, report-back; refuses hygiene-frozen repos and no-git repos. (2) review JUNIOR-nnn generates review artifact in TrueVow_CTO_Kn...
+  _by Admin - 2026-08-26_
 - **[9] CTO Orchestrator v2 IMPLEMENTED - first shift ran** - cto_v2.py live at TrueVow_Shared_Orchestration/cto_v2.py (status/next/board/brief/done/report/shift). Artifacts: Decision-Map.md + Tickets/ (11 tickets) + regenerated KANBAN-BOARD.md in TrueVow_CTO_Knowledge_Orchestrator; night-shift.bat launcher. First shift discoveries: (1) RETAINER, COMMAND, Plat...
   _by Admin - 2026-08-24_
 - **[9] vNext Component Disposition** - KEEP: compiler/checksum/versioning, tenant/config resolution, provider-neutral contracts, CandidateValidator, EffectRequest/EffectResult, effect idempotency, provider factories, fact schemas/catalogue. SHRINK: 22-state LifecycleFSM → ~8 states; custom Bridge orchestration substantially. EVOLVE: Ques...
@@ -1295,7 +1299,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (361)
+## context (363)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1365,6 +1369,10 @@
   _by Admin - 2026-07-27_
 - **[8] Git Scan: 2026-07-21T17:26:34** - { "summary": { "timestamp": "2026-07-21T17:26:34.837888+00:00", "total": 14, "clean": 0, "dirty": 13, "missing": 1, "errors": 0, "stale_services": 14, "active_services": 0, "status_breakdown": { "HEALTHY": 0, "ACTIVE": 0, "STALE": 1, "NEGLECTED": 13, "BLOCKED": 0, "FAILING": 0, "INCIDENT": 0, "DIRTY...
   _by Admin - 2026-07-21_
+- **[7] [ACTIVE] DONE: Sales Ops: C2 implemented+reviewed (ce1c5e8): 4 canonical Phase-3 Lead fields + 2 null/undefined bou** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "done", "status": "ACTIVE", "message": "Sales Ops: C2 implemented+reviewed (ce1c5e8): 4 canonical Phase-3 Lead fields + 2 null/undefined boundary coalesces, tsc 60\u219246, tests 1/1+13/13 | outcome: 2 of 6 C tickets PROVEN under new governance; sc...
+  _by user - 2026-08-24_
+- **[7] [ACTIVE] DONE: Sales Ops: C1 implemented+reviewed (f3de413): 11 sensitivity_class annotations, tsc 82→60, tests 13/** - {"agent_id": "TrueVow_Sales_Ops_Service", "action": "done", "status": "ACTIVE", "message": "Sales Ops: C1 implemented+reviewed (f3de413): 11 sensitivity_class annotations, tsc 82\u219260, tests 13/13+160/160 | outcome: first C ticket PROVEN under new governance; per-site sensitivity matrix recorded ...
+  _by user - 2026-08-24_
 - **[7] FND-003-R1: T01-R1 repair + T02 + T05 landed** - T01-R1 0a52a14 removed blanket default-ACL, added alembic_version SELECT (owner review repair); T02 6b3c058 two-URL split (privileged migration URL fail-loud, /ready requires 0023, runtime-isolation scan test); T05 173f597 migrated 12 attorney-route sites to internal_tenant_session with shrinking se...
   _by Admin - 2026-08-24_
 - **[7] FND-003-R1 frontier 01/03/04 implemented** - T01 0023_fnd003_runtime_role migration + guarded tests @18745cb; T03 internal_tenant_session seam + BlockedInternalTenantContext @787f6a4 on trace/TRACE-FND-003; T04 inventory ledger 57 sites committed to docs branch (INVALID_BYPASS_PATH baseline=2, ticket05 stays whole, batch07 watch-item). Local s...
