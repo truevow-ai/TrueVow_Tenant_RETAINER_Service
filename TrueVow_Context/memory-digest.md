@@ -3,10 +3,10 @@
 > AUTO-GENERATED from memory.db by `python TrueVow_Shared_Orchestration/memory.py export`.
 > Do NOT edit by hand - changes are overwritten. Source of truth: `TrueVow_Shared_Codebase_Memory/memory.db`.
 
-- Generated: 2026-08-26T03:14:12.936300+00:00
-- Total memories: 710
+- Generated: 2026-08-26T03:37:49.833622+00:00
+- Total memories: 711
 
-## High-importance decisions (8+, routine noise excluded) - 315
+## High-importance decisions (8+, routine noise excluded) - 316
 
 - **[10][architecture] Benjamin North Star: Schema-Gated Goal-Based Intake Engine** - CTO research decision: evolve Benjamin from FSM+QuestionRunner to schema-guided goal-based architecture. Firms configure FACTS (incident.location, injury.present) + GOALS + POLICY branches — NOT questions or node graphs. One caller sentence extracts multiple candidate facts, validated separately. Lifecycle shrinks to ~6 states (BOOTSTRAP/SCREENING/INTAKE/RESOLUTION/AWAITING_EFFECT/COMPLETE + HANDOFF/TERMINATED). LLM = conversation conductor within code-determined agenda; code = agenda authority. LiveKit = voice runtime only, TrueVow Core consumes provider-neutral CoreTurn. First Call Readiness Certificate requires all policy branches have outcomes + effect fallbacks; external integrations NOT required for first call. Prototype-first: challenger (Car Accident + OPI) vs current 22-state FSM, measure task completion/false commits/repeats/turns. SaaS Admin Builder implication: NOT a flowchart editor — firm configures facts, routing policy, destinations; previews generated sample conversations.
   _by Admin - 2026-08-12 - tags: -_
@@ -316,6 +316,8 @@
   _by Admin - 2026-07-31 - tags: -_
 - **[9][bug] contact_info_sequence dropped phone+email** - Root cause: routing INTO a sequence node used _execute_node, which returned the sequence's own intro prompt and left current_node=contact_info_sequence WITHOUT priming the first sub-node. Next turn the C10 terminal guard (workflow_engine.py:518) saw no next/branches/options and returned _build_complete_response — so name-only leads jumped to 'complete', losing phone+email. FIX: _execute_node now delegates type==sequence to _execute_sequence (primes contact_name, prepends intro to first question); terminal guards treat nodes/type==sequence as a valid exit. Verified: name->phone->email chain now runs.
   _by Admin - 2026-07-14 - tags: -_
+- **[9][context] cto_v2 trial run complete - loop proven on real work** - End-to-end trial executed: brief TICKET-022 correctly refused no-git repo; manual execution restored git for RETAINER (125 files, 8259c98) and Platform Analytics (83 files, 84fed34) with secret guards added pre-commit, zero secrets staged; COMMAND discovered EMPTY (zero code anywhere) escalated as AWAITING_FOUNDER TICKET-023 (build vs park vs rescope). Junior loop demoed on SETTLE JUNIOR-001: assignment -> honest report-back (ruff 2 errors, 339 tests collected) -> review REJECTED -> integrate gate blocked REJECTED / allowed APPROVED after explicit [x]. Two tool bugs found and fixed during trial: cmd_brief missing ticket_state wrap; integrate gate accepted unchecked-APPROVED state. Follow-up TICKET-024 filed for the lint errors.
+  _by Admin - 2026-08-26 - tags: -_
 - **[9][context] G13 = HOLD pending manual testing as of 2026-08-21** - Founder confirmed: G13 was held off because testing continued in the Tenant INTAKE engine repo and complete manual testing had not been reached as of two days before Aug 23. Earlier memory claims of 'G13 RUNTIME READINESS PASS' (Aug 11-12) refer to runtime readiness evidence only, NOT the gate. QA mandate bar stands: P1-P5 real proofs + fresh-context qualification. G14 HARD HOLD unchanged.
   _by Admin - 2026-08-24 - tags: -_
 - **[9][context] 04B Safety Clearance Findings** - INTAKE truevow-tenant-public: fly-tenant.toml ENVIRONMENT=production, Fly owner=personal, DB is production Supabase flhnyyreaxkmwmexchla. 2 active sessions both explicitly synthetic smoke tests (smoke-sg-2 Schema/Goal, smoke-vnext-1 vNext). Schema/Goal canary tenant 4f797776 has firm_name Oakwood Law Firm (payload contains oakwood) — demo identity reused, not hardcoded code routing, created via canonical command 0ca3b6ba. Live SENDGRID+TWILIO credentials deployed — email/SMS side effects POSSIBLE. Calendar NOT connected — booking BLOCKED.
@@ -1299,7 +1301,7 @@
 - **[1] FIXED: gitignore source-leak advisory** - RESOLVED July 1. All 6 affected services fixed.
   _by user - 2026-07-01_
 
-## context (363)
+## context (364)
 
 - **[10] Tenant INTAKE Stream Paused** - Tenant INTAKE engine stream paused at 891eec8 (review/tv-intake-engine-p1-02e-r1). All P1-02 artifacts frozen. Migration NOT applied. Next step belongs to CTO platform stream: TV-PR-INTAKE-MIGRATION-AUTH-01R. Bridge task adapters (TV-INTAKE-BRIDGE-GETNAME-01) NOT authorized until platform migration ...
   _by Admin - 2026-08-06_
@@ -1315,6 +1317,8 @@
   _by Admin - 2026-07-27_
 - **[10] TRACE documentation and memory updated July 24 2026** - All documentation updated: AGENTS.md (250+ lines with full service reference), README.md (updated stack/status), TRACE-Agent-Coding-Instructions.md (300+ line Appendix A with architecture, API reference, data flow, troubleshooting). Platform map updated (TRACE: port 3036, active). DEVELOPERS.md upda...
   _by Admin - 2026-07-24_
+- **[9] cto_v2 trial run complete - loop proven on real work** - End-to-end trial executed: brief TICKET-022 correctly refused no-git repo; manual execution restored git for RETAINER (125 files, 8259c98) and Platform Analytics (83 files, 84fed34) with secret guards added pre-commit, zero secrets staged; COMMAND discovered EMPTY (zero code anywhere) escalated as A...
+  _by Admin - 2026-08-26_
 - **[9] G13 = HOLD pending manual testing as of 2026-08-21** - Founder confirmed: G13 was held off because testing continued in the Tenant INTAKE engine repo and complete manual testing had not been reached as of two days before Aug 23. Earlier memory claims of 'G13 RUNTIME READINESS PASS' (Aug 11-12) refer to runtime readiness evidence only, NOT the gate. QA m...
   _by Admin - 2026-08-24_
 - **[9] 04B Safety Clearance Findings** - INTAKE truevow-tenant-public: fly-tenant.toml ENVIRONMENT=production, Fly owner=personal, DB is production Supabase flhnyyreaxkmwmexchla. 2 active sessions both explicitly synthetic smoke tests (smoke-sg-2 Schema/Goal, smoke-vnext-1 vNext). Schema/Goal canary tenant 4f797776 has firm_name Oakwood La...
