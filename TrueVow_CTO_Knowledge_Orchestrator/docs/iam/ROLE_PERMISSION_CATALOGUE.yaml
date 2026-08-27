@@ -1,0 +1,132 @@
+# Role and Permission Catalogue — IAM-G1
+
+meta:
+  name: TrueVow Role & Permission Catalogue
+  version: "1.0.0"
+  frozen: true
+  date: "2026-08-02"
+
+roles:
+  tenant:
+    - code: TENANT_OWNER
+      name: Firm Owner
+      description: Law firm owner with full administrative authority over the tenant
+      can_assign: [TENANT_ADMIN, ATTORNEY, INTAKE_MANAGER, CASE_STAFF, BILLING_MANAGER, VIEWER]
+      cannot_assign: [TENANT_OWNER, PLATFORM_OWNER, PLATFORM_ADMIN, CSM, SALES_OPS_ADMIN, SALES_REPRESENTATIVE, CLIENT_PORTAL_USER]
+
+    - code: TENANT_ADMIN
+      name: Firm Administrator
+      description: Manages firm settings, users, and integrations
+      can_assign: [ATTORNEY, INTAKE_MANAGER, CASE_STAFF, BILLING_MANAGER, VIEWER]
+
+    - code: ATTORNEY
+      name: Attorney
+      description: Licensed attorney with matter and representation authority
+      authority_class: ATTY_AUTH
+
+    - code: INTAKE_MANAGER
+      name: Intake Manager
+      description: Manages intake pipeline, schedules consultations
+
+    - code: CASE_STAFF
+      name: Case Staff
+      description: Paralegals, legal assistants, case managers
+
+    - code: BILLING_MANAGER
+      name: Billing Manager
+      description: Manages billing, invoices, trust accounting access
+
+    - code: VIEWER
+      name: Viewer
+      description: Read-only access to assigned matters
+
+  platform:
+    - code: PLATFORM_OWNER
+      name: Platform Owner
+      description: Full platform administration authority
+
+    - code: PLATFORM_ADMIN
+      name: Platform Administrator
+      description: Operates platform infrastructure, manages tenants
+
+    - code: CSM
+      name: Customer Success Manager
+      description: Manages tenant onboarding, health, renewal
+
+    - code: BILLING_OPERATOR
+      name: Billing Operator
+      description: Manages billing, invoicing, payment reconciliation
+
+    - code: COMPLIANCE_OPERATOR
+      name: Compliance Operator
+      description: Manages jurisdiction profiles, policy reviews, audit compliance
+
+    - code: SUPPORT_ADMIN
+      name: Support Administrator
+      description: Manages support queues, SLAs, knowledge base
+
+    - code: SUPPORT_AGENT
+      name: Support Agent
+      description: Handles support tickets and customer inquiries
+
+    - code: SALES_OPS_ADMIN
+      name: Sales Ops Administrator
+      description: Manages lead pipeline, campaigns, qualification
+
+    - code: SALES_REPRESENTATIVE
+      name: Sales Representative
+      description: Executes outreach, qualifies leads, schedules demos
+
+  client:
+    - code: CLIENT_PORTAL_USER
+      name: Client Portal User
+      description: Restricted access to own matters only
+
+permissions:
+  tenant:
+    - code: members.invite
+    - code: members.read
+    - code: members.manage
+    - code: roles.assign
+    - code: intake.read
+    - code: intake.update
+    - code: recordings.listen
+    - code: transcripts.read
+    - code: matters.read
+    - code: matters.update
+    - code: documents.upload
+    - code: billing.read
+    - code: billing.manage
+    - code: tenant.settings.read
+    - code: tenant.settings.manage
+
+  platform:
+    - code: platform.tenants.read
+    - code: platform.tenants.create
+    - code: platform.tenants.suspend
+    - code: platform.tenants.activate
+    - code: platform.entitlements.read
+    - code: platform.entitlements.manage
+    - code: platform.staff.read
+    - code: platform.staff.manage
+    - code: platform.audit.read
+
+  client:
+    - code: client.matter.read
+    - code: client.documents.read
+    - code: client.messages.send
+
+authority_classes:
+  - SYS_ADMIN
+  - FIRM_POLICY
+  - STAFF_AUTH
+  - ATTY_AUTH
+  - CLIENT_AUTH
+  - PROHIBITED
+
+authority_role_mapping:
+  ATTORNEY: [ATTY_AUTH, STAFF_AUTH]
+  TENANT_OWNER: [FIRM_POLICY, STAFF_AUTH]
+  CLIENT_PORTAL_USER: [CLIENT_AUTH]
+  PLATFORM_OWNER: [SYS_ADMIN]
+  PLATFORM_ADMIN: [SYS_ADMIN]

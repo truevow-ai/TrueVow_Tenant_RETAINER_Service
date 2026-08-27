@@ -1,0 +1,66 @@
+# IAM Event Catalogue — IAM-G1
+
+meta:
+  name: TrueVow IAM Event Catalogue
+  version: "1.0.0"
+  frozen: true
+  date: "2026-08-02"
+
+events:
+  identity:
+    - identity.profile_created
+    - identity.profile_updated
+    - identity.profile_suspended
+    - identity.profile_reactivated
+    - identity.profile_deactivated
+    - identity.email_verified
+    - identity.mfa_enabled
+    - identity.mfa_disabled
+    - identity.password_changed
+    - identity.session_created
+    - identity.session_refreshed
+    - identity.session_revoked
+    - identity.signed_out
+
+  tenant_membership:
+    - tenant.membership_invited
+    - tenant.membership_accepted
+    - tenant.membership_activated
+    - tenant.membership_suspended
+    - tenant.membership_reactivated
+    - tenant.membership_revoked
+
+  platform_membership:
+    - platform.membership_granted
+    - platform.membership_suspended
+    - platform.membership_reactivated
+    - platform.membership_revoked
+
+  client_membership:
+    - client.membership_granted
+    - client.membership_suspended
+    - client.membership_revoked
+
+  roles:
+    - role.assigned
+    - role.revoked
+
+  application_access:
+    - application.access_granted
+    - application.access_revoked
+
+  authority:
+    - authority.granted
+    - authority.revoked
+
+  invitation:
+    - invitation.created
+    - invitation.accepted
+    - invitation.expired
+    - invitation.revoked
+    - invitation.resent
+
+  rls:
+    - rls.access_denied
+    - rls.tenant_isolation_violation
+    - rls.service_role_bypass_audited

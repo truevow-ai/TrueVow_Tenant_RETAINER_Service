@@ -1,0 +1,101 @@
+# Application Catalogue — IAM-G1
+
+meta:
+  name: TrueVow Application Catalogue
+  version: "1.0.0"
+  frozen: true
+  date: "2026-08-02"
+
+applications:
+  - code: saas-admin
+    name: SaaS Administration
+    domain: PLATFORM_OPERATORS
+    port: 3001
+    owner: ghous-isb
+    auth_required: true
+    public_signup: false
+
+  - code: internal-ops
+    name: Internal Operations
+    domain: PLATFORM_OPERATORS
+    port: 3006
+    owner: yasha
+    auth_required: true
+    public_signup: false
+
+  - code: csm-core
+    name: Customer Success Core
+    domain: PLATFORM_OPERATORS
+    port: 3012
+    owner: ghous-isb
+    auth_required: true
+    public_signup: false
+
+  - code: financial-management
+    name: Financial Management
+    domain: PLATFORM_OPERATORS
+    port: 3011
+    owner: yasha
+    auth_required: true
+    public_signup: false
+
+  - code: billing
+    name: Billing Service
+    domain: PLATFORM_OPERATORS
+    port: 3016
+    owner: ghaus-fsd
+    auth_required: true
+    public_signup: false
+
+  - code: sales-ops
+    name: Sales Operations
+    domain: SALES_SUPPORT
+    port: 3056
+    owner: sania
+    auth_required: true
+    public_signup: false
+
+  - code: customer-portal
+    name: Customer Portal
+    domain: TENANTS
+    port: 3031
+    owner: yasha
+    auth_required: true
+    public_signup: false
+    invitation_only: true
+
+  - code: intake
+    name: INTAKE Service
+    domain: TENANTS
+    port: 3022
+    owner: ghaus-fsd
+    auth_required: true
+    public_signup: false
+
+  - code: trace
+    name: TRACE Service
+    domain: TENANTS
+    port: 3036
+    owner: yasha
+    auth_required: true
+    public_signup: false
+
+  - code: settle
+    name: SETTLE Service
+    domain: TENANTS
+    port: 8002
+    owner: yasha
+    auth_required: true
+    public_signup: false
+
+  - code: leverage
+    name: LEVERAGE Service
+    domain: TENANTS
+    auth_required: true
+    public_signup: false
+
+  - code: verify
+    name: VERIFY Service
+    domain: TENANTS
+    auth_required: true
+    public_signup: false

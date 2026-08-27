@@ -11,54 +11,48 @@
  * - Finance approval needed for: discounts, invoice adjustments, reimbursements
  * - Customer self-service: upgrades/downgrades — no approval needed
  */
-import { ClerkDomain } from '@truevow/auth-client'
+import { ClerkDomain } from './domain'
 import { RoleLevel, ROLE_REGISTRY, type RoleDefinition } from './roles'
 
 // ─── Permission IDs ───────────────────────────────────────────────
-export enum Permission {
-  // Tenant Management
-  TENANT_CREATE = 'tenant:create',
-  TENANT_READ = 'tenant:read',
-  TENANT_UPDATE = 'tenant:update',
-  TENANT_DELETE = 'tenant:delete',
-  TENANT_IMPERSONATE = 'tenant:impersonate',
+export const Permission = {
+  TENANT_CREATE: 'tenant:create',
+  TENANT_READ: 'tenant:read',
+  TENANT_UPDATE: 'tenant:update',
+  TENANT_DELETE: 'tenant:delete',
+  TENANT_IMPERSONATE: 'tenant:impersonate',
 
-  // Billing & Subscriptions
-  BILLING_READ = 'billing:read',
-  BILLING_SET_TIER = 'billing:set_tier',
-  BILLING_ADJUST_INVOICE = 'billing:adjust_invoice',
-  BILLING_APPLY_DISCOUNT = 'billing:apply_discount',
-  BILLING_PROCESS_REIMBURSEMENT = 'billing:process_reimbursement',
-  BILLING_SELF_SERVICE_CHANGE = 'billing:self_service_change',
+  BILLING_READ: 'billing:read',
+  BILLING_SET_TIER: 'billing:set_tier',
+  BILLING_ADJUST_INVOICE: 'billing:adjust_invoice',
+  BILLING_APPLY_DISCOUNT: 'billing:apply_discount',
+  BILLING_PROCESS_REIMBURSEMENT: 'billing:process_reimbursement',
+  BILLING_SELF_SERVICE_CHANGE: 'billing:self_service_change',
 
-  // User Management
-  USER_CREATE = 'user:create',
-  USER_READ = 'user:read',
-  USER_UPDATE = 'user:update',
-  USER_DELETE = 'user:delete',
-  USER_MANAGE_ROLES = 'user:manage_roles',
+  USER_CREATE: 'user:create',
+  USER_READ: 'user:read',
+  USER_UPDATE: 'user:update',
+  USER_DELETE: 'user:delete',
+  USER_MANAGE_ROLES: 'user:manage_roles',
 
-  // Support
-  TICKET_CREATE = 'ticket:create',
-  TICKET_READ = 'ticket:read',
-  TICKET_ASSIGN = 'ticket:assign',
-  TICKET_CLOSE = 'ticket:close',
+  TICKET_CREATE: 'ticket:create',
+  TICKET_READ: 'ticket:read',
+  TICKET_ASSIGN: 'ticket:assign',
+  TICKET_CLOSE: 'ticket:close',
 
-  // Sales CRM
-  LEAD_CREATE = 'lead:create',
-  LEAD_READ = 'lead:read',
-  LEAD_UPDATE = 'lead:update',
+  LEAD_CREATE: 'lead:create',
+  LEAD_READ: 'lead:read',
+  LEAD_UPDATE: 'lead:update',
 
-  // Settings
-  SETTINGS_READ = 'settings:read',
-  SETTINGS_UPDATE = 'settings:update',
+  SETTINGS_READ: 'settings:read',
+  SETTINGS_UPDATE: 'settings:update',
 
-  // Audit
-  AUDIT_READ = 'audit:read',
+  AUDIT_READ: 'audit:read',
 
-  // Integrations
-  INTEGRATION_MANAGE = 'integration:manage',
-}
+  INTEGRATION_MANAGE: 'integration:manage',
+} as const;
+
+export type Permission = (typeof Permission)[keyof typeof Permission];
 
 // ─── Permission-to-Role Mapping ───────────────────────────────────
 export interface PermissionRule {

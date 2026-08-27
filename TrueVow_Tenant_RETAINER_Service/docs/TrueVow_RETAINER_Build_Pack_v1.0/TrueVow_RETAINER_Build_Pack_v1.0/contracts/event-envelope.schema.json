@@ -1,7 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://contracts.truevow.example/events/event-envelope-v1.0.1.schema.json",
-  "title": "TrueVow EventEnvelope",
+  "$id": "https://contracts.truevow.example/events/event-envelope-v1.1.0.schema.json",
+  "title": "TrueVow EventEnvelope v1.1.0",
+  "description": "Frozen canonical event envelope. 18 required fields. tenant_id is now nullable for pre-tenant events (e.g. Sales Ops). authority_class enum expanded with tv.salesops.* values. Added optional authority_domain field. Product extensions prohibited at root. Created as v1.1.0 (not v1.0.2 patch) because the semantic change to nullable tenant_id and expanded authority may affect existing consumers.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -42,12 +43,21 @@
       "format": "date-time"
     },
     "tenant_id": {
-      "type": "string",
-      "format": "uuid"
+      "oneOf": [
+        {
+          "type": "string",
+          "format": "uuid"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Owning tenant identity boundary. Nullable for pre-tenant events (e.g. Sales Ops discovery/enrichment events emitted before SaaS Admin creates the tenant). MUST be non-null for all legal-product events."
     },
     "aggregate_type": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "description": "Canonical aggregate type. Legal-product uses ENT-XXX identifiers. Sales Ops uses tv.salesops.* namespace identifiers."
     },
     "aggregate_id": {
       "type": "string",
@@ -73,6 +83,11 @@
         }
       ]
     },
+    "authority_domain": {
+      "type": "string",
+      "enum": ["legal", "salesops", "platform"],
+      "description": "Optional field to disambiguate which authority system applies. 'legal' = tv.legal.* authority classes. 'salesops' = tv.salesops.* authority classes. 'platform' = tv.platform.*. If omitted, 'legal' is assumed for backward compatibility."
+    },
     "authority_class": {
       "enum": [
         "SYS_ADMIN",
@@ -80,8 +95,16 @@
         "STAFF_AUTH",
         "ATTY_AUTH",
         "CLIENT_AUTH",
-        "PROHIBITED"
-      ]
+        "PROHIBITED",
+        "SALESOPS_OBSERVE",
+        "SALESOPS_RECOMMEND",
+        "SALESOPS_DRAFT",
+        "SALESOPS_ACT_BOUNDED",
+        "SALESOPS_APPROVE",
+        "SALESOPS_ADMINISTER",
+        "SALESOPS_NEVER_AUTOMATE"
+      ],
+      "description": "Authority class for the action. 6 legal-product classes (SYS_ADMIN through PROHIBITED). 7 Sales Ops operational classes (SALESOPS_OBSERVE through SALESOPS_NEVER_AUTOMATE). Disambiguate with authority_domain field."
     },
     "authority_record_id": {
       "oneOf": [

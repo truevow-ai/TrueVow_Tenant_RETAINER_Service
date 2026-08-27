@@ -4,7 +4,7 @@
  * Wraps API route handlers with domain-aware permission checks.
  * Works with the auth-client ClerkWrapper for token validation.
  */
-import { type ClerkDomain } from '@truevow/auth-client'
+import { type ClerkDomain } from './domain'
 import { hasPermission, requiresApproval, Permission } from './permissions'
 import { ROLE_REGISTRY, RoleLevel, isRoleHigherOrEqual } from './roles'
 

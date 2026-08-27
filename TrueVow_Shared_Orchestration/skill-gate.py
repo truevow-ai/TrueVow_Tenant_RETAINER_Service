@@ -100,15 +100,49 @@ def scan_markers(files: list[str]) -> list[dict]:
 
 
 def run_skillspector(files: list[str]) -> list[dict]:
-    """Run SkillSpector if installed."""
+    """Run SkillSpector if installed. Advisory only: never blocks (INFO severity),
+    and a hang/crash/missing-binary degrades to a skipped scan, not a failed commit.
+    A 15s probe on the first file decides whether the tool works at all; if the
+    probe hangs we skip the whole pass instead of burning timeout-per-file."""
     findings = []
-    for f in files:
+    if not files:
+        return findings
+
+    def _scan(path: str, timeout: int):
+        return subprocess.run(
+            ["skillspector", "scan", path, "--no-llm"],
+            capture_output=True, text=True, timeout=timeout,
+        )
+
+    # Probe: is skillspector functional at all?
+    try:
+        r = _scan(files[0], 15)
+        findings.append({"file": files[0], "line": 0, "severity": "INFO",
+                         "rule": "skillspector", "evidence": (r.stdout or "").strip()[:200]})
+        rest = files[1:]
+    except subprocess.TimeoutExpired:
+        findings.append({"file": files[0], "line": 0, "severity": "INFO",
+                         "rule": "skillspector skipped (probe timeout)",
+                         "evidence": "15s probe hung — skipping entire skillspector pass"})
+        return findings
+    except (FileNotFoundError, OSError):
+        findings.append({"file": files[0], "line": 0, "severity": "INFO",
+                         "rule": "skillspector unavailable",
+                         "evidence": "binary not found/not runnable — skipped"})
+        return findings
+
+    for f in rest:
         if should_skip(f):
             continue
-        r = subprocess.run(
-            ["skillspector", "scan", f, "--no-llm"],
-            capture_output=True, text=True, timeout=120,
-        )
+        try:
+            r = _scan(f, 120)
+        except subprocess.TimeoutExpired:
+            findings.append({"file": f, "line": 0, "severity": "INFO",
+                             "rule": "skillspector skipped (timeout)",
+                             "evidence": "scan exceeded 120s — skipping remaining files"})
+            break
+        except (FileNotFoundError, OSError):
+            break
         if r.returncode == 0 and r.stdout:
             findings.append({"file": f, "line": 0, "severity": "INFO",
                              "rule": "skillspector", "evidence": r.stdout.strip()[:200]})

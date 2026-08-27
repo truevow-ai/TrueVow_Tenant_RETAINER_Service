@@ -18,10 +18,8 @@ class Settings(BaseSettings):
     auth_mode: str = "local"
     local_jwt_secret: str = "insecure-dev-secret-change-me"
     local_jwt_algorithm: str = "HS256"
-    clerk_jwks_url: str = ""
-    clerk_issuer: str = ""
-    clerk_audience: str = ""
-    clerk_jwks_cache_ttl: int = 3600
+    supabase_jwt_issuer: str = ""
+    supabase_jwks_url: str = ""
 
     retainer_database_url: str | None = Field(
         default=None,

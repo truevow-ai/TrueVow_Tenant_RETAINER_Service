@@ -1,0 +1,3 @@
+packages:
+  - "shared-libraries/*"
+  - "TrueVow_SaaS_Administration_Service"

@@ -9,3 +9,11 @@ dist/
 .pytest_cache/
 *.log
 .DS_Store
+
+# TICKET-022 secret guard
+.env
+.env.*
+*.pem
+*.key
+node_modules/
+

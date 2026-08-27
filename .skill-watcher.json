@@ -1,0 +1,84 @@
+{
+  "ts": "2026-08-27T02:30:22.327873+00:00",
+  "services": [
+    {
+      "service": "TrueVow_SaaS_Administration_Service",
+      "path": "C:\\Users\\yasha\\OneDrive\\Documents\\TrueVow\\Cursor\\TrueVow_SaaS_Administration_Service",
+      "last_commit": "dc6d3e5908a5815b32654ccfa75fccd0840de01a docs: Benjamin North Star \u00e2\u20ac\u201d schema-gated goal-based intake engine (minor architectural update)",
+      "dirty": 0
+    },
+    {
+      "service": "TrueVow_Sales_Ops_Service",
+      "path": "C:\\Users\\yasha\\OneDrive\\Documents\\TrueVow\\Cursor\\TrueVow_Sales_Ops_Service",
+      "last_commit": "41e2108cd600de0a204d2aecf2c001dca4e6a032 docs(sales-ops): C-batch session checkpoint \u00e2\u20ac\u201d 3/6 tickets proven, escalations + resume path recorded",
+      "dirty": 0
+    },
+    {
+      "service": "TrueVow-Tenant_Billing-Service",
+      "path": "C:\\Users\\yasha\\OneDrive\\Documents\\TrueVow\\Cursor\\TrueVow-Tenant_Billing-Service",
+      "last_commit": "f55372ac2e4e8dd2939c7ab112b2a9b34b990f36 docs(TrueVow-Tenant_Billing-Service): add skill reference table \u00e2\u20ac\u201d Pocock fundamentals + TrueVow platform",
+      "dirty": 36
+    },
+    {
+      "service": "TrueVow_Tenant_INTAKE_Service",
+      "path": "C:\\Users\\yasha\\OneDrive\\Documents\\TrueVow\\Cursor\\TrueVow_Tenant_INTAKE_Service",
+      "last_commit": "f58952484da51851a802238e7c5a4de0cb4c623a relocate google_calendar_gateway to Application Plane (c9d1aaa boundary)",
+      "dirty": 28
+    },
+    {
+      "service": "TrueVow_Customer_Success_CORE_Service",
+      "path": "C:\\Users\\yasha\\OneDrive\\Documents\\TrueVow\\Cursor\\TrueVow_Customer_Success_CORE_Service",
+      "last_commit": "af15a33f4f446382b092085341084ba444d2d64b docs(TrueVow_Customer_Success_CORE_Service): add skill reference table \u00e2\u20ac\u201d Pocock fundamentals + TrueVow platform",
+      "dirty": 53
+    },
+    {
+      "service": "TrueVow_Internal_Ops_Service",
+      "path": "C:\\Users\\yasha\\OneDrive\\Documents\\TrueVow\\Cursor\\TrueVow_Internal_Ops_Service",
+      "last_commit": "a12315d4b52b3396b136c15aad698dc45d112181 docs(TrueVow_Internal_Ops_Service): add skill reference table \u00e2\u20ac\u201d Pocock fundamentals + TrueVow platform",
+      "dirty": 2
+    },
+    {
+      "service": "TrueVow_Financial_Management_Service",
+      "path": "C:\\Users\\yasha\\OneDrive\\Documents\\TrueVow\\Cursor\\TrueVow_Financial_Management_Service",
+      "last_commit": "be3d08707225e0bdfeefffc84e8823f14cbba6a0 docs: add skill reference table \u00e2\u20ac\u201d Pocock fundamentals + TrueVow platform",
+      "dirty": 0
+    },
+    {
+      "service": "TrueVow_Platform_Analytics_Service",
+      "path": "C:\\Users\\yasha\\OneDrive\\Documents\\TrueVow\\Cursor\\TrueVow_Platform_Analytics_Service",
+      "last_commit": "84fed3401d5b5e25508dadd8c7cb51f4963bee50 chore: restore standalone git identity (TICKET-022)",
+      "dirty": 0
+    },
+    {
+      "service": "TrueVow_Tenant_SETTLE-Service",
+      "path": "C:\\Users\\yasha\\OneDrive\\Documents\\TrueVow\\Cursor\\TrueVow_Tenant_SETTLE-Service",
+      "last_commit": "9b83e1b6568460b6b06d0ee237c9a6cbd564ee53 docs: add skill reference table \u00e2\u20ac\u201d Pocock fundamentals + TrueVow platform",
+      "dirty": 1
+    },
+    {
+      "service": "TrueVow_Tenant_LEVERAGE_Service",
+      "path": "C:\\Users\\yasha\\OneDrive\\Documents\\TrueVow\\Cursor\\TrueVow_Tenant_LEVERAGE_Service",
+      "last_commit": "7a6514524b5fca14b5042b2a3a6b5d233335cfde docs: add skill reference table \u00e2\u20ac\u201d Pocock fundamentals + TrueVow platform",
+      "dirty": 0
+    },
+    {
+      "service": "TrueVow_Tenant_VERIFY_Service",
+      "path": "C:\\Users\\yasha\\OneDrive\\Documents\\TrueVow\\Cursor\\TrueVow_Tenant_VERIFY_Service",
+      "last_commit": "25278e2b2054ccb2343e64b34b5756bab54bb957 docs: add skill reference table \u00e2\u20ac\u201d Pocock fundamentals + TrueVow platform",
+      "dirty": 0
+    },
+    {
+      "service": "Truevow_Tenant_Customer_Portal_Service",
+      "path": "C:\\Users\\yasha\\OneDrive\\Documents\\TrueVow\\Cursor\\Truevow_Tenant_Customer_Portal_Service",
+      "last_commit": "daed558ed5be08d6e14ee4c8a22c97464b9f85ce docs: add skill reference table \u00e2\u20ac\u201d Pocock fundamentals + TrueVow platform",
+      "dirty": 0
+    },
+    {
+      "service": "TrueVow_Tenant_TRACE_Service",
+      "path": "C:\\Users\\yasha\\OneDrive\\Documents\\TrueVow\\Cursor\\TrueVow_Tenant_TRACE_Service",
+      "last_commit": "e73e094c4cb4ae4eb8344e3c012c6847c55069a5 feat(trace): FND-003-R1 T07A - services onto canonical tenant context (14 sites: providers/followup/fact_review/evidence/chronology) + firm-isolation fix on export path",
+      "dirty": 25
+    }
+  ],
+  "findings": []
+}

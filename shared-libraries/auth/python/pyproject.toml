@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "truevow_auth"
+version = "1.0.0"
+description = "TrueVow shared authentication — Supabase Auth JWT verification and authorization"
+requires-python = ">=3.11"
+dependencies = [
+    "pyjwt[crypto]>=2.8",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]

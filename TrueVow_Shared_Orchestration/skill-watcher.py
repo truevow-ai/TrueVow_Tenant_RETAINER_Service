@@ -91,10 +91,16 @@ def scan_for_invariants(service: str, path: Path) -> list[dict]:
             continue
         import re as _re
         for name, pattern, desc in INVARIANTS:
+            if name == "canonical-pipeline" and f.endswith(".md"):
+                # docs state the invariant (authority tables), not drift
+                continue
             if name == "manual-repair" and not content.startswith("#"):
                 # too noisy on arbitrary files; skip unless UPDATE is present
                 if "UPDATE " not in content:
                     continue
+            if name == "manual-repair" and _re.search(r"UPDATE\s+\w*outbox\b", content, _re.IGNORECASE):
+                # outbox reset on retry is an idempotent-retry pattern, not business-state repair
+                continue
             for m in _re.finditer(pattern, content, _re.IGNORECASE):
                 findings.append({
                     "service": service, "file": f, "invariant": name,

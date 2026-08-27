@@ -9,7 +9,7 @@
  * Level C: Standard Staff (Sales Rep, Support Agent, Operations)
  * Level D: External (Tenant Admin, Attorney, Paralegal, Client)
  */
-import { ClerkDomain } from '@truevow/auth-client'
+import { ClerkDomain } from './domain'
 
 // ─── Trust Level Hierarchy ────────────────────────────────────────
 export enum RoleLevel {

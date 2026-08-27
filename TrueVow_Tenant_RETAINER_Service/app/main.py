@@ -1,8 +1,9 @@
 """RETAINER FastAPI application.
 
-Wires middleware (correlation id + audit), Clerk-based auth, plain-English error
-handling, a public /health probe, and the firm-scoped v1 API under
-/api/v1/retainer. Production must run in Clerk auth mode — enforced at startup.
+Wires middleware (correlation id + audit), Supabase Auth via truevow_auth,
+plain-English error handling, a public /health probe, and the firm-scoped v1
+API under /api/v1/retainer. Production must run in Supabase auth mode —
+enforced at startup.
 """
 
 from __future__ import annotations
@@ -27,10 +28,20 @@ logger = get_logger("retainer.main")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    if settings.is_production and settings.auth_mode != "clerk":
+    if settings.is_production and settings.auth_mode != "supabase":
         raise RuntimeError(
-            "AUTH_MODE=local is forbidden in production. Set AUTH_MODE=clerk and CLERK_JWKS_URL."
+            "AUTH_MODE=local is forbidden in production. Set AUTH_MODE=supabase and SUPABASE_JWKS_URL."
         )
+
+    if settings.auth_mode == "supabase":
+        from truevow_auth import configure
+        configure(
+            issuer=settings.supabase_jwt_issuer,
+            audience="authenticated",
+            jwks_url=settings.supabase_jwks_url,
+        )
+        logger.info("truevow_auth configured: issuer=%s", settings.supabase_jwt_issuer)
+
     logger.info(
         "RETAINER starting: env=%s auth_mode=%s db=supabase",
         settings.environment,

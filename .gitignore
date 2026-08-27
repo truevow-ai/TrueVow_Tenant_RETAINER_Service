@@ -73,3 +73,7 @@ TrueVow_Knowledge/.triage.yaml
 # === SESSION FILES ===
 SESSION_SUMMARY_*.md
 ORCHESTRATOR_PROGRESS.md
+
+# === DEVICE FILES ===
+# 'nul' is a Windows device file artifact that corrupts git indexing
+nul

@@ -1,0 +1,280 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://contracts.truevow.law/sales-ops/handoff-contract-v1.schema.json",
+  "title": "SalesOpsApprovedCustomerHandoff",
+  "description": "Immutable, versioned handoff package from Sales Ops to SaaS Admin. Delivered as a durably persisted outbox event before SaaS Admin consumer acknowledgment.",
+  "version": "1.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "handoff_id",
+    "handoff_version",
+    "customer_candidate_id",
+    "source_application_id",
+    "firm_identity",
+    "validated_contact_points",
+    "qualification_result",
+    "approval_decision",
+    "approved_products",
+    "approved_plan",
+    "jurisdictions",
+    "practice_domains",
+    "expected_monthly_volume",
+    "implementation_requirements",
+    "custom_scope_required",
+    "authority_record",
+    "policy_version",
+    "sensitivity_class",
+    "created_at",
+    "checksum",
+    "source_system_version"
+  ],
+  "properties": {
+    "handoff_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Globally unique handoff event identifier used as idempotency key"
+    },
+    "handoff_version": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Monotonic version of this handoff package"
+    },
+    "customer_candidate_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Stable identifier for the approved customer candidate in Sales Ops domain"
+    },
+    "source_application_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Reference to the source CustomerApplication that was approved"
+    },
+    "firm_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["legal_name", "business_name", "primary_jurisdiction"],
+      "properties": {
+        "legal_name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Legal firm name as captured during qualification"
+        },
+        "business_name": {
+          "type": "string",
+          "description": "DBA or trading name if different from legal name"
+        },
+        "primary_jurisdiction": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 2,
+          "description": "ISO 3166-2 state code of primary office"
+        },
+        "firm_size": {
+          "type": "string",
+          "enum": ["solo", "small", "medium", "large", "unknown"]
+        },
+        "firm_website": {
+          "type": "string",
+          "format": "uri"
+        },
+        "year_founded": {
+          "type": "integer",
+          "minimum": 1800
+        },
+        "managing_partner": {
+          "type": "string"
+        },
+        "source_organization_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Sales Ops domain identifier for the Organization entity"
+        }
+      }
+    },
+    "validated_contact_points": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["contact_id", "contact_type", "validation_status"],
+        "properties": {
+          "contact_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Sales Ops domain contact identifier"
+          },
+          "contact_type": {
+            "type": "string",
+            "enum": ["primary", "billing", "technical", "managing_partner", "other"]
+          },
+          "first_name": { "type": "string" },
+          "last_name": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "phone": { "type": "string", "pattern": "^\\+[1-9]\\d{1,14}$" },
+          "validation_status": {
+            "type": "string",
+            "enum": ["TECHNICALLY_VALIDATED", "HUMAN_CONFIRMED", "CUSTOMER_DECLARED"]
+          },
+          "validation_method": { "type": "string" },
+          "validated_at": { "type": "string", "format": "date-time" }
+        }
+      }
+    },
+    "qualification_result": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["overall_assessment", "scored_at"],
+      "properties": {
+        "overall_assessment": {
+          "type": "string",
+          "enum": ["STRONG_FIT", "GOOD_FIT", "CONDITIONAL_FIT", "NOT_ASSESSED"]
+        },
+        "firmographics_score": { "type": "number", "minimum": 0, "maximum": 100 },
+        "engagement_signals": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "risk_flags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "scored_by": {
+          "type": "string",
+          "description": "agent_id of scoring agent"
+        },
+        "scored_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "approval_decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decision_id", "decision", "decided_by", "decided_at"],
+      "properties": {
+        "decision_id": { "type": "string", "format": "uuid" },
+        "decision": {
+          "type": "string",
+          "enum": ["approved", "rejected", "waitlist"]
+        },
+        "conditions": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Any conditions imposed on approval"
+        },
+        "decided_by": {
+          "type": "string",
+          "description": "Human actor identifier (must not be automated agent)"
+        },
+        "decided_at": { "type": "string", "format": "date-time" },
+        "approval_expires_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Optional expiry after which handoff is void if not accepted"
+        }
+      }
+    },
+    "approved_products": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "enum": ["INTAKE", "LEVERAGE", "SETTLE", "TRACE", "COMMAND"]
+      },
+      "description": "Products the customer is approved to use"
+    },
+    "approved_plan": {
+      "type": "string",
+      "enum": ["FOUNDATION", "GROWTH", "ENTERPRISE"],
+      "description": "Approved pricing tier"
+    },
+    "jurisdictions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 2,
+        "maxLength": 2
+      },
+      "description": "ISO 3166-2 state codes where the firm operates"
+    },
+    "practice_domains": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" },
+      "description": "Practice areas the firm serves"
+    },
+    "expected_monthly_volume": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Estimated monthly intake call volume"
+    },
+    "languages_required": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": ["en"],
+      "description": "Languages the firm requires for voice intake"
+    },
+    "implementation_requirements": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Any special setup requirements"
+    },
+    "custom_scope_required": {
+      "type": "boolean",
+      "description": "True if the firm needs custom configuration beyond standard onboarding"
+    },
+    "custom_scope_details": {
+      "type": "string",
+      "description": "Description of custom scope if applicable"
+    },
+    "authority_record": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["authority_record_id", "domain", "authority_class", "actor_id", "action"],
+      "properties": {
+        "authority_record_id": { "type": "string", "format": "uuid" },
+        "domain": { "type": "string", "enum": ["salesops"] },
+        "authority_class": {
+          "type": "string",
+          "enum": ["OBSERVE", "RECOMMEND", "DRAFT", "ACT_BOUNDED", "APPROVE", "ADMINISTER", "NEVER_AUTOMATE"]
+        },
+        "actor_id": { "type": "string" },
+        "action": { "type": "string" },
+        "policy_version_id": { "type": "string", "format": "uuid" }
+      }
+    },
+    "policy_version": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["policy_version_id", "ontology_version"],
+      "properties": {
+        "policy_version_id": { "type": "string", "format": "uuid" },
+        "ontology_version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+        "ontology_namespace": { "type": "string", "const": "tv.salesops" }
+      }
+    },
+    "sensitivity_class": {
+      "type": "string",
+      "const": "INTERNAL_CONFIDENTIAL",
+      "description": "Sales Ops handoff data classification"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the handoff package was sealed (immutable)"
+    },
+    "checksum": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA-256 hash of the canonical JSON representation for integrity verification"
+    },
+    "source_system_version": {
+      "type": "string",
+      "description": "Version of the Sales Ops system that produced this handoff"
+    }
+  }
+}
